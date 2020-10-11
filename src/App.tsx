@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Reqeusts from './containers/Reqeusts';
 import NotFound from './components/errors/Notfound';
+import './i18n';
 
 function App() {
   return (
