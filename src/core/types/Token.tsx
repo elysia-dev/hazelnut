@@ -4,7 +4,8 @@ type Token = {
   contractAddress: string;
   title: string;
   expectedAnualReturn?: string;
-  userAddress: string;
+  userAddresses: string[];
+  pricePerToken: string;
   email: string;
 }
 
