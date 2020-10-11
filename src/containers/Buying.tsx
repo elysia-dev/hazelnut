@@ -5,6 +5,8 @@ import BuyingStage from "../core/enums/BuyingStage";
 import Spinner from "react-spinkit";
 import { getElPrice } from "../core/clients/CoingeckoClient";
 import BuyingSummary from "../components/BuyingSummary";
+import { useWeb3React } from "@web3-react/core";
+import InjectedConnector from "../core/connectors/InjectedConnector";
 
 type Props = {
   token: Token
@@ -19,6 +21,7 @@ type State = {
 
 function Buying(props: Props) {
   const { t } = useTranslation();
+  const { activate, library, account } = useWeb3React();
 
   const [state, setState] = useState<State>({
     stage: BuyingStage.WHITELIST_CHECK,
@@ -33,6 +36,10 @@ function Buying(props: Props) {
     BuyingStage.WHITELIST_CHECK
   ].includes(state.stage);
 
+  const connectWallet = () => {
+    activate(InjectedConnector)
+  }
+
   const loadElPrice = () => {
     getElPrice().then((res) => {
       setState({
@@ -45,7 +52,19 @@ function Buying(props: Props) {
     })
   }
 
+  useEffect(connectWallet, []);
   useEffect(loadElPrice, []);
+  useEffect(() => {
+    if (!!library) {
+      library.getBalance(account)
+        .then((balance: any) => {
+          console.log(balance)
+        })
+        .catch(() => {
+          console.log("error")
+        })
+    }
+  }, [account, library])
 
   if (state.error) {
     return (
@@ -59,6 +78,14 @@ function Buying(props: Props) {
         <Spinner name="line-scale" />
       </div>
     );
+  } else if (!account) {
+    return (
+      <div>
+        <div onClick={() => connectWallet()}>
+          Connect wallet
+        </div>
+      </div>
+    )
   } else {
     return (
       <div>
