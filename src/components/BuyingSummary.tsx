@@ -18,7 +18,7 @@ function BuyingSummary(props: Props) {
         <span> You ({userAddress}) </span>
         <span> → </span>
         <span> Elysia </span>
-        <span> {expectedElValue.toFixed(2)} EL </span>
+        <span> (expected) {expectedElValue.toFixed(2)} EL </span>
       </div>
       <div>
         <span> Elysia </span>
