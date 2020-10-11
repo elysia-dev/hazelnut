@@ -1,23 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import Token from "../core/types/Token";
+import BuyingStage from "../core/enums/BuyingStage";
+import Spinner from "react-spinkit";
 
 type Props = {
   token: Token
 }
 
-// States
-// 0 : whitelist checking
-// 1 : whitelist retry
-// 2 : allownace checking
-// 3 : allowance retry
-// 4 : making transactions
-// 5 : transaction result
+type State = {
+  stage: BuyingStage
+}
 
 function Buying(props: Props) {
+  const { t } = useTranslation();
+
+  const [state, setState] = useState<State>({
+    stage: BuyingStage.WHITELIST_CHECK
+  });
+
+  const needSpinner = [
+    BuyingStage.ALLOWANCE_CHECK,
+    BuyingStage.WHITELIST_CHECK,
+    BuyingStage.WHITELIST_CHECK
+  ].includes(state.stage);
+
   return (
     <div>
-      <h2>Buying!</h2>
-      <p> {props.token.amount}</p>
+      <h1>{`${props.token.amount} ELA1`}</h1>
+      {
+        needSpinner && (
+          <div>
+            <Spinner name="line-scale" />
+          </div>
+        )
+      }
+      <p>{t(`Buying.${state.stage}`)}</p>
+      { state.stage === BuyingStage.WHITELIST_RETRY && <p> {props.token.userAddress}</p>}
     </div>
   );
 }
