@@ -1,11 +1,12 @@
 type Token = {
   type: string;
   amount?: number;
+  productTitle: string;
+  tokenName: string;
   contractAddress: string;
-  title: string;
   expectedAnnualReturn?: string;
   userAddresses: string[];
-  pricePerToken: string;
+  usdPricePerToken: string;
   email: string;
 }
 
