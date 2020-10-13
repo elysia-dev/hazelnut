@@ -3,7 +3,7 @@ type Token = {
   amount?: number;
   contractAddress: string;
   title: string;
-  expectedAnualReturn?: string;
+  expectedAnnualReturn?: string;
   userAddresses: string[];
   pricePerToken: string;
   email: string;

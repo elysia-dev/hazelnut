@@ -7,6 +7,7 @@ import { getElPrice } from "../core/clients/CoingeckoClient";
 import BuyingSummary from "../components/BuyingSummary";
 import { useWeb3React } from "@web3-react/core";
 import InjectedConnector from "../core/connectors/InjectedConnector";
+import BuyingStatusBar from "../components/BuyingStatusBar";
 
 type Props = {
   token: Token
@@ -29,12 +30,6 @@ function Buying(props: Props) {
     loading: true,
     error: false,
   });
-
-  const needSpinner = [
-    BuyingStage.ALLOWANCE_CHECK,
-    BuyingStage.WHITELIST_CHECK,
-    BuyingStage.WHITELIST_CHECK
-  ].includes(state.stage);
 
   const connectWallet = () => {
     activate(InjectedConnector)
@@ -63,6 +58,7 @@ function Buying(props: Props) {
         .catch(() => {
           console.log("error")
         })
+        console.log(library);
     }
   }, [account, library])
 
@@ -88,20 +84,23 @@ function Buying(props: Props) {
     )
   } else {
     return (
-      <div>
-        <h1>{props.token.title}</h1>
+      <div style={{justifyContent:'center', justifyItems:'center'}}>
+
         <BuyingSummary
           token={props.token}
           elPricePerToken={state.elPricePerToken}
         />
-        {
-          needSpinner && (
-            <div>
-              <Spinner name="line-scale" />
-            </div>
-          )
-        }
-        <p>{t(`Buying.${state.stage}`)}</p>
+        <div style={{width:312, height:20, marginLeft:'auto', marginRight:'auto', display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
+          <p style={{color: "#1c1c1c", fontWeight:'bold', fontSize: 15}}>{t('Buying.ExpectedAnnualReturn')}</p>
+          <p style={{color: "#1c1c1c", fontWeight:'bold', fontSize: 15}}>$ {parseFloat(props.token.expectedAnnualReturn? props.token.expectedAnnualReturn : "0").toFixed(2)}</p>
+        </div>
+
+        <BuyingStatusBar token={props.token} stage={state.stage} loading={state.loading} error={state.error}></BuyingStatusBar>
+        <div style={{width: 312, height: 50, marginLeft:'auto', marginRight:'auto'}}>
+        <button style={{backgroundColor: ( state.stage ===  BuyingStage.WHITELIST_CHECK || state.stage === BuyingStage.ALLOWANCE_CHECK ) ? "#D0D8DF" : "#3679B5", borderRadius: 10, borderWidth:0, width: 312, height:50}}>
+          <p style={{color: "#fff", fontWeight:"bold", fontSize:15}}>{t(`Buying.${state.stage}_button`)}</p>
+        </button>
+        </div>
       </div>
     );
   }
