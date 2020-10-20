@@ -12,7 +12,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/requests/:token">
+        <Route path="/requests/:id">
           <Reqeusts />
         </Route>
         <Route path='*' exact={true} component={NotFound} />

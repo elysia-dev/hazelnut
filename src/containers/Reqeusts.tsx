@@ -2,47 +2,42 @@ import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Web3ReactProvider } from '@web3-react/core'
 import Spinner from "react-spinkit";
-import Token from "../core/types/Token";
-import * as jwt from "jsonwebtoken";
-import TokenType from "../core/enums/TokenType";
+import TransactionType from "../core/enums/TransactionType";
 import Buying from "./Buying";
 import Refund from "./Refund";
 import Interest from "./Interest";
 import getLibrary from "../core/utils/getLibrary";
+import TransactionRequest from "../core/types/TransactionRequest";
+import { getTransactionRequest } from "../core/clients/EspressoClient";
 
 type ParamTypes = {
-  token: string
-}
-
-type State = {
-  decodedToken: Token
+  id: string
 }
 
 function Requests() {
-  const [state, setState] = useState<State>();
-  const { token } = useParams<ParamTypes>();
+  const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
+  const { id } = useParams<ParamTypes>();
   const history = useHistory();
 
-  function decodeToken() {
+  function loadTransactionRequest() {
     // TODO : Validate token with api
-    const decodedToken = jwt.decode(token) as Token;
-
-    if (decodedToken) {
-      setState({ decodedToken });
-    } else {
+    getTransactionRequest(id).then((res) => {
+      setTransactionRequest(res.data)
+    }).catch(() => {
       history.push('/notFound')
-    }
+    })
   }
 
-  useEffect(decodeToken, []);
-  if (state?.decodedToken) {
+  useEffect(loadTransactionRequest, []);
+
+  if (transactionRequest) {
     if (window.ethereum?.isMetaMask) {
       return (
         <div>
           <Web3ReactProvider getLibrary={getLibrary}>
-            {state.decodedToken.type === TokenType.BUYING && <Buying token={state.decodedToken} />}
-            {state.decodedToken.type === TokenType.REFUND && <Refund token={state.decodedToken} />}
-            {state.decodedToken.type === TokenType.INTEREST && <Interest token={state.decodedToken} />}
+            {transactionRequest.type === TransactionType.BUYING && <Buying transactionRequest={transactionRequest} />}
+            {transactionRequest.type === TransactionType.REFUND && <Refund transactionRequest={transactionRequest} />}
+            {transactionRequest.type === TransactionType.INTEREST && <Interest transactionRequest={transactionRequest} />}
           </Web3ReactProvider>
         </div>
       );

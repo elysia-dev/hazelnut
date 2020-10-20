@@ -1,7 +1,7 @@
-enum TokenType {
+enum TransactionType {
   BUYING = 'buying',
   REFUND = 'refund',
   INTEREST = 'interest'
 }
 
-export default TokenType
+export default TransactionType

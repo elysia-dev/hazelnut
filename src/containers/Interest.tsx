@@ -1,15 +1,15 @@
 import React from "react";
-import Token from "../core/types/Token";
+import TransactionRequest from "../core/types/TransactionRequest";
 
 type Props = {
-  token: Token
+  transactionRequest: TransactionRequest
 }
 
 function Interest(props: Props) {
   return (
     <div>
       <h2>Interest!</h2>
-      <p> {props.token.amount}</p>
+      <p> {props.transactionRequest.amount}</p>
     </div>
   );
 }

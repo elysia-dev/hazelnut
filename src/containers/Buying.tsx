@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import Token from "../core/types/Token";
+import TransactionRequest from "../core/types/TransactionRequest";
 import BuyingStage from "../core/enums/BuyingStage";
 import Spinner from "react-spinkit";
 import { getElPrice } from "../core/clients/CoingeckoClient";
@@ -10,7 +10,7 @@ import InjectedConnector from "../core/connectors/InjectedConnector";
 import BuyingStatusBar from "../components/BuyingStatusBar";
 
 type Props = {
-  token: Token
+  transactionRequest: TransactionRequest
 }
 
 type State = {
@@ -58,7 +58,7 @@ function Buying(props: Props) {
         .catch(() => {
           console.log("error")
         })
-        console.log(library);
+      console.log(library);
     }
   }, [account, library])
 
@@ -84,22 +84,28 @@ function Buying(props: Props) {
     )
   } else {
     return (
-      <div style={{justifyContent:'center', justifyItems:'center'}}>
+      <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
 
         <BuyingSummary
-          token={props.token}
+          transactionRequest={props.transactionRequest}
           elPricePerToken={state.elPricePerToken}
         />
-        <div style={{width:312, height:20, marginLeft:'auto', marginRight:'auto', display:'flex', flexDirection:'row', justifyContent:'space-between'}}>
-          <p style={{color: "#1c1c1c", fontWeight:'bold', fontSize: 15}}>{t('Buying.ExpectedAnnualReturn')}</p>
-          <p style={{color: "#1c1c1c", fontWeight:'bold', fontSize: 15}}>$ {parseFloat(props.token.expectedAnnualReturn? props.token.expectedAnnualReturn : "0").toFixed(2)}</p>
+        <div style={{ width: 312, height: 20, marginLeft: 'auto', marginRight: 'auto', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+          <p style={{ color: "#1c1c1c", fontWeight: 'bold', fontSize: 15 }}>{t('Buying.ExpectedAnnualReturn')}</p>
+          <p style={{ color: "#1c1c1c", fontWeight: 'bold', fontSize: 15 }}>
+            $ {parseFloat(props.transactionRequest.expectedAnnualReturn ? props.transactionRequest.expectedAnnualReturn : "0").toFixed(2)}
+          </p>
         </div>
-
-        <BuyingStatusBar token={props.token} stage={state.stage} loading={state.loading} error={state.error}></BuyingStatusBar>
-        <div style={{width: 312, height: 50, marginLeft:'auto', marginRight:'auto'}}>
-        <button style={{backgroundColor: ( state.stage ===  BuyingStage.WHITELIST_CHECK || state.stage === BuyingStage.ALLOWANCE_CHECK ) ? "#D0D8DF" : "#3679B5", borderRadius: 10, borderWidth:0, width: 312, height:50}}>
-          <p style={{color: "#fff", fontWeight:"bold", fontSize:15}}>{t(`Buying.${state.stage}_button`)}</p>
-        </button>
+        <BuyingStatusBar
+          transactionRequest={props.transactionRequest}
+          stage={state.stage}
+          loading={state.loading}
+          error={state.error}
+        />
+        <div style={{ width: 312, height: 50, marginLeft: 'auto', marginRight: 'auto' }}>
+          <button style={{ backgroundColor: (state.stage === BuyingStage.WHITELIST_CHECK || state.stage === BuyingStage.ALLOWANCE_CHECK) ? "#D0D8DF" : "#3679B5", borderRadius: 10, borderWidth: 0, width: 312, height: 50 }}>
+            <p style={{ color: "#fff", fontWeight: "bold", fontSize: 15 }}>{t(`Buying.${state.stage}_button`)}</p>
+          </button>
         </div>
       </div>
     );
