@@ -36,8 +36,10 @@
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "PORT=5000 react-scripts start",
+    "build": "sh -ac '. .env.${REACT_APP_ENV}; react-scripts build'",
+    "build:staging": "REACT_APP_ENV=staging yarn build",
+    "build:production": "REACT_APP_ENV=production yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
