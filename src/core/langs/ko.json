@@ -13,7 +13,7 @@
       "AllowanceRetry_button": "허용 금액 트랜잭션 만들기",
       "Transaction": "트랜잭션 생성",
       "Transaction_button": "구매 트랜잭션 만들기",
-      "TransactionResult": "부동산 토큰을 구매하기 위한 트랜잭션이 성공적으로 만들어 졌습니다.",
+      "TransactionResult": "부동산 토큰 교환을 위한 트랜잭션이 성공적으로 만들어 졌습니다.",
       "ExpectedAnnualReturn": "연 기대 적립금"
     },
     "Error": {
