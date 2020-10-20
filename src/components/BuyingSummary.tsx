@@ -6,6 +6,7 @@ import TransactionRequest from "../core/types/TransactionRequest";
 type Props = {
   transactionRequest: TransactionRequest
   elPricePerToken: number
+  expectedElValue: number
 }
 const GrayBox = styled.div`
 display: flex;
@@ -53,9 +54,6 @@ justify-content: space-between;
 align-items: center;
 `
 function BuyingSummary(props: Props) {
-  const expectedUsdValue = (props.transactionRequest.amount || 0)
-    * props.transactionRequest.usdPricePerToken;
-  const expectedElValue = expectedUsdValue / props.elPricePerToken;
   const { t } = useTranslation();
 
   return (
@@ -76,7 +74,7 @@ function BuyingSummary(props: Props) {
           <SpanWrapper >
             <BlackSpan style={{ flex: 1, textAlign: 'left' }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 1 }}> ELYSIA </BlackSpan>
-            <BlackSpan style={{ flex: 3, textAlign: "right" }}> EL {expectedElValue.toFixed(2)} </BlackSpan>
+            <BlackSpan style={{ flex: 3, textAlign: "right" }}> EL {props.expectedElValue.toFixed(2)} </BlackSpan>
           </SpanWrapper>
         </WhiteBox>
         <div style={{ width: 30, height: 20, marginLeft: 'auto', marginRight: 'auto' }}>

@@ -31,6 +31,14 @@ function Buying(props: Props) {
     error: false,
   });
 
+  const expectedUsdValue = (props.transactionRequest.amount || 0)
+    * props.transactionRequest.usdPricePerToken;
+  const expectedElValue = expectedUsdValue / state.elPricePerToken;
+  const expectedReturn = (
+    expectedElValue * parseFloat(props.transactionRequest.expectedAnnualReturn) * 0.01
+  );
+  const expectedReturnUsd = expectedReturn * state.elPricePerToken;
+
   const connectWallet = () => {
     activate(InjectedConnector)
   }
@@ -89,11 +97,12 @@ function Buying(props: Props) {
         <BuyingSummary
           transactionRequest={props.transactionRequest}
           elPricePerToken={state.elPricePerToken}
+          expectedElValue={expectedElValue}
         />
         <div style={{ width: 312, height: 20, marginLeft: 'auto', marginRight: 'auto', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <p style={{ color: "#1c1c1c", fontWeight: 'bold', fontSize: 15 }}>{t('Buying.ExpectedAnnualReturn')}</p>
           <p style={{ color: "#1c1c1c", fontWeight: 'bold', fontSize: 15 }}>
-            $ {parseFloat(props.transactionRequest.expectedAnnualReturn ? props.transactionRequest.expectedAnnualReturn : "0").toFixed(2)}
+            {`EL ${expectedReturn.toFixed(2)} ($ ${expectedReturnUsd.toFixed(2)})`}
           </p>
         </div>
         <BuyingStatusBar
