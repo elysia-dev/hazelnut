@@ -1,0 +1,23 @@
+{
+  "translation": {
+    "Buying": {
+      "CreateTransaction": "Create a transaction",
+      "WhitelistCheck": "Checking Whitelist",
+      "WhitelistCheckComplete": "Whitelist check complete",
+      "WhitelistCheckButton": "Checking Whitelist",
+      "WhitelistRetryButton": "Redo",
+      "WhitelistRetry": "The whitelist verification failed.\nPlease connect to the address below.",
+      "AllowanceCheck": "Token Value Check",
+      "AllowanceCheckButton": "Checking allowed amount",
+      "AllowanceRetry": "You do not have a sufficient allowance amount.\nPlease make an allowance amount transaction to proceed.",
+      "AllowanceRetryButton": "Create allowance transaction",
+      "Transaction": "Create a transaction",
+      "TransactionButton": "Create a purchase transaction",
+      "TransactionResult": "The transaction for real estate token exchange has been successfully created.",
+      "ExpectedAnnualReturn": "Annual expected reserve"
+    },
+    "Error": {
+      "PriceServer": "EL price information could not be loaded."
+    }
+  }
+}

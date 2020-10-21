@@ -9,6 +9,8 @@ import Interest from "./Interest";
 import getLibrary from "../core/utils/getLibrary";
 import TransactionRequest from "../core/types/TransactionRequest";
 import { getTransactionRequest } from "../core/clients/EspressoClient";
+import { useTranslation } from "react-i18next";
+import LanguageType from "../core/enums/LanguageType";
 
 type ParamTypes = {
   id: string
@@ -17,12 +19,14 @@ type ParamTypes = {
 function Requests() {
   const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
   const { id } = useParams<ParamTypes>();
+  const { i18n } = useTranslation();
   const history = useHistory();
 
   function loadTransactionRequest() {
     // TODO : Validate token with api
     getTransactionRequest(id).then((res) => {
-      setTransactionRequest(res.data)
+      setTransactionRequest(res.data);
+      i18n.changeLanguage(res.data.language || LanguageType.EN);
     }).catch(() => {
       history.push('/notFound')
     })

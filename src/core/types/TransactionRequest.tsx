@@ -1,4 +1,5 @@
 import TransactionType from "../enums/TransactionType";
+import LanguageType from "../enums/LanguageType";
 
 type TransactionRequest = {
   type: TransactionType
@@ -7,8 +8,9 @@ type TransactionRequest = {
   tokenName: string
   contractAddress: string
   expectedAnnualReturn: string
-  usdPricePerToken: number,
+  usdPricePerToken: number
   userAddresses: string[]
+  language?: LanguageType
 }
 
 export default TransactionRequest;

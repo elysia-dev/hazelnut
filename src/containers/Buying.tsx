@@ -125,7 +125,7 @@ function Buying(props: Props) {
         />
         <div style={{ width: 312, height: 50, marginLeft: 'auto', marginRight: 'auto' }}>
           <button style={{ backgroundColor: (state.stage === BuyingStage.WHITELIST_CHECK || state.stage === BuyingStage.ALLOWANCE_CHECK) ? "#D0D8DF" : "#3679B5", borderRadius: 10, borderWidth: 0, width: 312, height: 50 }}>
-            <p style={{ color: "#fff", fontWeight: "bold", fontSize: 15 }}>{t(`Buying.${state.stage}_button`)}</p>
+            <p style={{ color: "#fff", fontWeight: "bold", fontSize: 15 }}>{t(`Buying.${state.stage}Button`)}</p>
           </button>
         </div>
       </div>
