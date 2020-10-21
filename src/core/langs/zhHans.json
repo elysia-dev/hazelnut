@@ -1,20 +1,20 @@
 {
   "translation": {
     "Buying": {
-      "CreateTransaction": "创建交易",
-      "WhitelistCheck": "检查白名单",
-      "WhitelistCheckComplete": "Whitelist检查完成",
-      "WhitelistCheckButton": "正在检查白名单",
-      "WhitelistRetryButton": "重做",
-      "WhitelistRetry": "白名单验证失败。 n请连接到下面的地址。",
-      "AllowanceCheck": "令牌值检查",
-      "AllowanceCheckButton": "正在检查允许的金额",
-      "AllowanceRetry": "您的配额金额不足。 n请进行配额金额交易。",
-      "AllowanceRetryButton": "创建配额交易",
-      "Transaction": "创建交易",
-      "TransactionButton": "创建购买交易",
-      "TransactionResult": "已成功创建用于房地产令牌交换的交易。",
-      "ExpectedAnnualReturn": "年度预期储备金"
+      "CreateTransaction": "创建新的交易",
+      "WhitelistCheck": "正在验证白名单",
+      "WhitelistCheckComplete": "白名单验证完成",
+      "WhitelistCheckButton": "正在验证白名单",
+      "WhitelistRetryButton": "重新验证白名单按钮",
+      "WhitelistRetry": "重新验证白名单",
+      "AllowanceCheck": "正在验证余额",
+      "AllowanceCheckButton": "正在验证余额按钮",
+      "AllowanceRetry": "重新验证余额。",
+      "AllowanceRetryButton": "重新验证余额按钮",
+      "Transaction": "交易",
+      "TransactionButton": "交易按钮",
+      "TransactionResult": "交易结果。",
+      "ExpectedAnnualReturn": "年度预期收益"
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。"
