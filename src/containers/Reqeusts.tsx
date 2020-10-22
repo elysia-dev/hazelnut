@@ -41,7 +41,7 @@ function Requests() {
           <Web3ReactProvider getLibrary={getLibrary}>
             {transactionRequest.type === TransactionType.BUYING && <Buying transactionRequest={transactionRequest} />}
             {transactionRequest.type === TransactionType.REFUND && <Refund transactionRequest={transactionRequest} />}
-            {transactionRequest.type === TransactionType.INTEREST && <Interest transactionRequest={transactionRequest} />}
+            {transactionRequest.type === TransactionType.INTEREST && <Buying transactionRequest={transactionRequest} />}
           </Web3ReactProvider>
         </div>
       );
