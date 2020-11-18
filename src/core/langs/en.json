@@ -17,7 +17,16 @@
       "ExpectedAnnualReturn": "Annual expected return"
     },
     "Error": {
-      "PriceServer": "EL price information could not be loaded."
+      "PriceServer": "EL price information could not be loaded.",
+      "InvalidAddress": "올바르지 않은 지갑 주소입니다. 다시 시도해주세요.",
+      "InstallMetamask": "메타마스크를 설치해주세요",
+      "AlreadyInstalled": "이미 설치하셨다면?",
+      "PleaseReload": "오른쪽 아래 버튼을 통해 다시 로드해주세요!"
+    },
+    "Register": {
+      "ConnectWallet": "Connect Wallet",
+      "Connect": "Connect",
+      "Connected": "지갑 주소가 등록되었습니다. 앱으로 돌아가주세요."
     }
   }
 }

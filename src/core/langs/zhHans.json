@@ -17,7 +17,16 @@
       "ExpectedAnnualReturn": "年度预期收益"
     },
     "Error": {
-      "PriceServer": "无法加载EL价格信息。"
+      "PriceServer": "无法加载EL价格信息。",
+      "InvalidAddress": "올바르지 않은 지갑 주소입니다. 다시 시도해주세요.",
+      "InstallMetamask": "메타마스크를 설치해주세요",
+      "AlreadyInstalled": "이미 설치하셨다면?",
+      "PleaseReload": "오른쪽 아래 버튼을 통해 다시 로드해주세요!"
+    },
+    "Register": {
+      "ConnectWallet": "绑定钱包",
+      "Connect": "绑定钱包",
+      "Connected": "지갑 주소가 등록되었습니다. 앱으로 돌아가주세요."
     }
   }
 }
