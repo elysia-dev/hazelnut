@@ -15,6 +15,7 @@ type Account = string | null | undefined;
 
 const GrayBox = styled.div`
   flex-direction: column;
+  margin-top: 20px;
   margin-left: 5%;
   align-self: center;
   align-content: space-between;
@@ -101,25 +102,44 @@ function Register(props: Props) {
     >
       <p
         style={{
+          marginTop: 30,
           fontSize: 25,
           fontWeight: 'bold',
-          marginBottom: 12,
           textAlign: 'center',
         }}
       >
         {t('Register.ConnectWallet')}
       </p>
-      <img
-        src={require('../images/metamask_logo.png')}
-        srcSet={`${require('../images/metamask_logo@2x.png')} 2x, ${require('../images/metamask_logo@3x.png')} 3x`}
+      <div
         style={{
-          display: 'flex',
+          width: 130,
+          height: 130,
+          marginTop: 30,
+          borderRadius: 65,
           marginLeft: 'auto',
           marginRight: 'auto',
-          marginTop: 30,
-          marginBottom: 30,
+          boxShadow: '0px 1px 6px #00000029',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'center',
         }}
-      />
+      >
+        <img
+          src={require('../images/metamask_logo.png')}
+          srcSet={`${require('../images/metamask_logo@2x.png')} 2x, ${require('../images/metamask_logo@3x.png')} 3x`}
+          style={{
+            display: 'flex',
+            width: 90,
+            height: 90,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            alignSelf: 'center',
+            // marginTop: 30,
+            // marginBottom: 30,
+          }}
+        />
+      </div>
       <GrayBox>
         <p
           style={{
