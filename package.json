@@ -19,6 +19,7 @@
     "@web3-react/core": "^6.1.1",
     "@web3-react/injected-connector": "^6.0.7",
     "axios": "^0.20.0",
+    "file-loader": "^6.2.0",
     "i18next": "^19.8.2",
     "prettier": "^2.1.2",
     "react": "^16.13.1",
