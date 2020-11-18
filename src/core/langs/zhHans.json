@@ -18,15 +18,15 @@
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。",
-      "InvalidAddress": "올바르지 않은 지갑 주소입니다. 다시 시도해주세요.",
-      "InstallMetamask": "메타마스크를 설치해주세요",
-      "AlreadyInstalled": "이미 설치하셨다면?",
-      "PleaseReload": "오른쪽 아래 버튼을 통해 다시 로드해주세요!"
+      "InvalidAddress": "钱包地址不正确, 请再输入一次",
+      "InstallMetamask": "请下载Metamask钱包App。",
+      "AlreadyInstalled": "已经安装Metamask钱包App了吗？",
+      "PleaseReload": "请点击右下方按钮，进行重新加载。"
     },
     "Register": {
       "ConnectWallet": "绑定钱包",
       "Connect": "绑定钱包",
-      "Connected": "지갑 주소가 등록되었습니다. 앱으로 돌아가주세요."
+      "Connected": "您已成功绑定钱包地址，请返回App页面。"
     }
   }
 }
