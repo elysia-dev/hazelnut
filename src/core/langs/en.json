@@ -26,7 +26,8 @@
     "Register": {
       "ConnectWallet": "Connect Wallet",
       "Connect": "Connect",
-      "Connected": "지갑 주소가 등록되었습니다. 앱으로 돌아가주세요."
+      "Connected": "지갑 주소가 등록되었습니다. 앱으로 돌아가주세요.",
+      "Duplicated": "Wallet address is duplicated. Use other address."
     }
   }
 }

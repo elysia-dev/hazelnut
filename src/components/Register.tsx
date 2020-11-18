@@ -69,6 +69,9 @@ function Register(props: Props) {
         alert(t('Register.Connected'));
       })
       .catch(e => {
+        if (e.response.status === 400) {
+       	  alert(t('Register.Duplicated'));
+        }
         if (e.response.status === 404) {
           history.push('/notFound');
         }
