@@ -1,37 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import BuyingStage from '../core/enums/BuyingStage';
+import React, { useEffect } from 'react';
 import Spinner from 'react-spinkit';
-import BuyingSummary from '../components/BuyingSummary';
-import { useWeb3React, Web3ReactProvider } from '@web3-react/core';
-import InjectedConnector from '../core/connectors/InjectedConnector';
-import BuyingStatusBar from '../components/BuyingStatusBar';
-import { useParams } from 'react-router-dom';
+import { Web3ReactProvider } from '@web3-react/core';
+import { useHistory, useParams } from 'react-router-dom';
 import getLibrary from '../core/utils/getLibrary';
 import Register from '../components/Register';
+import { checkValidRegister } from '../core/clients/EspressoClient';
+import { useTranslation } from 'react-i18next';
+import InstallMetamask from '../components/errors/InstallMetamask';
 
 type ParamTypes = {
   id: string;
 };
 
 function EthAddress() {
-  const { t } = useTranslation();
-  const { activate, library, account } = useWeb3React();
   const { id } = useParams<ParamTypes>();
+  const history = useHistory();
 
-  if (window.ethereum?.isMetaMask) {
-    return (
-      <Web3ReactProvider getLibrary={getLibrary}>
-        <Register />
-      </Web3ReactProvider>
-    );
+  useEffect(() => {
+    checkValidRegister(id)
+      .then()
+      .catch(e => {
+        if (e.response.status === 404) {
+          history.push('/notFound');
+        }
+      });
+  }, []);
+
+  if (id !== undefined) {
+    if (window.ethereum?.isMetaMask) {
+      return (
+        <Web3ReactProvider getLibrary={getLibrary}>
+          <Register id={id} />
+        </Web3ReactProvider>
+      );
+    } else {
+      return <InstallMetamask />;
+    }
   } else {
     return (
       <div>
-        <h2>Install Metamask</h2>
+        <Spinner name="line-scale" />
       </div>
     );
   }
 }
-
 export default EthAddress;
