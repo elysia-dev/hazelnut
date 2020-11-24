@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { registerEthAddress } from '../core/clients/EspressoClient';
-import { useEagerConnect, useInactiveListener } from '../hooks/connectHooks';
 
 type Props = {
   id: string;
@@ -55,6 +54,7 @@ function Register(props: Props) {
   const { account, activate, deactivate } = useWeb3React();
   const history = useHistory();
   const [userAccount, setUserAccount] = useState<Account>(undefined);
+  const [connected, setConnected] = useState<boolean>(false);
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -66,7 +66,7 @@ function Register(props: Props) {
     }
     registerEthAddress(props.id, userAccount)
       .then(() => {
-        alert(t('Register.Connected'));
+	setConnected(true)
       })
       .catch(e => {
         if (e.response.status === 400) {
@@ -162,6 +162,7 @@ function Register(props: Props) {
       >
         <button
           onClick={register}
+          disabled={connected}
           style={{
             backgroundColor: '#3679B5',
             borderRadius: 10,
@@ -171,7 +172,7 @@ function Register(props: Props) {
           }}
         >
           <p style={{ color: '#fff', fontWeight: 'bold', fontSize: 15 }}>
-            {t('Register.Connect')}
+            {connected ? t('Register.Connected') : t('Register.Connect')}
           </p>
         </button>
       </div>
