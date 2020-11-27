@@ -7,6 +7,7 @@ import Register from '../components/Register';
 import { checkValidRegister } from '../core/clients/EspressoClient';
 import { useTranslation } from 'react-i18next';
 import InstallMetamask from '../components/errors/InstallMetamask';
+import LanguageType from "../core/enums/LanguageType";
 
 type ParamTypes = {
   id: string;
@@ -14,11 +15,14 @@ type ParamTypes = {
 
 function EthAddress() {
   const { id } = useParams<ParamTypes>();
+  const { i18n } = useTranslation();
   const history = useHistory();
 
   useEffect(() => {
     checkValidRegister(id)
-      .then()
+      .then((res) => {
+        i18n.changeLanguage(res.data.language || LanguageType.EN);
+      })
       .catch(e => {
         if (e.response.status === 404) {
           history.push('/notFound');

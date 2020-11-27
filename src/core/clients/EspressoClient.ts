@@ -1,5 +1,6 @@
 import Axios, { AxiosResponse } from 'axios';
 import TransactionRequest from '../types/TransactionRequest';
+import EthAddressResponse from '../types/EthAddressResponse';
 
 export const getTransactionRequest = (
   id: string,
@@ -9,7 +10,7 @@ export const getTransactionRequest = (
   );
 };
 
-export const checkValidRegister = (id: string): Promise<AxiosResponse> => {
+export const checkValidRegister = (id: string): Promise<AxiosResponse<EthAddressResponse>> => {
   return Axios.get(`${process.env.REACT_APP_API_URL}/ethAddress/${id}`);
 };
 
