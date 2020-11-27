@@ -53,24 +53,24 @@ function Register(props: Props) {
   const { t } = useTranslation();
   const { account, activate, deactivate } = useWeb3React();
   const history = useHistory();
-  const [userAccount, setUserAccount] = useState<Account>(undefined);
   const [connected, setConnected] = useState<boolean>(false);
+  const [userAccount, setUserAccount] = useState<Account>(undefined);
 
   const connectWallet = () => {
     activate(InjectedConnector);
   };
 
   const register = () => {
-    if (typeof userAccount !== 'string') {
+    if (!userAccount) {
       return alert(t('Error.InvalidAddress'));
     }
     registerEthAddress(props.id, userAccount)
       .then(() => {
-	setConnected(true)
+        setConnected(true)
       })
       .catch(e => {
         if (e.response.status === 400) {
-       	  alert(t('Register.Duplicated'));
+          alert(t('Register.Duplicated'));
         }
         if (e.response.status === 404) {
           history.push('/notFound');
@@ -87,7 +87,7 @@ function Register(props: Props) {
 
   useEffect(() => {
     if (account) {
-      throttle(() => setUserAccount(account), 1000);
+      throttle(() => setUserAccount(account), 500);
     }
   }, [account]);
 
