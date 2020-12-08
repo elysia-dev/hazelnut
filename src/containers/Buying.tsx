@@ -8,6 +8,8 @@ import BuyingSummary from "../components/BuyingSummary";
 import { useWeb3React } from "@web3-react/core";
 import InjectedConnector from "../core/connectors/InjectedConnector";
 import BuyingStatusBar from "../components/BuyingStatusBar";
+import { useAssetToken, useElysiaToken } from "../hooks/useContract";
+import { BigNumber } from "bignumber.js";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -18,17 +20,21 @@ type State = {
   elPricePerToken: number
   loading: boolean
   error: boolean
+  message: string
 }
 
 function Buying(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
+  const elToken = useElysiaToken();
+  const assetToken = useAssetToken(props.transactionRequest.contractAddress);
 
   const [state, setState] = useState<State>({
     stage: BuyingStage.WHITELIST_CHECK,
     elPricePerToken: 0.003,
     loading: true,
     error: false,
+    message: "",
   });
 
   const expectedUsdValue = (props.transactionRequest.amount || 0)
@@ -55,20 +61,101 @@ function Buying(props: Props) {
     })
   }
 
+  const checkWhitelisted = () => {
+    assetToken?.isWhitelisted(account).then((res: any) => {
+      setState({
+        ...state,
+        stage: res ? BuyingStage.ALLOWANCE_CHECK : BuyingStage.WHITELIST_RETRY,
+        message: props.transactionRequest.userAddresses[0].substr(0, 10) + '**',
+      })
+    })
+  }
+
+  const checkAllowance = () => {
+    elToken?.allowance(account, props.transactionRequest.contractAddress).then((res: BigNumber) => {
+      const allownace = new BigNumber(res.toString());
+      setState({
+        ...state,
+        stage: allownace.gte(new BigNumber(expectedElValue + '0'.repeat(18))) ? BuyingStage.TRANSACTION : BuyingStage.ALLOWANCE_RETRY
+      })
+    })
+  }
+
+  const createTransaction = () => {
+    assetToken?.populateTransaction.purchase(props.transactionRequest.amount).then((populatedTransaction) => {
+      const transactionParameters = {
+        nonce: '0x00', // ignored by MetaMask
+        to: populatedTransaction.to, // Required except during contract publications.
+        from: account, // must match user's active address.
+        value: '0x00', // Only required to send ether to the recipient from the initiating external account.
+        data: populatedTransaction.data,
+        chainId: 3, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
+      };
+
+      library.provider.request({
+        method: 'eth_sendTransaction',
+        params: [transactionParameters],
+      }).then((txHash: string) => {
+        setState({
+          ...state,
+          stage: BuyingStage.TRANSACTION_RESULT,
+        })
+      }).catch((error: any) => {
+        setState({
+          ...state,
+          stage: BuyingStage.TRANSACTION_RETRY,
+          message: error.message,
+        })
+      })
+    })
+  }
+
+  const increaseAllowance = () => {
+    elToken?.populateTransaction.increaseAllowance(
+      props.transactionRequest.contractAddress,
+      "1" + "0".repeat(25)
+    ).then((populatedTransaction) => {
+      const transactionParameters = {
+        nonce: '0x00', // ignored by MetaMask
+        to: populatedTransaction.to, // Required except during contract publications.
+        from: account, // must match user's active address.
+        value: '0x00', // Only required to send ether to the recipient from the initiating external account.
+        data: populatedTransaction.data,
+        chainId: 3, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
+      };
+
+      library.provider.request({
+        method: 'eth_sendTransaction',
+        params: [transactionParameters],
+      }).then((txHash: string) => {
+        setState({
+          ...state,
+          stage: BuyingStage.ALLOWANCE_CHECK,
+        })
+      }).catch((error: any) => {
+        setState({
+          ...state,
+          stage: BuyingStage.ALLOWANCE_RETRY,
+        })
+      })
+    })
+  }
+
   useEffect(connectWallet, []);
   useEffect(loadElPrice, []);
+  useEffect(checkWhitelisted, [account]);
+
   useEffect(() => {
-    if (!!library) {
-      library.getBalance(account)
-        .then((balance: any) => {
-          console.log(balance)
-        })
-        .catch(() => {
-          console.log("error")
-        })
-      console.log(library);
+    switch (state.stage) {
+      case BuyingStage.ALLOWANCE_CHECK:
+        account && checkAllowance();
+        break;
+      case BuyingStage.TRANSACTION:
+        account && createTransaction();
+        break;
+      default: return
     }
-  }, [account, library])
+  }, [state.stage])
 
   if (state.error) {
     return (
@@ -122,12 +209,48 @@ function Buying(props: Props) {
           stage={state.stage}
           loading={state.loading}
           error={state.error}
+          message={state.message}
         />
-        <div style={{ width: 312, height: 50, marginLeft: 'auto', marginRight: 'auto' }}>
-          <button style={{ backgroundColor: (state.stage === BuyingStage.WHITELIST_CHECK || state.stage === BuyingStage.ALLOWANCE_CHECK) ? "#D0D8DF" : "#3679B5", borderRadius: 10, borderWidth: 0, width: 312, height: 50 }}>
-            <p style={{ color: "#fff", fontWeight: "bold", fontSize: 15 }}>{t(`Buying.${state.stage}Button`)}</p>
-          </button>
-        </div>
+        {
+          [BuyingStage.ALLOWANCE_RETRY, BuyingStage.TRANSACTION_RETRY].includes(state.stage) && <div
+            style={{
+              backgroundColor: "#3679B5",
+              borderRadius: 10,
+              borderWidth: 0,
+              width: 312,
+              height: 50,
+              cursor: "pointer",
+              marginLeft: 'auto', marginRight: 'auto'
+            }}
+            onClick={() => {
+              if (state.stage.includes("Whitelist")) {
+                setState({
+                  ...state,
+                  stage: BuyingStage.WHITELIST_CHECK
+                })
+              } else if (state.stage.includes("Transaction")) {
+                setState({
+                  ...state,
+                  stage: BuyingStage.TRANSACTION
+                })
+              } else {
+                increaseAllowance();
+              }
+            }}
+          >
+            <div
+              style={{
+                paddingTop: 12,
+                color: "#fff",
+                fontSize: 20,
+                textAlign: "center",
+                fontWeight: 300,
+              }}
+            >
+              {t(`Buying.${state.stage}Button`)}
+            </div>
+          </div>
+        }
       </div>
     );
   }

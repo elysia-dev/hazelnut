@@ -13,6 +13,7 @@ type Props = {
   stage: BuyingStage;
   loading: boolean;
   error: boolean;
+  message: string;
 };
 
 function BuyingStatusBar(props: Props) {
@@ -83,9 +84,9 @@ function BuyingStatusBar(props: Props) {
         >
           {t(`Buying.${props.stage}`)}
         </p>
-        {props.stage === BuyingStage.WHITELIST_RETRY && (
+        {props.stage.includes("Retry") && (
           <p style={{ color: '#1c1c1c', textDecorationLine: 'underline' }}>
-            {props.transactionRequest.userAddresses[0]}
+            {props.message}
           </p>
         )}
       </div>

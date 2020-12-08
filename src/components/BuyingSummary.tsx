@@ -69,9 +69,8 @@ function BuyingSummary(props: Props) {
           textAlign: 'center',
         }}
       >
-        {`${t('Buying.CreateTransaction')} (${
-          props.transactionRequest.productTitle
-        })`}
+        {`${t('Buying.CreateTransaction')} (${props.transactionRequest.productTitle
+          })`}
       </p>
       <GrayBox>
         <WhiteBox>
@@ -140,6 +139,7 @@ function BuyingSummary(props: Props) {
             <BlackSpan style={{ flex: 1 }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
               {props.transactionRequest.tokenName}
+              {' '}
               {props.transactionRequest.amount}
             </BlackSpan>
           </SpanWrapper>
