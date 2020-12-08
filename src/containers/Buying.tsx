@@ -83,18 +83,14 @@ function Buying(props: Props) {
 
   const createTransaction = () => {
     assetToken?.populateTransaction.purchase(props.transactionRequest.amount).then((populatedTransaction) => {
-      const transactionParameters = {
-        nonce: '0x00', // ignored by MetaMask
-        to: populatedTransaction.to, // Required except during contract publications.
-        from: account, // must match user's active address.
-        value: '0x00', // Only required to send ether to the recipient from the initiating external account.
-        data: populatedTransaction.data,
-        chainId: 3, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
-      };
-
       library.provider.request({
         method: 'eth_sendTransaction',
-        params: [transactionParameters],
+        params: [{
+          to: populatedTransaction.to,
+          from: account,
+          data: populatedTransaction.data,
+          chainId: 3,
+        }],
       }).then((txHash: string) => {
         setState({
           ...state,
@@ -115,18 +111,13 @@ function Buying(props: Props) {
       props.transactionRequest.contractAddress,
       "1" + "0".repeat(25)
     ).then((populatedTransaction) => {
-      const transactionParameters = {
-        nonce: '0x00', // ignored by MetaMask
-        to: populatedTransaction.to, // Required except during contract publications.
-        from: account, // must match user's active address.
-        value: '0x00', // Only required to send ether to the recipient from the initiating external account.
-        data: populatedTransaction.data,
-        chainId: 3, // Used to prevent transaction reuse across blockchains. Auto-filled by MetaMask.
-      };
-
       library.provider.request({
         method: 'eth_sendTransaction',
-        params: [transactionParameters],
+        params: [{
+          to: populatedTransaction.to,
+          from: account,
+          data: populatedTransaction.data,
+        }],
       }).then((txHash: string) => {
         setState({
           ...state,
