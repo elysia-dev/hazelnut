@@ -4,16 +4,15 @@
       "CreateTransaction": "创建新的交易",
       "WhitelistCheck": "正在验证白名单",
       "WhitelistCheckComplete": "白名单验证完成",
-      "WhitelistCheckButton": "正在验证白名单",
       "WhitelistRetryButton": "重新验证白名单按钮",
       "WhitelistRetry": "重新验证白名单",
       "AllowanceCheck": "正在验证余额",
-      "AllowanceCheckButton": "正在验证余额按钮",
       "AllowanceRetry": "重新验证余额。",
       "AllowanceRetryButton": "重新验证余额按钮",
       "Transaction": "交易",
-      "TransactionButton": "交易按钮",
       "TransactionResult": "交易结果。",
+      "TransactionRetry": "无法创建交易。",
+      "TransactionRetryButton": "交易",
       "ExpectedAnnualReturn": "年度预期收益"
     },
     "Error": {
