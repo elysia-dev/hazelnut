@@ -47,7 +47,7 @@ function Interest(props: Props) {
         (new BigNumber(res.toString()))
           .div(new BigNumber('1' + '0'.repeat(18)))
           .div(new BigNumber(state.elPricePerToken))
-          .toFormat(0)
+          .toFormat(3)
       )
     })
   }

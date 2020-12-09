@@ -18,6 +18,9 @@
     "Refund": {
       "Title": "Refund"
     },
+    "Interest": {
+      "Title": "Claim reward"
+    },
     "Error": {
       "PriceServer": "EL price information could not be loaded.",
       "InvalidAddress": "Invalid address. Try again.",
