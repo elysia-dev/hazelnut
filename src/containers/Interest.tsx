@@ -9,6 +9,7 @@ import { getElPrice } from "../core/clients/CoingeckoClient";
 import ConnectWallet from "../components/ConnectWallet";
 import TxSummary from "../components/TxSummary";
 import BigNumber from "bignumber.js";
+import Button from "../components/Button";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -134,31 +135,11 @@ function Interest(props: Props) {
             >
               {state.message}
             </div>
-            <div
-              style={{
-                marginTop: 20,
-                backgroundColor: "#3679B5",
-                borderRadius: 10,
-                borderWidth: 0,
-                width: 312,
-                height: 50,
-                cursor: "pointer",
-                marginLeft: 'auto', marginRight: 'auto'
-              }}
-              onClick={createTransaction}
-            >
-              <div
-                style={{
-                  paddingTop: 12,
-                  color: "#fff",
-                  fontSize: 20,
-                  textAlign: "center",
-                  fontWeight: 300,
-                }}
-              >
-                {t(`Buying.TransactionRetryButton`)}
-              </div>
-            </div>
+            <Button
+              style={{ paddingTop: 20 }}
+              title={t(`Buying.TransactionRetryButton`)}
+              clickHandler={createTransaction}
+            />
           </>
         )}
       </div>

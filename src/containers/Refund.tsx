@@ -8,6 +8,7 @@ import InjectedConnector from "../core/connectors/InjectedConnector";
 import { useAssetToken } from "../hooks/useContract";
 import ConnectWallet from "../components/ConnectWallet";
 import TxSummary from "../components/TxSummary";
+import Button from "../components/Button";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -126,31 +127,11 @@ function Refund(props: Props) {
           </div>
         )}
         {
-          state.error && <div
-            style={{
-              marginTop: 20,
-              backgroundColor: "#3679B5",
-              borderRadius: 10,
-              borderWidth: 0,
-              width: 312,
-              height: 50,
-              cursor: "pointer",
-              marginLeft: 'auto', marginRight: 'auto'
-            }}
-            onClick={createTransaction}
-          >
-            <div
-              style={{
-                paddingTop: 12,
-                color: "#fff",
-                fontSize: 20,
-                textAlign: "center",
-                fontWeight: 300,
-              }}
-            >
-              {t(`Buying.TransactionRetryButton`)}
-            </div>
-          </div>
+          state.error && <Button
+            style={{ paddingTop: 50 }}
+            title={t(`Buying.TransactionRetryButton`)}
+            clickHandler={createTransaction}
+          />
         }
       </div>
     );
