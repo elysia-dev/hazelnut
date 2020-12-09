@@ -15,6 +15,9 @@
       "TransactionRetryButton": "트랜잭션 생성",
       "ExpectedAnnualReturn": "연 기대 적립금"
     },
+    "Refund": {
+      "Title": "환불하기"
+    },
     "Error": {
       "PriceServer": "EL 가격 정보를 불러오지 못했습니다.",
       "InvalidAddress": "올바르지 않은 지갑 주소입니다. 다시 시도해주세요.",

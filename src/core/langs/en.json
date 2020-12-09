@@ -15,6 +15,9 @@
       "TransactionRetryButton": "Create a transaction",
       "ExpectedAnnualReturn": "Annual expected return"
     },
+    "Refund": {
+      "Title": "Refund"
+    },
     "Error": {
       "PriceServer": "EL price information could not be loaded.",
       "InvalidAddress": "Invalid address. Try again.",
