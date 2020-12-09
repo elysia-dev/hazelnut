@@ -11,6 +11,7 @@
       "AllowanceRetryButton": "Asset Token의 EL 출금 허용하기.",
       "AllowancePending": "트랜잭션 대기중",
       "Transaction": "트랜잭션 생성",
+      "TransactionPending": "트랜잭션 대기중",
       "TransactionResult": "부동산 토큰 교환을 위한 트랜잭션이 성공적으로 만들어 졌습니다.",
       "TransactionRetry": "트랜잭션을 만들 수 없습니다.",
       "TransactionRetryButton": "트랜잭션 생성",

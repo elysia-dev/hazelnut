@@ -52,13 +52,13 @@ function BuyingStatusBar(props: Props) {
           }
         />
         <StepBar
-          active={false}
+          active={props.stage.includes('Transaction')}
           animated={props.stage === BuyingStage.TRANSACTION}
         />
         <Step
           step={3}
           stage={
-            props.stage === BuyingStage.TRANSACTION ? StepStage.LOADING :
+            [BuyingStage.TRANSACTION, BuyingStage.TRANSACTION_PENDING].includes(props.stage) ? StepStage.LOADING :
               props.stage === BuyingStage.TRANSACTION_RETRY ? StepStage.FAIL :
                 props.stage.includes('Whitelist') || props.stage.includes('Allowance') ? StepStage.NONE :
                   StepStage.SUCCESS

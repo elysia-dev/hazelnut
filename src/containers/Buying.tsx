@@ -23,7 +23,7 @@ type State = {
   loading: boolean
   error: boolean
   message: string
-  approvalTx: string
+  txHash: string
 }
 
 function Buying(props: Props) {
@@ -38,7 +38,7 @@ function Buying(props: Props) {
     loading: true,
     error: false,
     message: "",
-    approvalTx: "",
+    txHash: "",
   });
 
   const [counter, setCounter] = useState<number>(0);
@@ -101,7 +101,8 @@ function Buying(props: Props) {
       }).then((txHash: string) => {
         setState({
           ...state,
-          stage: BuyingStage.TRANSACTION_RESULT,
+          stage: BuyingStage.TRANSACTION_PENDING,
+          txHash
         })
       }).catch((error: any) => {
         setState({
@@ -129,7 +130,7 @@ function Buying(props: Props) {
         setState({
           ...state,
           stage: BuyingStage.ALLOWANCE_PENDING,
-          approvalTx: txHash,
+          txHash,
         })
 
       }).catch((error: any) => {
@@ -141,18 +142,19 @@ function Buying(props: Props) {
     })
   }
 
-  const checkAllowanceTx = () => {
-    library?.getTransactionReceipt(state.approvalTx).then((res: any) => {
+  const checkPendingTx = (nextStage: BuyingStage, prevStage: BuyingStage) => {
+    library?.getTransactionReceipt(state.txHash).then((res: any) => {
+      console.log(res);
       if (res && res.status === 1) {
         setState({
           ...state,
-          stage: BuyingStage.TRANSACTION,
-          approvalTx: "",
+          stage: nextStage,
+          txHash: "",
         })
       } else if (res && res.status !== 1) {
         setState({
           ...state,
-          stage: BuyingStage.ALLOWANCE_RETRY,
+          stage: prevStage,
         })
       } else {
         setCounter(counter + 1);
@@ -177,7 +179,13 @@ function Buying(props: Props) {
   }, [state.stage])
 
   useEffect(() => {
-    state.stage === BuyingStage.ALLOWANCE_PENDING && setTimeout(checkAllowanceTx, 2000);
+    state.stage === BuyingStage.ALLOWANCE_PENDING && setTimeout(() => {
+      checkPendingTx(BuyingStage.TRANSACTION, BuyingStage.ALLOWANCE_RETRY)
+    }, 2000);
+
+    state.stage === BuyingStage.TRANSACTION_PENDING && setTimeout(() => {
+      checkPendingTx(BuyingStage.TRANSACTION_RESULT, BuyingStage.TRANSACTION_RETRY)
+    }, 2000);
   }, [state.stage, counter])
 
   if (state.error) {
@@ -222,7 +230,7 @@ function Buying(props: Props) {
           message={state.message}
         />
         {
-          [BuyingStage.ALLOWANCE_RETRY, BuyingStage.TRANSACTION_RETRY].includes(state.stage) && !state.approvalTx && <Button
+          [BuyingStage.ALLOWANCE_RETRY, BuyingStage.TRANSACTION_RETRY].includes(state.stage) && <Button
             title={t(`Buying.${state.stage}Button`)}
             clickHandler={() => {
               if (state.stage.includes("Whitelist")) {
@@ -242,8 +250,8 @@ function Buying(props: Props) {
           />
         }
         {
-          state.approvalTx && <div style={{ textAlign: "center", fontSize: 10 }}>
-            {state.approvalTx}
+          state.txHash && <div style={{ textAlign: "center", fontSize: 10 }}>
+            {state.txHash}
           </div>
         }
       </div>

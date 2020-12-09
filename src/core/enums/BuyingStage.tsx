@@ -5,8 +5,9 @@ enum Stage {
   ALLOWANCE_PENDING = 'AllowancePending',
   ALLOWANCE_RETRY = 'AllowanceRetry',
   TRANSACTION = 'Transaction',
-  TRANSACTION_RESULT = 'TransactionResult',
   TRANSACTION_RETRY = 'TransactionRetry',
+  TRANSACTION_PENDING = 'TransactionPending',
+  TRANSACTION_RESULT = 'TransactionResult',
 }
 
 export default Stage

@@ -11,6 +11,7 @@
       "AllowanceRetryButton": "Allow AssetToken to spend your EL",
       "AllowancePending": "Waiting for transaction",
       "Transaction": "Create a transaction",
+      "TransactionPending": "Waiting for transaction",
       "TransactionResult": "Transaction for property token swap has been successfully created.",
       "TransactionRetry": "Unable to create tx.",
       "TransactionRetryButton": "Create a transaction",
