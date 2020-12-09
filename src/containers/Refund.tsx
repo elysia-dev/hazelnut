@@ -128,7 +128,7 @@ function Refund(props: Props) {
         )}
         {
           state.error && <Button
-            style={{ paddingTop: 50 }}
+            style={{ marginTop: 50 }}
             title={t(`Buying.TransactionRetryButton`)}
             clickHandler={createTransaction}
           />

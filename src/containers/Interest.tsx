@@ -136,7 +136,7 @@ function Interest(props: Props) {
               {state.message}
             </div>
             <Button
-              style={{ paddingTop: 20 }}
+              style={{ marginTop: 20 }}
               title={t(`Buying.TransactionRetryButton`)}
               clickHandler={createTransaction}
             />
