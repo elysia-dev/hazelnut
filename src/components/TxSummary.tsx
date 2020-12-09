@@ -1,12 +1,10 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import TransactionRequest from '../core/types/TransactionRequest';
 
 type Props = {
-  transactionRequest: TransactionRequest;
-  elPricePerToken: number;
-  expectedElValue: number;
+  in: string;
+  out: string;
+  title: string;
 };
 
 const GrayBox = styled.div`
@@ -56,9 +54,8 @@ const SpanWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-function BuyingSummary(props: Props) {
-  const { t } = useTranslation();
 
+function TxSummary(props: Props) {
   return (
     <div style={{ paddingTop: 20 }}>
       <p
@@ -69,8 +66,7 @@ function BuyingSummary(props: Props) {
           textAlign: 'center',
         }}
       >
-        {`${t('Buying.CreateTransaction')} (${props.transactionRequest.productTitle
-          })`}
+        {props.title}
       </p>
       <GrayBox>
         <WhiteBox>
@@ -94,7 +90,7 @@ function BuyingSummary(props: Props) {
             <BlackSpan style={{ flex: 1, textAlign: 'left' }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 1 }}> ELYSIA </BlackSpan>
             <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              EL {props.expectedElValue.toFixed(2)}
+              {props.out}
             </BlackSpan>
           </SpanWrapper>
         </WhiteBox>
@@ -138,9 +134,7 @@ function BuyingSummary(props: Props) {
             <BlackSpan style={{ flex: 1, textAlign: 'left' }}>ELYSIA</BlackSpan>
             <BlackSpan style={{ flex: 1 }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              {props.transactionRequest.tokenName}
-              {' '}
-              {props.transactionRequest.amount}
+              {props.in}
             </BlackSpan>
           </SpanWrapper>
         </WhiteBox>
@@ -149,4 +143,4 @@ function BuyingSummary(props: Props) {
   );
 }
 
-export default BuyingSummary;
+export default TxSummary;

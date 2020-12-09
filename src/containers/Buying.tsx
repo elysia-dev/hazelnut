@@ -4,13 +4,13 @@ import TransactionRequest from "../core/types/TransactionRequest";
 import BuyingStage from "../core/enums/BuyingStage";
 import Spinner from "react-spinkit";
 import { getElPrice } from "../core/clients/CoingeckoClient";
-import BuyingSummary from "../components/BuyingSummary";
 import { useWeb3React } from "@web3-react/core";
 import InjectedConnector from "../core/connectors/InjectedConnector";
 import BuyingStatusBar from "../components/BuyingStatusBar";
 import { useAssetToken, useElysiaToken } from "../hooks/useContract";
 import { BigNumber } from "bignumber.js";
 import ConnectWallet from "../components/ConnectWallet";
+import TxSummary from "../components/TxSummary";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -168,10 +168,14 @@ function Buying(props: Props) {
   } else {
     return (
       <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
-        <BuyingSummary
-          transactionRequest={props.transactionRequest}
-          elPricePerToken={state.elPricePerToken}
-          expectedElValue={expectedElValue}
+        <TxSummary
+          in={
+            `${props.transactionRequest.tokenName} ${props.transactionRequest.amount}`
+          }
+          out={`EL ${expectedElValue.toFixed(2)}`}
+          title={
+            `${t('Buying.CreateTransaction')} (${props.transactionRequest.productTitle})`
+          }
         />
         <div style={{ width: 312, height: 20, marginLeft: 'auto', marginRight: 'auto', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
           <p style={{ color: "#1c1c1c", fontWeight: 'bold', fontSize: 15 }}>{t('Buying.ExpectedAnnualReturn')}</p>
