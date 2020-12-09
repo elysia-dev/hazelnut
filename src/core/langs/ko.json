@@ -8,7 +8,7 @@
       "WhitelistRetry": "화이트 리스트 확인에 실패했습니다.\n아래 주소로 연결해주세요.",
       "AllowanceCheck": "Token Value 체크",
       "AllowanceRetry": "충분한 허용 금액을 가지고 있지 않습니다.\n진행을 위해 허용 금액 트랜잭션을 만들어 주세요.",
-      "AllowanceRetryButton": "허용 금액 트랜잭션 만들기",
+      "AllowanceRetryButton": "Asset Token의 EL 출금 허용하기.",
       "Transaction": "트랜잭션 생성",
       "TransactionResult": "부동산 토큰 교환을 위한 트랜잭션이 성공적으로 만들어 졌습니다.",
       "TransactionRetry": "트랜잭션을 만들 수 없습니다.",

@@ -11,6 +11,7 @@ import { useAssetToken, useElysiaToken } from "../hooks/useContract";
 import { BigNumber } from "bignumber.js";
 import ConnectWallet from "../components/ConnectWallet";
 import TxSummary from "../components/TxSummary";
+import Button from "../components/Button";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -77,7 +78,8 @@ function Buying(props: Props) {
       const allownace = new BigNumber(res.toString());
       setState({
         ...state,
-        stage: allownace.gte(new BigNumber(expectedElValue + '0'.repeat(18))) ? BuyingStage.TRANSACTION : BuyingStage.ALLOWANCE_RETRY
+        stage: allownace.gte(new BigNumber(expectedElValue + '0'.repeat(18))) ? BuyingStage.TRANSACTION : BuyingStage.ALLOWANCE_RETRY,
+        message: "",
       })
     })
   }
@@ -107,8 +109,8 @@ function Buying(props: Props) {
     })
   }
 
-  const increaseAllowance = () => {
-    elToken?.populateTransaction.increaseAllowance(
+  const approve = () => {
+    elToken?.populateTransaction.approve(
       props.transactionRequest.contractAddress,
       "1" + "0".repeat(25)
     ).then((populatedTransaction) => {
@@ -191,17 +193,9 @@ function Buying(props: Props) {
           message={state.message}
         />
         {
-          [BuyingStage.ALLOWANCE_RETRY, BuyingStage.TRANSACTION_RETRY].includes(state.stage) && <div
-            style={{
-              backgroundColor: "#3679B5",
-              borderRadius: 10,
-              borderWidth: 0,
-              width: 312,
-              height: 50,
-              cursor: "pointer",
-              marginLeft: 'auto', marginRight: 'auto'
-            }}
-            onClick={() => {
+          [BuyingStage.ALLOWANCE_RETRY, BuyingStage.TRANSACTION_RETRY].includes(state.stage) && <Button
+            title={t(`Buying.${state.stage}Button`)}
+            clickHandler={() => {
               if (state.stage.includes("Whitelist")) {
                 setState({
                   ...state,
@@ -213,22 +207,10 @@ function Buying(props: Props) {
                   stage: BuyingStage.TRANSACTION
                 })
               } else {
-                increaseAllowance();
+                approve();
               }
             }}
-          >
-            <div
-              style={{
-                paddingTop: 12,
-                color: "#fff",
-                fontSize: 20,
-                textAlign: "center",
-                fontWeight: 300,
-              }}
-            >
-              {t(`Buying.${state.stage}Button`)}
-            </div>
-          </div>
+          />
         }
       </div>
     );

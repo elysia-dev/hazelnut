@@ -8,7 +8,7 @@
       "WhitelistRetry": "Unable to check whitelist.\nPlease connect to the address below.",
       "AllowanceCheck": "Token Value Check",
       "AllowanceRetry": "You do not have a sufficient allowance amount.\nPlease make an allowance amount transaction to proceed.",
-      "AllowanceRetryButton": "Increase allowance",
+      "AllowanceRetryButton": "Allow AssetToken to spend your EL",
       "Transaction": "Create a transaction",
       "TransactionResult": "Transaction for property token swap has been successfully created.",
       "TransactionRetry": "Unable to create tx.",
