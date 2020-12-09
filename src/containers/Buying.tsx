@@ -23,6 +23,7 @@ type State = {
   loading: boolean
   error: boolean
   message: string
+  approvalTx: string
 }
 
 function Buying(props: Props) {
@@ -37,7 +38,10 @@ function Buying(props: Props) {
     loading: true,
     error: false,
     message: "",
+    approvalTx: "",
   });
+
+  const [counter, setCounter] = useState<number>(0);
 
   const expectedUsdValue = (props.transactionRequest.amount || 0)
     * props.transactionRequest.usdPricePerToken;
@@ -124,14 +128,35 @@ function Buying(props: Props) {
       }).then((txHash: string) => {
         setState({
           ...state,
-          stage: BuyingStage.ALLOWANCE_CHECK,
+          stage: BuyingStage.ALLOWANCE_PENDING,
+          approvalTx: txHash,
         })
+
       }).catch((error: any) => {
         setState({
           ...state,
           stage: BuyingStage.ALLOWANCE_RETRY,
         })
       })
+    })
+  }
+
+  const checkAllowanceTx = () => {
+    library?.getTransactionReceipt(state.approvalTx).then((res: any) => {
+      if (res && res.status === 1) {
+        setState({
+          ...state,
+          stage: BuyingStage.TRANSACTION,
+          approvalTx: "",
+        })
+      } else if (res && res.status !== 1) {
+        setState({
+          ...state,
+          stage: BuyingStage.ALLOWANCE_RETRY,
+        })
+      } else {
+        setCounter(counter + 1);
+      }
     })
   }
 
@@ -150,6 +175,10 @@ function Buying(props: Props) {
       default: return
     }
   }, [state.stage])
+
+  useEffect(() => {
+    state.stage === BuyingStage.ALLOWANCE_PENDING && setTimeout(checkAllowanceTx, 2000);
+  }, [state.stage, counter])
 
   if (state.error) {
     return (
@@ -193,7 +222,7 @@ function Buying(props: Props) {
           message={state.message}
         />
         {
-          [BuyingStage.ALLOWANCE_RETRY, BuyingStage.TRANSACTION_RETRY].includes(state.stage) && <Button
+          [BuyingStage.ALLOWANCE_RETRY, BuyingStage.TRANSACTION_RETRY].includes(state.stage) && !state.approvalTx && <Button
             title={t(`Buying.${state.stage}Button`)}
             clickHandler={() => {
               if (state.stage.includes("Whitelist")) {
@@ -211,6 +240,11 @@ function Buying(props: Props) {
               }
             }}
           />
+        }
+        {
+          state.approvalTx && <div style={{ textAlign: "center", fontSize: 10 }}>
+            {state.approvalTx}
+          </div>
         }
       </div>
     );

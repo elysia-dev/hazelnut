@@ -9,6 +9,7 @@
       "AllowanceCheck": "正在验证余额",
       "AllowanceRetry": "重新验证余额。",
       "AllowanceRetryButton": "允许AssetToken花费您的EL",
+      "AllowancePending": "等待允许交易",
       "Transaction": "交易",
       "TransactionResult": "交易结果。",
       "TransactionRetry": "无法创建交易。",

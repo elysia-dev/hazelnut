@@ -45,7 +45,7 @@ function BuyingStatusBar(props: Props) {
         <Step
           step={2}
           stage={
-            props.stage === BuyingStage.ALLOWANCE_CHECK ? StepStage.LOADING :
+            [BuyingStage.ALLOWANCE_CHECK, BuyingStage.ALLOWANCE_PENDING].includes(props.stage) ? StepStage.LOADING :
               props.stage === BuyingStage.ALLOWANCE_RETRY ? StepStage.FAIL :
                 props.stage.includes('Whitelist') ? StepStage.NONE :
                   StepStage.SUCCESS
