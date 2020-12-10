@@ -13,6 +13,7 @@ import TxSummary from "../components/TxSummary";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 import BoxLayout from "../components/BoxLayout";
+import { useHistory } from "react-router-dom";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -30,6 +31,7 @@ type State = {
 function Buying(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
+  const history = useHistory();
   const elToken = useElysiaToken();
   const assetToken = useAssetToken(props.transactionRequest.contractAddress);
 
@@ -175,6 +177,11 @@ function Buying(props: Props) {
       case BuyingStage.TRANSACTION:
         account && createTransaction();
         break;
+      case BuyingStage.TRANSACTION_RESULT:
+        // TODO : Make pending tx be expired
+        setTimeout(() => {
+          history.push("/txCompletion")
+        }, 3000)
       default: return
     }
   }, [state.stage])
