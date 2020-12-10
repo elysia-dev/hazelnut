@@ -2,6 +2,7 @@ import React from 'react';
 
 type Props = {
   children: React.ReactNode
+  style?: React.CSSProperties
 }
 
 function BoxLayout(props: Props) {
@@ -12,6 +13,7 @@ function BoxLayout(props: Props) {
         minHeight: '100%',
         position: 'fixed',
         backgroundColor: '#F9F9F9',
+        ...props.style,
       }}
     >
       <div

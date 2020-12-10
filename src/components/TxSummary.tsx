@@ -58,17 +58,18 @@ const SpanWrapper = styled.div`
 
 function TxSummary(props: Props) {
   return (
-    <div style={{ paddingTop: 20 }}>
-      <p
+    <div>
+      <div
         style={{
           fontSize: 25,
           fontWeight: 'bold',
           marginBottom: 12,
           textAlign: 'center',
+          whiteSpace: 'pre-wrap'
         }}
       >
         {props.title}
-      </p>
+      </div>
       <GrayBox>
         <WhiteBox>
           <SpanWrapper>
