@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import TransactionRequest from "../core/types/TransactionRequest";
-import Spinner from "react-spinkit";
 import { getElPrice } from "../core/clients/CoingeckoClient";
 import { useWeb3React } from "@web3-react/core";
 import InjectedConnector from "../core/connectors/InjectedConnector";
@@ -9,6 +8,10 @@ import { useAssetToken } from "../hooks/useContract";
 import ConnectWallet from "../components/ConnectWallet";
 import TxSummary from "../components/TxSummary";
 import Button from "../components/Button";
+import Loading from "../components/Loading";
+import BoxLayout from "../components/BoxLayout";
+import { useHistory, useParams } from "react-router-dom";
+import { completeTransactionRequest } from "../core/clients/EspressoClient";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -25,7 +28,9 @@ type State = {
 function Refund(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
+  const history = useHistory();
   const assetToken = useAssetToken(props.transactionRequest.contractAddress);
+  const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
     elPricePerToken: 0.003,
@@ -34,6 +39,7 @@ function Refund(props: Props) {
     message: "",
     txHash: "",
   });
+  const [counter, setCounter] = useState<number>(0);
 
   const expectedUsdValue = (props.transactionRequest.amount || 0)
     * props.transactionRequest.usdPricePerToken;
@@ -68,6 +74,7 @@ function Refund(props: Props) {
       }).then((txHash: string) => {
         setState({
           ...state,
+          loading: true,
           error: false,
           txHash,
         })
@@ -81,6 +88,25 @@ function Refund(props: Props) {
     })
   }
 
+  const checkPendingTx = () => {
+    library?.getTransactionReceipt(state.txHash).then((res: any) => {
+      if (res && res.status === 1) {
+        completeTransactionRequest(id)
+        history.push("/txCompletion")
+      } else if (res && res.status !== 1) {
+        setState({
+          ...state,
+          loading: false,
+          error: true,
+          message: "Transaction is failed",
+          txHash: "",
+        })
+      } else {
+        setCounter(counter + 1);
+      }
+    })
+  }
+
   useEffect(connectWallet, []);
   useEffect(loadElPrice, []);
   useEffect(() => {
@@ -88,12 +114,17 @@ function Refund(props: Props) {
       createTransaction();
     }
   }, [account])
+  useEffect(() => {
+    if (state.txHash) {
+      setTimeout(() => {
+        checkPendingTx()
+      }, 1000)
+    }
+  }, [state.txHash, counter])
 
   if (state.loading) {
     return (
-      <div>
-        <Spinner name="line-scale" />
-      </div>
+      <Loading />
     );
   } else if (!account) {
     return (
@@ -101,7 +132,7 @@ function Refund(props: Props) {
     )
   } else {
     return (
-      <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
+      <BoxLayout>
         <TxSummary
           outUnit={props.transactionRequest.tokenName}
           outValue={props.transactionRequest.amount.toString()}
@@ -133,7 +164,7 @@ function Refund(props: Props) {
             clickHandler={createTransaction}
           />
         }
-      </div>
+      </BoxLayout>
     );
   }
 }

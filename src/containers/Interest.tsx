@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
-import Spinner from "react-spinkit";
 import TransactionRequest from "../core/types/TransactionRequest";
 import { useWeb3React } from "@web3-react/core";
 import InjectedConnector from "../core/connectors/InjectedConnector";
@@ -10,6 +9,10 @@ import ConnectWallet from "../components/ConnectWallet";
 import TxSummary from "../components/TxSummary";
 import BigNumber from "bignumber.js";
 import Button from "../components/Button";
+import BoxLayout from "../components/BoxLayout";
+import Loading from "../components/Loading";
+import { useHistory, useParams } from "react-router-dom";
+import { completeTransactionRequest } from "../core/clients/EspressoClient";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -26,7 +29,9 @@ type State = {
 function Interest(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
+  const history = useHistory();
   const assetToken = useAssetToken(props.transactionRequest.contractAddress);
+  const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
     loading: true,
@@ -37,6 +42,7 @@ function Interest(props: Props) {
   });
 
   const [interest, setInterest] = useState<string>("");
+  const [counter, setCounter] = useState<number>(0);
 
   const connectWallet = () => {
     activate(InjectedConnector)
@@ -79,6 +85,7 @@ function Interest(props: Props) {
         setState({
           ...state,
           error: false,
+          loading: true,
           txHash,
         })
       }).catch((error: any) => {
@@ -91,6 +98,25 @@ function Interest(props: Props) {
     })
   }
 
+  const checkPendingTx = () => {
+    library?.getTransactionReceipt(state.txHash).then((res: any) => {
+      if (res && res.status === 1) {
+        completeTransactionRequest(id)
+        history.push("/txCompletion")
+      } else if (res && res.status !== 1) {
+        setState({
+          ...state,
+          loading: false,
+          error: true,
+          message: "Transaction is failed",
+          txHash: "",
+        })
+      } else {
+        setCounter(counter + 1);
+      }
+    })
+  }
+
   useEffect(loadElPrice, []);
   useEffect(connectWallet, []);
   useEffect(() => {
@@ -99,12 +125,18 @@ function Interest(props: Props) {
       setTimeout(() => { createTransaction() }, 1000)
     }
   }, [account])
+  useEffect(() => {
+    if (state.txHash) {
+      setTimeout(() => {
+        checkPendingTx()
+      }, 1000)
+    }
+  }, [state.txHash, counter])
+
 
   if (state.loading) {
     return (
-      <div>
-        <Spinner name="line-scale" />
-      </div>
+      <Loading />
     );
   } else if (!account) {
     return (
@@ -112,7 +144,7 @@ function Interest(props: Props) {
     )
   } else {
     return (
-      <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
+      <BoxLayout>
         <TxSummary
           inUnit={'EL'}
           inValue={interest}
@@ -144,7 +176,7 @@ function Interest(props: Props) {
             />
           </>
         )}
-      </div>
+      </BoxLayout>
     );
   }
 }

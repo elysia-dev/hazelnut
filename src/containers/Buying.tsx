@@ -13,7 +13,8 @@ import TxSummary from "../components/TxSummary";
 import Button from "../components/Button";
 import Loading from "../components/Loading";
 import BoxLayout from "../components/BoxLayout";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
+import { completeTransactionRequest } from "../core/clients/EspressoClient";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -34,6 +35,7 @@ function Buying(props: Props) {
   const history = useHistory();
   const elToken = useElysiaToken();
   const assetToken = useAssetToken(props.transactionRequest.contractAddress);
+  const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
     stage: BuyingStage.WHITELIST_CHECK,
@@ -135,7 +137,6 @@ function Buying(props: Props) {
           stage: BuyingStage.ALLOWANCE_PENDING,
           txHash,
         })
-
       }).catch((error: any) => {
         setState({
           ...state,
@@ -147,7 +148,6 @@ function Buying(props: Props) {
 
   const checkPendingTx = (nextStage: BuyingStage, prevStage: BuyingStage) => {
     library?.getTransactionReceipt(state.txHash).then((res: any) => {
-      console.log(res);
       if (res && res.status === 1) {
         setState({
           ...state,
@@ -178,7 +178,7 @@ function Buying(props: Props) {
         account && createTransaction();
         break;
       case BuyingStage.TRANSACTION_RESULT:
-        // TODO : Make pending tx be expired
+        completeTransactionRequest(id);
         setTimeout(() => {
           history.push("/txCompletion")
         }, 3000)

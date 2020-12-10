@@ -10,6 +10,14 @@ export const getTransactionRequest = (
   );
 };
 
+export const completeTransactionRequest = (
+  id: string,
+): Promise<AxiosResponse<void>> => {
+  return Axios.put(
+    `${process.env.REACT_APP_API_URL}/transactionRequests/${id}/complete`,
+  );
+};
+
 export const checkValidRegister = (id: string): Promise<AxiosResponse<EthAddressResponse>> => {
   return Axios.get(`${process.env.REACT_APP_API_URL}/ethAddress/${id}`);
 };
