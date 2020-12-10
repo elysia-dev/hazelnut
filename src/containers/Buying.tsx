@@ -12,6 +12,7 @@ import { BigNumber } from "bignumber.js";
 import ConnectWallet from "../components/ConnectWallet";
 import TxSummary from "../components/TxSummary";
 import Button from "../components/Button";
+import Loading from "../components/Loading";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -196,9 +197,7 @@ function Buying(props: Props) {
     );
   } else if (state.loading) {
     return (
-      <div>
-        <Spinner name="line-scale" />
-      </div>
+      <Loading />
     );
   } else if (!account) {
     return (

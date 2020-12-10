@@ -14,7 +14,6 @@ function Button(props: Props) {
         backgroundColor: "#3679B5",
         borderRadius: 10,
         borderWidth: 0,
-        width: 312,
         height: 50,
         cursor: "pointer",
         marginLeft: 'auto', marginRight: 'auto'
