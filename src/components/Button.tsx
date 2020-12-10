@@ -16,7 +16,9 @@ function Button(props: Props) {
         borderWidth: 0,
         height: 50,
         cursor: "pointer",
-        marginLeft: 'auto', marginRight: 'auto'
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        maxWidth: 340,
       }}
       onClick={props.clickHandler}
     >
