@@ -2,8 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 
 type Props = {
-  in: string;
-  out: string;
+  inUnit: string;
+  inValue: string;
+  outUnit: string;
+  outValue: string;
   title: string;
 };
 
@@ -12,7 +14,6 @@ const GrayBox = styled.div`
   flex-direction: column;
   align-content: space-between;
   width: 312px;
-  height: 180px;
   padding: 10px;
   border-radius: 10px;
   background-color: #f6f6f8;
@@ -90,56 +91,45 @@ function TxSummary(props: Props) {
             <BlackSpan style={{ flex: 1, textAlign: 'left' }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 1 }}> ELYSIA </BlackSpan>
             <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              {props.out}
+              {props.outUnit}
+              <span style={{ fontWeight: 900, marginLeft: 10 }}>
+                {props.outValue}
+              </span>
             </BlackSpan>
           </SpanWrapper>
         </WhiteBox>
         <div
           style={{
-            width: 30,
-            height: 20,
-            marginLeft: 'auto',
-            marginRight: 'auto',
+            width: '100%',
+            height: 30,
           }}
         >
-          <img
-            alt={'arrow'}
+          <div
             style={{
-              width: '100%',
-              height: '100%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
+              margin: 'auto',
+              marginTop: 10,
+              width: 0,
+              height: 0,
+              borderLeft: "10px solid transparent",
+              borderRight: "10px solid transparent",
+              borderTop: "10px solid #838383",
             }}
-            src={require('../images/downarrow.png')}
           />
         </div>
-        <WhiteBox>
-          <SpanWrapper>
-            <GraySpan style={{ flex: 1, textAlign: 'left' }}> FROM </GraySpan>
-            <GraySpan style={{ flex: 1 }}> TO </GraySpan>
-            <GraySpan style={{ flex: 3, textAlign: 'right' }}> VALUE </GraySpan>
-          </SpanWrapper>
-          <div style={{ flex: 1 }}>
-            <div
-              style={{
-                position: 'relative',
-                top: '50%',
-                width: '100%',
-                height: 1,
-                backgroundColor: '#E5E5E5',
-              }}
-            ></div>
-          </div>
+        <WhiteBox style={{ height: 20 }}>
           <SpanWrapper>
             <BlackSpan style={{ flex: 1, textAlign: 'left' }}>ELYSIA</BlackSpan>
             <BlackSpan style={{ flex: 1 }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              {props.in}
+              {props.inUnit}
+              <span style={{ fontWeight: 900, marginLeft: 10 }}>
+                {props.inValue}
+              </span>
             </BlackSpan>
           </SpanWrapper>
         </WhiteBox>
       </GrayBox>
-    </div>
+    </div >
   );
 }
 

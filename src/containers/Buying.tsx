@@ -208,10 +208,10 @@ function Buying(props: Props) {
     return (
       <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
         <TxSummary
-          in={
-            `${props.transactionRequest.tokenName} ${props.transactionRequest.amount}`
-          }
-          out={`EL ${expectedElValue.toFixed(2)}`}
+          inUnit={props.transactionRequest.tokenName}
+          inValue={props.transactionRequest.amount.toString()}
+          outUnit={'EL'}
+          outValue={expectedElValue.toFixed(2)}
           title={
             `${t('Buying.CreateTransaction')} (${props.transactionRequest.productTitle})`
           }

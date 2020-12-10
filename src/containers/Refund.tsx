@@ -103,10 +103,10 @@ function Refund(props: Props) {
     return (
       <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
         <TxSummary
-          out={
-            `${props.transactionRequest.tokenName} ${props.transactionRequest.amount}`
-          }
-          in={`EL ${expectedElValue.toFixed(2)}`}
+          outUnit={props.transactionRequest.tokenName}
+          outValue={props.transactionRequest.amount.toString()}
+          inUnit={'EL'}
+          inValue={expectedElValue.toFixed(2)}
           title={
             `${t('Refund.Title')} (${props.transactionRequest.productTitle})`
           }

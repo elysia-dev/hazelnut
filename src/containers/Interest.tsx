@@ -114,8 +114,10 @@ function Interest(props: Props) {
     return (
       <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
         <TxSummary
-          out={'0'}
-          in={`EL ${interest}`}
+          inUnit={'EL'}
+          inValue={interest}
+          outUnit={''}
+          outValue={'0'}
           title={
             `${t('Interest.Title')} (${props.transactionRequest.productTitle})`
           }
