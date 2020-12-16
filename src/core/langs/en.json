@@ -6,6 +6,8 @@
       "WhitelistCheckComplete": "Whitelist check complete",
       "WhitelistRetryButton": "Redo",
       "WhitelistRetry": "Unable to check whitelist.\nPlease connect to the address below.",
+      "WhitelistRequest": "Requesting to elysia server.",
+      "WhitelistPending": "Waiting for transaction.",
       "AllowanceCheck": "Token Value Check",
       "AllowanceRetry": "You do not have a sufficient allowance amount.\nPlease make an allowance amount transaction to proceed.",
       "AllowanceRetryButton": "Allow AssetToken to spend your EL",

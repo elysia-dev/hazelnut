@@ -6,6 +6,8 @@
       "WhitelistCheckComplete": "白名单验证完成",
       "WhitelistRetryButton": "重新验证白名单按钮",
       "WhitelistRetry": "重新验证白名单",
+      "WhitelistRequest": "请求elysia服务器",
+      "WhitelistPending": "等待允许交易",
       "AllowanceCheck": "正在验证余额",
       "AllowanceRetry": "重新验证余额。",
       "AllowanceRetryButton": "允许AssetToken花费您的EL",

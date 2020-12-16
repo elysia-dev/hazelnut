@@ -33,7 +33,7 @@ function BuyingStatusBar(props: Props) {
         <Step
           step={1}
           stage={
-            props.stage === BuyingStage.WHITELIST_CHECK ? StepStage.LOADING :
+            [BuyingStage.WHITELIST_CHECK, BuyingStage.WHITELIST_REQUEST, BuyingStage.WHITELIST_PENDING].includes(props.stage) ? StepStage.LOADING :
               props.stage === BuyingStage.WHITELIST_RETRY ? StepStage.FAIL :
                 StepStage.SUCCESS
           }

@@ -14,7 +14,8 @@ import Button from "../components/Button";
 import Loading from "../components/Loading";
 import BoxLayout from "../components/BoxLayout";
 import { useHistory, useParams } from "react-router-dom";
-import { completeTransactionRequest } from "../core/clients/EspressoClient";
+import { completeTransactionRequest, getWhitelistRequest } from "../core/clients/EspressoClient";
+import ServerError from "../components/errors/ServerError";
 
 type Props = {
   transactionRequest: TransactionRequest
@@ -73,11 +74,20 @@ function Buying(props: Props) {
   }
 
   const checkWhitelisted = () => {
+    if (account !== props.transactionRequest.userAddresses[0]) {
+      setState({
+        ...state,
+        stage: BuyingStage.WHITELIST_RETRY,
+        message: props.transactionRequest.userAddresses[0].substr(0, 10) + '**',
+      })
+
+      return
+    }
+
     assetToken?.isWhitelisted(account).then((res: any) => {
       setState({
         ...state,
-        stage: res ? BuyingStage.ALLOWANCE_CHECK : BuyingStage.WHITELIST_RETRY,
-        message: props.transactionRequest.userAddresses[0].substr(0, 10) + '**',
+        stage: res ? BuyingStage.ALLOWANCE_CHECK : BuyingStage.WHITELIST_REQUEST,
       })
     })
   }
@@ -165,6 +175,37 @@ function Buying(props: Props) {
     })
   }
 
+  const requestWhitelist = () => {
+    getWhitelistRequest(id).then((res) => {
+      console.log(res.data);
+      if (res.data.status === 'new' || !res.data.txHash) {
+        setCounter(counter + 1);
+      } else if (res.data.status === 'error') {
+        serverError();
+      } else {
+        setState({
+          ...state,
+          stage: BuyingStage.WHITELIST_PENDING,
+          txHash: res.data.txHash
+        })
+      }
+    }).catch((e) => {
+      if (e.status === 404) {
+        history.push("/notfound");
+      } else {
+        serverError();
+      }
+    })
+  }
+
+  const serverError = () => {
+    setState({
+      ...state,
+      error: true,
+      message: "Elysia Server Internal error"
+    })
+  }
+
   useEffect(connectWallet, []);
   useEffect(loadElPrice, []);
   useEffect(checkWhitelisted, [account]);
@@ -182,25 +223,47 @@ function Buying(props: Props) {
         setTimeout(() => {
           history.push("/txCompletion")
         }, 3000)
+        break;
       default: return
     }
   }, [state.stage])
 
   useEffect(() => {
-    state.stage === BuyingStage.ALLOWANCE_PENDING && setTimeout(() => {
-      checkPendingTx(BuyingStage.TRANSACTION, BuyingStage.ALLOWANCE_RETRY)
-    }, 2000);
+    let timer: number;
 
-    state.stage === BuyingStage.TRANSACTION_PENDING && setTimeout(() => {
-      checkPendingTx(BuyingStage.TRANSACTION_RESULT, BuyingStage.TRANSACTION_RETRY)
-    }, 2000);
+    switch (state.stage) {
+      case BuyingStage.ALLOWANCE_PENDING:
+        timer = setTimeout(() => {
+          checkPendingTx(BuyingStage.TRANSACTION, BuyingStage.ALLOWANCE_RETRY)
+        }, 2000);
+        break;
+      case BuyingStage.TRANSACTION_PENDING:
+        timer = setTimeout(() => {
+          checkPendingTx(BuyingStage.TRANSACTION_RESULT, BuyingStage.TRANSACTION_RETRY)
+        }, 2000);
+        break;
+      case BuyingStage.WHITELIST_REQUEST:
+        timer = setTimeout(() => {
+          requestWhitelist();
+        }, 3000);
+        break;
+      case BuyingStage.WHITELIST_PENDING:
+        timer = setTimeout(() => {
+          checkPendingTx(BuyingStage.ALLOWANCE_CHECK, BuyingStage.WHITELIST_RETRY)
+        }, 2000);
+        break;
+    }
+
+    return () => {
+      clearTimeout(timer)
+    }
   }, [state.stage, counter])
 
   if (state.error) {
     return (
-      <div>
-        {t("Error.PriceServer")}
-      </div>
+      <ServerError
+        message={state.message}
+      />
     );
   } else if (state.loading) {
     return (
