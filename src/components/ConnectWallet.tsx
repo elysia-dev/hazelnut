@@ -29,7 +29,9 @@ function ConnectWallet(props: Props) {
               src={Logo}
               style={{
                 width: 90,
-                height: 90,
+                position: 'relative',
+                top: -3,
+                left: 1,
               }}
             />
           </div>
