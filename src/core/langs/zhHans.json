@@ -26,13 +26,13 @@
       "Title": "领取奖励"
     },
     "Completion": {
-      "Interest": "수익출금 완료!",
-      "Buying": "지분소유 완료!",
-      "Refund": "환불 완료!",
-      "InterestResult": "엘리시아 {{product}}의 \n이자수익 EL {{value}}를 받으셨습니다!",
-      "BuyingResult": "엘리시아 {{product}}의 \n지분 {{value}}의 건물주가 되셨습니다!",
-      "RefundResult": "엘리시아 {{product}}의 \n투자금 EL {{value}}이 환불되었습니다!",
-      "ReturnToApp": "앱에서 확인하기"
+      "Interest": "取出收益完成",
+      "Buying": "成功获得所有权",
+      "Refund": "退款完成",
+      "InterestResult": "收到了爱立厦(Elysia) {{product}}的租金收益 EL币 {{value}}",
+      "BuyingResult": "恭喜您成为爱立厦(Elysia) {{product}} {{value}}的房地产房主之一啦",
+      "RefundResult": "爱立厦(Elysia) {{product}}投资EL代币{{value}}退款完成!",
+      "ReturnToApp": "请在手机应用程序上确认"
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。",
