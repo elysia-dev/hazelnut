@@ -75,11 +75,7 @@ function BuyingStatusBar(props: Props) {
       >
         <p
           style={{
-            textAlign: props.stage.includes("Allowance")
-              ? 'center'
-              : props.stage.includes("Transaction")
-                ? 'right'
-                : 'left',
+            textAlign: "center"
           }}
         >
           {t(`Buying.${props.stage}`)}

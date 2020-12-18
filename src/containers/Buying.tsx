@@ -339,7 +339,7 @@ function Buying(props: Props) {
     return (
       <>
         { longLoading && <Loading />}
-        <div style={{ filter: longLoading ? "blur(4px)" : "none" }}>
+        <div style={{ filter: longLoading ? "blur(10px)" : "none" }}>
           <BoxLayout style={{ background: '#F9F9F9', }}>
             <div style={{ height: 500 }}>
               <TxSummary

@@ -168,7 +168,7 @@ function Interest(props: Props) {
     return (
       <>
         { state.loading && <Loading />}
-        <div style={{ filter: state.loading ? "blur(4px)" : "none" }}>
+        <div style={{ filter: state.loading ? "blur(10px)" : "none" }}>
           <BoxLayout style={{ background: '#F9F9F9' }}>
             <TxSummary
               inUnit={'EL'}
