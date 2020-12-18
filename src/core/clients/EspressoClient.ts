@@ -1,5 +1,7 @@
 import Axios, { AxiosResponse } from 'axios';
 import TransactionRequest from '../types/TransactionRequest';
+import EthAddressResponse from '../types/EthAddressResponse';
+import WhitelistResponse from '../types/WhitelistResponse';
 
 export const getTransactionRequest = (
   id: string,
@@ -9,7 +11,15 @@ export const getTransactionRequest = (
   );
 };
 
-export const checkValidRegister = (id: string): Promise<AxiosResponse> => {
+export const completeTransactionRequest = (
+  id: string,
+): Promise<AxiosResponse<void>> => {
+  return Axios.put(
+    `${process.env.REACT_APP_API_URL}/transactionRequests/${id}/complete`,
+  );
+};
+
+export const checkValidRegister = (id: string): Promise<AxiosResponse<EthAddressResponse>> => {
   return Axios.get(`${process.env.REACT_APP_API_URL}/ethAddress/${id}`);
 };
 
@@ -20,4 +30,8 @@ export const registerEthAddress = (
   return Axios.put(`${process.env.REACT_APP_API_URL}/ethAddress/${id}`, {
     address: address,
   });
+};
+
+export const getWhitelistRequest = (id: string): Promise<AxiosResponse<WhitelistResponse>> => {
+  return Axios.get(`${process.env.REACT_APP_API_URL}/productWhitelist/${id}`);
 };

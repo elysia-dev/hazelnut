@@ -1,12 +1,12 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import TransactionRequest from '../core/types/TransactionRequest';
 
 type Props = {
-  transactionRequest: TransactionRequest;
-  elPricePerToken: number;
-  expectedElValue: number;
+  inUnit: string;
+  inValue: string;
+  outUnit: string;
+  outValue: string;
+  title: string;
 };
 
 const GrayBox = styled.div`
@@ -14,7 +14,6 @@ const GrayBox = styled.div`
   flex-direction: column;
   align-content: space-between;
   width: 312px;
-  height: 180px;
   padding: 10px;
   border-radius: 10px;
   background-color: #f6f6f8;
@@ -56,23 +55,21 @@ const SpanWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
-function BuyingSummary(props: Props) {
-  const { t } = useTranslation();
 
+function TxSummary(props: Props) {
   return (
-    <div style={{ paddingTop: 20 }}>
-      <p
+    <div>
+      <div
         style={{
           fontSize: 25,
           fontWeight: 'bold',
           marginBottom: 12,
           textAlign: 'center',
+          whiteSpace: 'pre-wrap'
         }}
       >
-        {`${t('Buying.CreateTransaction')} (${
-          props.transactionRequest.productTitle
-        })`}
-      </p>
+        {props.title}
+      </div>
       <GrayBox>
         <WhiteBox>
           <SpanWrapper>
@@ -95,58 +92,46 @@ function BuyingSummary(props: Props) {
             <BlackSpan style={{ flex: 1, textAlign: 'left' }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 1 }}> ELYSIA </BlackSpan>
             <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              EL {props.expectedElValue.toFixed(2)}
+              {props.outUnit}
+              <span style={{ fontWeight: 900, marginLeft: 10 }}>
+                {props.outValue}
+              </span>
             </BlackSpan>
           </SpanWrapper>
         </WhiteBox>
         <div
           style={{
-            width: 30,
-            height: 20,
-            marginLeft: 'auto',
-            marginRight: 'auto',
+            width: '100%',
+            height: 30,
           }}
         >
-          <img
-            alt={'arrow'}
+          <div
             style={{
-              width: '100%',
-              height: '100%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
+              margin: 'auto',
+              marginTop: 10,
+              width: 0,
+              height: 0,
+              borderLeft: "10px solid transparent",
+              borderRight: "10px solid transparent",
+              borderTop: "10px solid #838383",
             }}
-            src={require('../images/downarrow.png')}
           />
         </div>
-        <WhiteBox>
-          <SpanWrapper>
-            <GraySpan style={{ flex: 1, textAlign: 'left' }}> FROM </GraySpan>
-            <GraySpan style={{ flex: 1 }}> TO </GraySpan>
-            <GraySpan style={{ flex: 3, textAlign: 'right' }}> VALUE </GraySpan>
-          </SpanWrapper>
-          <div style={{ flex: 1 }}>
-            <div
-              style={{
-                position: 'relative',
-                top: '50%',
-                width: '100%',
-                height: 1,
-                backgroundColor: '#E5E5E5',
-              }}
-            ></div>
-          </div>
+        <WhiteBox style={{ height: 20 }}>
           <SpanWrapper>
             <BlackSpan style={{ flex: 1, textAlign: 'left' }}>ELYSIA</BlackSpan>
             <BlackSpan style={{ flex: 1 }}> YOU </BlackSpan>
             <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              {props.transactionRequest.tokenName}
-              {props.transactionRequest.amount}
+              {props.inUnit}
+              <span style={{ fontWeight: 900, marginLeft: 10 }}>
+                {props.inValue}
+              </span>
             </BlackSpan>
           </SpanWrapper>
         </WhiteBox>
       </GrayBox>
-    </div>
+    </div >
   );
 }
 
-export default BuyingSummary;
+export default TxSummary;

@@ -4,29 +4,49 @@
       "CreateTransaction": "创建新的交易",
       "WhitelistCheck": "正在验证白名单",
       "WhitelistCheckComplete": "白名单验证完成",
-      "WhitelistCheckButton": "正在验证白名单",
       "WhitelistRetryButton": "重新验证白名单按钮",
       "WhitelistRetry": "重新验证白名单",
+      "WhitelistRequest": "请求elysia服务器",
+      "WhitelistPending": "等待允许交易",
       "AllowanceCheck": "正在验证余额",
-      "AllowanceCheckButton": "正在验证余额按钮",
       "AllowanceRetry": "重新验证余额。",
-      "AllowanceRetryButton": "重新验证余额按钮",
+      "AllowanceRetryButton": "允许AssetToken花费您的EL",
+      "AllowancePending": "等待允许交易",
       "Transaction": "交易",
-      "TransactionButton": "交易按钮",
       "TransactionResult": "交易结果。",
+      "TransactionPending": "等待允许交易",
+      "TransactionRetry": "无法创建交易。",
+      "TransactionRetryButton": "交易",
       "ExpectedAnnualReturn": "年度预期收益"
+    },
+    "Refund": {
+      "Title": "退款"
+    },
+    "Interest": {
+      "Title": "领取奖励"
+    },
+    "Completion": {
+      "Interest": "수익출금 완료!",
+      "Buying": "지분소유 완료!",
+      "Refund": "환불 완료!",
+      "InterestResult": "엘리시아 {{product}}의 \n이자수익 EL {{value}}를 받으셨습니다!",
+      "BuyingResult": "엘리시아 {{product}}의 \n지분 {{value}}의 건물주가 되셨습니다!",
+      "RefundResult": "엘리시아 {{product}}의 \n투자금 EL {{value}}이 환불되었습니다!",
+      "ReturnToApp": "앱에서 확인하기"
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。",
-      "InvalidAddress": "钱包地址不正确, 请再输入一次",
-      "InstallMetamask": "请下载Metamask钱包App。",
-      "AlreadyInstalled": "已经安装Metamask钱包App了吗？",
-      "PleaseReload": "请点击右下方按钮，进行重新加载。"
+      "BalanceServer": "EL币余额记录加载出现问题。",
+      "InvalidAddress": "这是不正确的钱包地址，请再输入一次。",
+      "InstallMetamask": "请安装Metamask钱包。",
+      "AlreadyInstalled": "如果已经安装好Metamask钱包, ",
+      "PleaseReload": "请按右下按钮重新加载。"
     },
     "Register": {
       "ConnectWallet": "绑定钱包",
       "Connect": "绑定钱包",
-      "Connected": "您已成功绑定钱包地址，请返回App页面。"
+      "Connected": "本钱包地址已经被绑定。",
+      "Duplicated": "钱包地址重复。使用其他地址"
     }
   }
 }

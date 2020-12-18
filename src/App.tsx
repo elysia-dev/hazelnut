@@ -5,6 +5,7 @@ import NotFound from './components/errors/Notfound';
 import './i18n';
 import EthAddress from './containers/EthAddress';
 import './fonts/font.css';
+import TransactionCompletion from './components/TransactionCompletion';
 
 function App() {
   return (
@@ -15,6 +16,9 @@ function App() {
         </Route>
         <Route path="/ethAddress/:id">
           <EthAddress />
+        </Route>
+        <Route path="/txCompletion">
+          <TransactionCompletion />
         </Route>
         <Route path="*" exact={true} component={NotFound} />
       </Switch>
