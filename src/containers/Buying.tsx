@@ -60,6 +60,7 @@ function Buying(props: Props) {
   const [totalSupply, setTotalSupply] = useState<Supply>(undefined);
   const longLoading = [
     BuyingStage.ALLOWANCE_PENDING,
+    BuyingStage.WHITELIST_REQUEST,
     BuyingStage.WHITELIST_PENDING,
     BuyingStage.TRANSACTION_PENDING,
   ].includes(state.stage);
@@ -338,7 +339,7 @@ function Buying(props: Props) {
   } else {
     return (
       <>
-        { longLoading && <Loading />}
+        { longLoading && <Loading message={t(`Buying.${state.stage}`)} />}
         <div style={{ filter: longLoading ? "blur(10px)" : "none" }}>
           <BoxLayout style={{ background: '#F9F9F9', }}>
             <div style={{ height: 500 }}>

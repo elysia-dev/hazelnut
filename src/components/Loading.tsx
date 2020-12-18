@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./Loading.css";
 
-function Loading() {
+type Props = {
+  message?: string
+}
+
+function Loading(props: Props) {
   const [counter, setCounter] = useState<number>(50);
 
   useEffect(() => {
@@ -10,7 +14,7 @@ function Loading() {
     if (counter < -55) {
       timer = setTimeout(() => { setCounter(50) }, 1000);
     } else {
-      timer = setTimeout(() => { setCounter(counter - 1) }, 500);
+      timer = setTimeout(() => { setCounter(counter - 2) }, 500);
     }
 
     return () => {
@@ -36,10 +40,11 @@ function Loading() {
           top: "40%",
           left: "50%",
           transform: "translate(-46%, -50%)",
+          whiteSpace: "nowrap",
         }}
       >
-        Loading..
-        </div>
+        {props.message}
+      </div>
     </div>
   )
 }

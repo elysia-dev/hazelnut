@@ -38,13 +38,6 @@ function Step(props: Props) {
       >
         <div style={{ padding: 6 }}>
           {
-            props.stage === StepStage.LOADING && <LoadingIndicator
-              color={{ red: 255, green: 255, blue: 255, alpha: 1 }}
-              segments={8}
-              segmentWidth={2}
-            />
-          }
-          {
             props.stage === StepStage.FAIL && <p
               style={{
                 fontSize: 17,
@@ -69,7 +62,7 @@ function Step(props: Props) {
             </Animated>
           }
         </div>
-        {props.stage === StepStage.NONE && <StepNum>{props.step}</StepNum>}
+        {[StepStage.NONE, StepStage.LOADING].includes(props.stage) && <StepNum>{props.step}</StepNum>}
       </Circle>
     </div>
   )
