@@ -58,6 +58,11 @@ function Buying(props: Props) {
   const [counter, setCounter] = useState<number>(0);
   const [balance, setBalance] = useState<Balance>(undefined);
   const [totalSupply, setTotalSupply] = useState<Supply>(undefined);
+  const longLoading = [
+    BuyingStage.ALLOWANCE_PENDING,
+    BuyingStage.WHITELIST_PENDING,
+    BuyingStage.TRANSACTION_PENDING,
+  ].includes(state.stage);
 
   const expectedUsdValue =
     (props.transactionRequest.amount || 0) *
@@ -277,8 +282,8 @@ function Buying(props: Props) {
               product: props.transactionRequest.productTitle,
               value: totalSupply
                 ? (
-                    props.transactionRequest.amount / totalSupply.toNumber()
-                  ).toFixed(4)
+                  props.transactionRequest.amount / totalSupply.toNumber()
+                ).toFixed(4)
                 : '--',
             },
           });
@@ -328,97 +333,97 @@ function Buying(props: Props) {
 
   if (state.error) {
     return <ServerError message={state.message} />;
-  } else if (state.loading) {
-    return <Loading />;
   } else if (!account) {
     return <ConnectWallet handler={connectWallet} />;
   } else {
     return (
       <>
-        <BoxLayout style={{ background: '#F9F9F9' }}>
-          <div style={{ height: 500 }}>
-            <TxSummary
-              inUnit={props.transactionRequest.tokenName}
-              inValue={props.transactionRequest.amount.toString()}
-              outUnit={'EL'}
-              outValue={expectedElValue.toFixed(2)}
-              title={`${t('Buying.CreateTransaction')} (${
-                props.transactionRequest.productTitle
-              })`}
-            >
-              <div
-                style={{
-                  width: 312,
-                  height: 20,
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
+        { longLoading && <Loading />}
+        <div style={{ filter: longLoading ? "blur(4px)" : "none" }}>
+          <BoxLayout style={{ background: '#F9F9F9', }}>
+            <div style={{ height: 500 }}>
+              <TxSummary
+                inUnit={props.transactionRequest.tokenName}
+                inValue={props.transactionRequest.amount.toString()}
+                outUnit={'EL'}
+                outValue={expectedElValue.toFixed(2)}
+                title={`${t('Buying.CreateTransaction')} (${props.transactionRequest.productTitle
+                  })`}
               >
-                <p
-                  style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
-                >
-                  {t('Buying.ExpectedAnnualReturn')}
-                </p>
-                <p
-                  style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
-                >
-                  {`EL ${expectedReturn.toFixed(
-                    2,
-                  )} ($ ${expectedReturnUsd.toFixed(2)})`}
-                </p>
-              </div>
-              <BuyingStatusBar
-                transactionRequest={props.transactionRequest}
-                stage={state.stage}
-                loading={state.loading}
-                error={state.error}
-                message={state.message}
-              />
-              {[
-                BuyingStage.ALLOWANCE_RETRY,
-                BuyingStage.TRANSACTION_RETRY,
-              ].includes(state.stage) && (
-                <Button
-                  title={t(`Buying.${state.stage}Button`)}
-                  clickHandler={() => {
-                    if (state.stage.includes('Whitelist')) {
-                      setState({
-                        ...state,
-                        stage: BuyingStage.WHITELIST_CHECK,
-                      });
-                    } else if (state.stage.includes('Transaction')) {
-                      setState({
-                        ...state,
-                        stage: BuyingStage.TRANSACTION,
-                      });
-                    } else {
-                      approve();
-                    }
-                  }}
-                />
-              )}
-              {state.txHash && (
-                <span
+                <div
                   style={{
-                    textAlign: 'center',
-                    fontSize: 10,
-                    width: '90%',
-                    paddingLeft: '5%',
-                    paddingRight: '5%',
-                    display: 'block',
-                    wordBreak: 'break-all',
+                    width: 312,
+                    height: 20,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  {state.txHash}
-                </span>
-              )}
-            </TxSummary>
-          </div>
-        </BoxLayout>
-        <AddressBottomTab address={account} balance={balance} />
+                  <p
+                    style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
+                  >
+                    {t('Buying.ExpectedAnnualReturn')}
+                  </p>
+                  <p
+                    style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
+                  >
+                    {`EL ${expectedReturn.toFixed(
+                      2,
+                    )} ($ ${expectedReturnUsd.toFixed(2)})`}
+                  </p>
+                </div>
+                <BuyingStatusBar
+                  transactionRequest={props.transactionRequest}
+                  stage={state.stage}
+                  loading={state.loading}
+                  error={state.error}
+                  message={state.message}
+                />
+                {[
+                  BuyingStage.ALLOWANCE_RETRY,
+                  BuyingStage.TRANSACTION_RETRY,
+                ].includes(state.stage) && (
+                    <Button
+                      title={t(`Buying.${state.stage}Button`)}
+                      clickHandler={() => {
+                        if (state.stage.includes('Whitelist')) {
+                          setState({
+                            ...state,
+                            stage: BuyingStage.WHITELIST_CHECK,
+                          });
+                        } else if (state.stage.includes('Transaction')) {
+                          setState({
+                            ...state,
+                            stage: BuyingStage.TRANSACTION,
+                          });
+                        } else {
+                          approve();
+                        }
+                      }}
+                    />
+                  )}
+                {state.txHash && (
+                  <span
+                    style={{
+                      textAlign: 'center',
+                      fontSize: 10,
+                      width: '90%',
+                      paddingLeft: '5%',
+                      paddingRight: '5%',
+                      display: 'block',
+                      wordBreak: 'break-all',
+                    }}
+                  >
+                    {state.txHash}
+                  </span>
+                )}
+              </TxSummary>
+            </div>
+          </BoxLayout>
+          <AddressBottomTab address={account} balance={balance} />
+        </div>
       </>
     );
   }

@@ -8,13 +8,13 @@ import { useAssetToken, useElysiaToken } from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import Button from '../components/Button';
-import Loading from '../components/Loading';
 import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
 import { BigNumber } from 'bignumber.js';
 import TransactionType from '../core/enums/TransactionType';
+import Loading from '../components/Loading';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -40,7 +40,7 @@ function Refund(props: Props) {
 
   const [state, setState] = useState<State>({
     elPricePerToken: 0.003,
-    loading: true,
+    loading: false,
     error: false,
     message: '',
     txHash: '',
@@ -63,7 +63,6 @@ function Refund(props: Props) {
         setState({
           ...state,
           elPricePerToken: res.data.elysia.usd,
-          loading: false,
         });
       })
       .catch(e => {
@@ -154,48 +153,48 @@ function Refund(props: Props) {
     }
   }, [state.txHash, counter]);
 
-  if (state.loading) {
-    return <Loading />;
-  } else if (!account) {
+  if (!account) {
     return <ConnectWallet handler={connectWallet} />;
   } else {
     return (
-      <div style={{ width: '100%' }}>
-        <BoxLayout style={{ background: '#F9F9F9' }}>
-          <TxSummary
-            outUnit={props.transactionRequest.tokenName}
-            outValue={props.transactionRequest.amount.toString()}
-            inUnit={'EL'}
-            inValue={expectedElValue.toFixed(2)}
-            title={`${t('Refund.Title')} (${
-              props.transactionRequest.productTitle
-            })`}
-          />
-          {state.error && (
-            <div
-              style={{
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                marginTop: 10,
-                color: '#1c1c1c',
-                textDecorationLine: 'underline',
-                textAlign: 'center',
-                width: 312,
-              }}
-            >
-              {state.message}
-            </div>
-          )}
-          {state.error && (
-            <Button
-              style={{ marginTop: 50 }}
-              title={t(`Buying.TransactionRetryButton`)}
-              clickHandler={createTransaction}
+      <>
+        { state.loading && <Loading />}
+        <div style={{ filter: state.loading ? "blur(4px)" : "none" }}>
+          <BoxLayout style={{ background: '#F9F9F9' }}>
+            <TxSummary
+              outUnit={props.transactionRequest.tokenName}
+              outValue={props.transactionRequest.amount.toString()}
+              inUnit={'EL'}
+              inValue={expectedElValue.toFixed(2)}
+              title={`${t('Refund.Title')} (${props.transactionRequest.productTitle
+                })`}
             />
-          )}
-        </BoxLayout>
-        <AddressBottomTab address={account} balance={balance} />
-      </div>
+            {state.error && (
+              <div
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  marginTop: 10,
+                  color: '#1c1c1c',
+                  textDecorationLine: 'underline',
+                  textAlign: 'center',
+                  width: 312,
+                }}
+              >
+                {state.message}
+              </div>
+            )}
+            {state.error && (
+              <Button
+                style={{ marginTop: 50 }}
+                title={t(`Buying.TransactionRetryButton`)}
+                clickHandler={createTransaction}
+              />
+            )}
+          </BoxLayout>
+          <AddressBottomTab address={account} balance={balance} />
+        </div>
+      </>
     );
   }
 }

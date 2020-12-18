@@ -10,11 +10,11 @@ import TxSummary from '../components/TxSummary';
 import BigNumber from 'bignumber.js';
 import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
-import Loading from '../components/Loading';
 import { useHistory, useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
+import Loading from '../components/Loading';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -39,7 +39,7 @@ function Interest(props: Props) {
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    loading: true,
+    loading: false,
     elPricePerToken: 0.03,
     error: false,
     message: '',
@@ -71,7 +71,6 @@ function Interest(props: Props) {
         setState({
           ...state,
           elPricePerToken: res.data.elysia.usd,
-          loading: false,
         });
       })
       .catch(e => {
@@ -163,48 +162,48 @@ function Interest(props: Props) {
     }
   }, [state.txHash, counter]);
 
-  if (state.loading) {
-    return <Loading />;
-  } else if (!account) {
+  if (!account) {
     return <ConnectWallet handler={connectWallet} />;
   } else {
     return (
-      <div style={{ width: '100%' }}>
-        <BoxLayout style={{ background: '#F9F9F9' }}>
-          <TxSummary
-            inUnit={'EL'}
-            inValue={interest}
-            outUnit={''}
-            outValue={'0'}
-            title={`${t('Interest.Title')} (${
-              props.transactionRequest.productTitle
-            })`}
-          />
-          {state.error && (
-            <>
-              <div
-                style={{
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                  marginTop: 10,
-                  color: '#1c1c1c',
-                  textDecorationLine: 'underline',
-                  textAlign: 'center',
-                  width: 312,
-                }}
-              >
-                {state.message}
-              </div>
-              <Button
-                style={{ marginTop: 20 }}
-                title={t(`Buying.TransactionRetryButton`)}
-                clickHandler={createTransaction}
-              />
-            </>
-          )}
-        </BoxLayout>
-        <AddressBottomTab address={account} balance={balance} />
-      </div>
+      <>
+        { state.loading && <Loading />}
+        <div style={{ filter: state.loading ? "blur(4px)" : "none" }}>
+          <BoxLayout style={{ background: '#F9F9F9' }}>
+            <TxSummary
+              inUnit={'EL'}
+              inValue={interest}
+              outUnit={''}
+              outValue={'0'}
+              title={`${t('Interest.Title')} (${props.transactionRequest.productTitle
+                })`}
+            />
+            {state.error && (
+              <>
+                <div
+                  style={{
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    marginTop: 10,
+                    color: '#1c1c1c',
+                    textDecorationLine: 'underline',
+                    textAlign: 'center',
+                    width: 312,
+                  }}
+                >
+                  {state.message}
+                </div>
+                <Button
+                  style={{ marginTop: 20 }}
+                  title={t(`Buying.TransactionRetryButton`)}
+                  clickHandler={createTransaction}
+                />
+              </>
+            )}
+          </BoxLayout>
+          <AddressBottomTab address={account} balance={balance} />
+        </div>
+      </>
     );
   }
 }

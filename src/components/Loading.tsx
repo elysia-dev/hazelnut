@@ -1,10 +1,26 @@
-import React from "react";
-import BoxLayout from "./BoxLayout";
+import React, { useEffect, useState } from "react";
 import "./Loading.css";
 
 function Loading() {
+  const [counter, setCounter] = useState<number>(50);
+
+  useEffect(() => {
+    let timer: number;
+
+    if (counter < -55) {
+      timer = setTimeout(() => { setCounter(50) }, 1000);
+    } else {
+      timer = setTimeout(() => { setCounter(counter - 1) }, 500);
+    }
+
+    return () => {
+      clearTimeout(timer);
+    }
+  }, [counter])
+
+
   return (
-    <BoxLayout>
+    <div style={{ top: 0, left: 0, position: 'fixed', width: "100%", height: "100%", zIndex: 100 }}>
       <div
         style={{
           margin: "auto",
@@ -13,9 +29,14 @@ function Loading() {
           width: 80
         }}
       >
-        <div className="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        <div className="circle">
+          <div className="wave">
+            <div className="wave-before" style={{ top: `${counter}%` }} />
+            <div className="wave-after" style={{ top: `${counter}%` }} />
+          </div>
+        </div>
       </div>
-    </BoxLayout>
+    </div>
   )
 }
 
