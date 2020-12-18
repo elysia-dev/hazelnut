@@ -25,8 +25,18 @@
     "Interest": {
       "Title": "이자받기"
     },
+    "Completion": {
+      "Interest": "수익출금 완료!",
+      "Buying": "지분소유 완료!",
+      "Refund": "환불 완료!",
+      "InterestResult": "엘리시아 {{product}}의 \n이자수익 EL {{value}}를 받으셨습니다!",
+      "BuyingResult": "엘리시아 {{product}}의 \n지분 {{value}}%의 건물주가 되셨습니다!",
+      "RefundResult": "엘리시아 {{product}}의 \n투자금 EL {{value}}이 환불되었습니다!",
+      "ReturnToApp": "앱에서 확인하기"
+    },
     "Error": {
       "PriceServer": "EL 가격 정보를 불러오지 못했습니다.",
+      "BalanceServer": "EL 잔고를 불러오지 못했습니다.",
       "InvalidAddress": "올바르지 않은 지갑 주소입니다. 다시 시도해주세요.",
       "InstallMetamask": "메타마스크를 설치해주세요",
       "AlreadyInstalled": "이미 설치하셨다면,",
