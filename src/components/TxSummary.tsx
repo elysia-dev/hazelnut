@@ -7,13 +7,14 @@ type Props = {
   outUnit: string;
   outValue: string;
   title: string;
+  children?: React.ReactNode;
 };
 
 const GrayBox = styled.div`
   display: flex;
   flex-direction: column;
   align-content: space-between;
-  width: 312px;
+  width: 300px;
   padding: 10px;
   border-radius: 10px;
   background-color: #f6f6f8;
@@ -24,7 +25,7 @@ const GrayBox = styled.div`
 `;
 
 const WhiteBox = styled.div`
-  width: 292px;
+  width: 280px;
   height: 60px;
   border-radius: 10px;
   background-color: #fff;
@@ -58,14 +59,22 @@ const SpanWrapper = styled.div`
 
 function TxSummary(props: Props) {
   return (
-    <div>
+    <div
+      style={{
+        boxShadow: '0px 0px 6px #00000010',
+        background: '#fff',
+        paddingTop: 20,
+        paddingBottom: 20,
+        borderRadius: 25,
+      }}
+    >
       <div
         style={{
           fontSize: 25,
           fontWeight: 'bold',
           marginBottom: 12,
           textAlign: 'center',
-          whiteSpace: 'pre-wrap'
+          whiteSpace: 'pre-wrap',
         }}
       >
         {props.title}
@@ -111,9 +120,9 @@ function TxSummary(props: Props) {
               marginTop: 10,
               width: 0,
               height: 0,
-              borderLeft: "10px solid transparent",
-              borderRight: "10px solid transparent",
-              borderTop: "10px solid #838383",
+              borderLeft: '10px solid transparent',
+              borderRight: '10px solid transparent',
+              borderTop: '10px solid #838383',
             }}
           />
         </div>
@@ -130,7 +139,8 @@ function TxSummary(props: Props) {
           </SpanWrapper>
         </WhiteBox>
       </GrayBox>
-    </div >
+      {props.children}
+    </div>
   );
 }
 
