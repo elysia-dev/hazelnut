@@ -1,9 +1,9 @@
 import React from 'react';
 
 type Props = {
-  children: React.ReactNode
-  style?: React.CSSProperties
-}
+  children: React.ReactNode;
+  style?: React.CSSProperties;
+};
 
 function BoxLayout(props: Props) {
   return (
@@ -17,7 +17,7 @@ function BoxLayout(props: Props) {
     >
       <div
         style={{
-          padding: 30,
+          padding: 15,
           margin: 'auto',
           marginTop: 30,
         }}
@@ -25,7 +25,7 @@ function BoxLayout(props: Props) {
         {props.children}
       </div>
     </div>
-  )
+  );
 }
 
 export default BoxLayout;
