@@ -67,7 +67,7 @@ function Register(props: Props) {
     }
     registerEthAddress(props.id, userAccount)
       .then(() => {
-        setConnected(true)
+        setConnected(true);
       })
       .catch(e => {
         if (e.response.status === 400) {
