@@ -275,74 +275,58 @@ function Buying(props: Props) {
       <>
         { longLoading && <Loading message={t(`Buying.${state.stage}`)} />}
         <div style={{ filter: longLoading ? "blur(10px)" : "none" }}>
-          <BoxLayout style={{ background: '#F9F9F9', }}>
+          <BoxLayout>
             <div style={{ height: 500 }}>
               <TxSummary
                 inUnit={props.transactionRequest.product.tokenName}
                 inValue={props.transactionRequest.amount.toString()}
                 outUnit={'EL'}
                 outValue={expectedElValue.toFixed(2)}
-                title={`${t('Buying.CreateTransaction')} (${props.transactionRequest.product.title
-                  })`}
+                title={t('Buying.CreateTransaction')}
+                transactionRequest={props.transactionRequest}
+              />
+              <div
+                style={{
+                  height: 40,
+                  backgroundColor: "#F6F6F8",
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  margin: "0px 15px",
+                  padding: "0px 15px",
+                  borderBottomLeftRadius: 10,
+                  borderBottomRightRadius: 10,
+                }}
               >
                 <div
+                  style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
+                >
+                  {t('Buying.ExpectedAnnualReturn')}
+                </div>
+                <div
+                  style={{ color: '#1c1c1c', fontSize: 15 }}
+                >
+                  EL
+                   <strong style={{ marginLeft: "5px" }}>
+                    {expectedReturn.toFixed(2)}
+                  </strong>
+                </div>
+              </div>
+              {state.txHash && (
+                <span
                   style={{
-                    width: 312,
-                    height: 20,
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
+                    textAlign: 'center',
+                    fontSize: 10,
+                    width: '90%',
+                    paddingLeft: '5%',
+                    paddingRight: '5%',
+                    display: 'block',
+                    wordBreak: 'break-all',
                   }}
                 >
-                  <p
-                    style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
-                  >
-                    {t('Buying.ExpectedAnnualReturn')}
-                  </p>
-                  <p
-                    style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
-                  >
-                    {`EL ${expectedReturn.toFixed(
-                      2,
-                    )} ($ ${expectedReturnUsd.toFixed(2)})`}
-                  </p>
-                </div>
-                {[
-                  BuyingStage.ALLOWANCE_RETRY,
-                  BuyingStage.TRANSACTION_RETRY,
-                ].includes(state.stage) && (
-                    <Button
-                      title={t(`Buying.${state.stage}Button`)}
-                      clickHandler={() => {
-                        if (state.stage.includes('Transaction')) {
-                          setState({
-                            ...state,
-                            stage: BuyingStage.TRANSACTION,
-                          });
-                        } else {
-                          approve();
-                        }
-                      }}
-                    />
-                  )}
-                {state.txHash && (
-                  <span
-                    style={{
-                      textAlign: 'center',
-                      fontSize: 10,
-                      width: '90%',
-                      paddingLeft: '5%',
-                      paddingRight: '5%',
-                      display: 'block',
-                      wordBreak: 'break-all',
-                    }}
-                  >
-                    {state.txHash}
-                  </span>
-                )}
-              </TxSummary>
+                  {state.txHash}
+                </span>
+              )}
             </div>
           </BoxLayout>
           <AddressBottomTab address={account} balance={balance} />

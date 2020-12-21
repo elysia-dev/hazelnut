@@ -17,9 +17,8 @@ function BoxLayout(props: Props) {
     >
       <div
         style={{
-          padding: 15,
           margin: 'auto',
-          marginTop: 30,
+          marginTop: 90,
         }}
       >
         {props.children}

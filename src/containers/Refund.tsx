@@ -166,8 +166,8 @@ function Refund(props: Props) {
               outValue={props.transactionRequest.amount.toString()}
               inUnit={'EL'}
               inValue={expectedElValue.toFixed(2)}
-              title={`${t('Refund.Title')} (${props.transactionRequest.product.title
-                })`}
+              title={t('Refund.Title')}
+              transactionRequest={props.transactionRequest}
             />
             {state.error && (
               <div

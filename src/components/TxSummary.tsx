@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import TransactionRequest from '../core/types/TransactionRequest';
 
 type Props = {
   inUnit: string;
@@ -7,59 +8,29 @@ type Props = {
   outUnit: string;
   outValue: string;
   title: string;
-  children?: React.ReactNode;
+  transactionRequest: TransactionRequest;
 };
 
-const GrayBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-content: space-between;
-  width: 300px;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #f6f6f8;
-  border-width: 1px;
-  border-color: #e5e5e5;
-  margin-left: auto;
-  margin-right: auto;
+const InnerBox = styled.div`
+  border: 1px solid #E6ECF2;
+  border-radius: 5px;
+  padding: 14px;
 `;
 
-const WhiteBox = styled.div`
-  width: 280px;
-  height: 60px;
-  border-radius: 10px;
-  background-color: #fff;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-content: space-between;
-  align-items: space-between;
-`;
-const GraySpan = styled.span`
-  fontsize: 13px;
-  text-align: center;
-  align-items: center;
-  color: #626368;
+const SmallSpan = styled.div`
+  color: #707380;
+  font-size: 11px;
 `;
 
-const BlackSpan = styled.span`
-  fontsize: 13px;
-  text-align: center;
-  align-items: center;
-  color: #1c1c1c;
-`;
-
-const SpanWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+const BigSpan = styled.div`
+  color: #1C1C1C;
+  font-size: 18px;
+  font-weight: bold;
 `;
 
 function TxSummary(props: Props) {
   return (
-    <div>
+    <div style={{ margin: "0px 15px" }}>
       <div
         style={{
           fontSize: 25,
@@ -71,67 +42,62 @@ function TxSummary(props: Props) {
       >
         {props.title}
       </div>
-      <GrayBox>
-        <WhiteBox>
-          <SpanWrapper>
-            <GraySpan style={{ flex: 1, textAlign: 'left' }}> FROM </GraySpan>
-            <GraySpan style={{ flex: 1 }}> TO </GraySpan>
-            <GraySpan style={{ flex: 3, textAlign: 'right' }}> VALUE </GraySpan>
-          </SpanWrapper>
-          <div style={{ flex: 1 }}>
-            <div
-              style={{
-                position: 'relative',
-                top: '50%',
-                width: '100%',
-                height: 1,
-                backgroundColor: '#E5E5E5',
-              }}
-            ></div>
-          </div>
-          <SpanWrapper>
-            <BlackSpan style={{ flex: 1, textAlign: 'left' }}> YOU </BlackSpan>
-            <BlackSpan style={{ flex: 1 }}> ELYSIA </BlackSpan>
-            <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              {props.outUnit}
-              <span style={{ fontWeight: 900, marginLeft: 10 }}>
-                {props.outValue}
-              </span>
-            </BlackSpan>
-          </SpanWrapper>
-        </WhiteBox>
+      <div style={{ textAlign: "center", marginBottom: 30 }}>
+        <span
+          style={{
+            background: "#F6F6F8",
+            padding: "4px 19px",
+            fontSize: 15,
+            color: "#5C5B5B",
+            borderRadius: 5,
+            fontWeight: "bold",
+          }}
+        >{props.transactionRequest.product.tokenName}</span>
+      </div>
+      <div
+        style={{
+          backgroundImage: `url(${props.transactionRequest.product.data.images[0]})`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "bottom",
+          backgroundSize: "cover",
+          height: 175,
+          borderBottomRightRadius: 5,
+          borderBottomLeftRadius: 5,
+          marginBottom: 15,
+        }}
+      >
+      </div>
+      <div style={{ backgroundColor: "#F6F6F8" }}>
         <div
           style={{
-            width: '100%',
-            height: 30,
-          }}
-        >
-          <div
-            style={{
-              margin: 'auto',
-              marginTop: 10,
-              width: 0,
-              height: 0,
-              borderLeft: '10px solid transparent',
-              borderRight: '10px solid transparent',
-              borderTop: '10px solid #838383',
-            }}
-          />
+            backgroundColor: "white",
+            borderRadius: 5,
+            padding: 15,
+            boxShadow: "0 0 10px #00000029"
+          }}>
+          <InnerBox style={{ marginBottom: 30 }}>
+            <div style={{ height: 20 }}>
+              <SmallSpan style={{ float: "left" }}>FROM</SmallSpan>
+              <SmallSpan style={{ float: "right" }}>VALUE</SmallSpan>
+            </div>
+            <div style={{ height: 20 }}>
+              <BigSpan style={{ float: "left" }}>{props.outUnit}</BigSpan>
+              <BigSpan style={{ float: "right" }}>{props.outValue}</BigSpan>
+            </div>
+          </InnerBox>
+          <InnerBox>
+            <div style={{ height: 20 }}>
+              <SmallSpan style={{ float: "left" }}>TO</SmallSpan>
+              <SmallSpan style={{ float: "right" }}>VALUE</SmallSpan>
+            </div>
+            <div style={{ height: 20 }}>
+              <BigSpan style={{ float: "left" }}>{props.inUnit}</BigSpan>
+              <BigSpan style={{ float: "right" }}>{props.inValue}</BigSpan>
+            </div>
+          </InnerBox>
         </div>
-        <WhiteBox style={{ height: 20 }}>
-          <SpanWrapper>
-            <BlackSpan style={{ flex: 1, textAlign: 'left' }}>ELYSIA</BlackSpan>
-            <BlackSpan style={{ flex: 1 }}> YOU </BlackSpan>
-            <BlackSpan style={{ flex: 3, textAlign: 'right' }}>
-              {props.inUnit}
-              <span style={{ fontWeight: 900, marginLeft: 10 }}>
-                {props.inValue}
-              </span>
-            </BlackSpan>
-          </SpanWrapper>
-        </WhiteBox>
-      </GrayBox>
-      {props.children}
+        <div style={{ height: 30 }}></div>
+      </div>
     </div>
   );
 }

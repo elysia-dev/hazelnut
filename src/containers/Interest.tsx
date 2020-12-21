@@ -275,8 +275,8 @@ function Interest(props: Props) {
               inValue={interest}
               outUnit={''}
               outValue={'0'}
-              title={`${t('Interest.Title')} (${props.transactionRequest.product.title
-                })`}
+              title={t('Interest.Title')}
+              transactionRequest={props.transactionRequest}
             />
             {
               [
