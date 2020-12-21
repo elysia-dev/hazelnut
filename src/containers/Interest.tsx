@@ -37,7 +37,7 @@ function Interest(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elToken = useElysiaToken();
-  const assetToken = useAssetToken(props.transactionRequest.contractAddress);
+  const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -221,7 +221,7 @@ function Interest(props: Props) {
             pathname: '/txCompletion',
             state: {
               type: TransactionType.INTEREST,
-              product: props.transactionRequest.productTitle,
+              product: props.transactionRequest.product.title,
             },
           });
         }, 3000);
@@ -275,7 +275,7 @@ function Interest(props: Props) {
               inValue={interest}
               outUnit={''}
               outValue={'0'}
-              title={`${t('Interest.Title')} (${props.transactionRequest.productTitle
+              title={`${t('Interest.Title')} (${props.transactionRequest.product.title
                 })`}
             />
             {

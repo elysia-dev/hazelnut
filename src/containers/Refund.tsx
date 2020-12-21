@@ -35,7 +35,7 @@ function Refund(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elToken = useElysiaToken();
-  const assetToken = useAssetToken(props.transactionRequest.contractAddress);
+  const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -50,7 +50,7 @@ function Refund(props: Props) {
 
   const expectedUsdValue =
     (props.transactionRequest.amount || 0) *
-    props.transactionRequest.usdPricePerToken;
+    props.transactionRequest.product.usdPricePerToken;
   const expectedElValue = expectedUsdValue / state.elPricePerToken;
 
   const connectWallet = () => {
@@ -119,7 +119,7 @@ function Refund(props: Props) {
           pathname: '/txCompletion',
           state: {
             type: TransactionType.REFUND,
-            product: props.transactionRequest.productTitle,
+            product: props.transactionRequest.product.title,
             value: expectedElValue.toFixed(2),
           },
         });
@@ -162,11 +162,11 @@ function Refund(props: Props) {
         <div style={{ filter: state.loading ? "blur(10px)" : "none" }}>
           <BoxLayout style={{ background: '#F9F9F9' }}>
             <TxSummary
-              outUnit={props.transactionRequest.tokenName}
+              outUnit={props.transactionRequest.product.tokenName}
               outValue={props.transactionRequest.amount.toString()}
               inUnit={'EL'}
               inValue={expectedElValue.toFixed(2)}
-              title={`${t('Refund.Title')} (${props.transactionRequest.productTitle
+              title={`${t('Refund.Title')} (${props.transactionRequest.product.title
                 })`}
             />
             {state.error && (

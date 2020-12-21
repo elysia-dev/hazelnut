@@ -41,7 +41,7 @@ function Buying(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elToken = useElysiaToken();
-  const assetToken = useAssetToken(props.transactionRequest.contractAddress);
+  const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -63,11 +63,11 @@ function Buying(props: Props) {
 
   const expectedUsdValue =
     (props.transactionRequest.amount || 0) *
-    props.transactionRequest.usdPricePerToken;
+    props.transactionRequest.product.usdPricePerToken;
   const expectedElValue = expectedUsdValue / state.elPricePerToken;
   const expectedReturn =
     expectedElValue *
-    parseFloat(props.transactionRequest.expectedAnnualReturn) *
+    parseFloat(props.transactionRequest.product.expectedAnnualReturn) *
     0.01;
   const expectedReturnUsd = expectedReturn * state.elPricePerToken;
 
@@ -91,7 +91,7 @@ function Buying(props: Props) {
 
   const checkAllowance = () => {
     elToken
-      ?.allowance(account, props.transactionRequest.contractAddress)
+      ?.allowance(account, props.transactionRequest.product.contractAddress)
       .then((res: BigNumber) => {
         const allownace = new BigNumber(res.toString());
         setState({
@@ -146,7 +146,7 @@ function Buying(props: Props) {
 
   const approve = () => {
     elToken?.populateTransaction
-      .approve(props.transactionRequest.contractAddress, '1' + '0'.repeat(25))
+      .approve(props.transactionRequest.product.contractAddress, '1' + '0'.repeat(25))
       .then(populatedTransaction => {
         library.provider
           .request({
@@ -201,14 +201,6 @@ function Buying(props: Props) {
     });
   };
 
-  const serverError = () => {
-    setState({
-      ...state,
-      error: true,
-      message: 'Elysia Server Internal error',
-    });
-  };
-
   useEffect(connectWallet, []);
   useEffect(loadElPrice, []);
   useEffect(getTotalSupply, [assetToken]);
@@ -235,7 +227,7 @@ function Buying(props: Props) {
             pathname: '/txCompletion',
             state: {
               type: TransactionType.BUYING,
-              product: props.transactionRequest.productTitle,
+              product: props.transactionRequest.product.title,
               value: totalSupply
                 ? (
                   props.transactionRequest.amount / totalSupply.toNumber()
@@ -286,11 +278,11 @@ function Buying(props: Props) {
           <BoxLayout style={{ background: '#F9F9F9', }}>
             <div style={{ height: 500 }}>
               <TxSummary
-                inUnit={props.transactionRequest.tokenName}
+                inUnit={props.transactionRequest.product.tokenName}
                 inValue={props.transactionRequest.amount.toString()}
                 outUnit={'EL'}
                 outValue={expectedElValue.toFixed(2)}
-                title={`${t('Buying.CreateTransaction')} (${props.transactionRequest.productTitle
+                title={`${t('Buying.CreateTransaction')} (${props.transactionRequest.product.title
                   })`}
               >
                 <div

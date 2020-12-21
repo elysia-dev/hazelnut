@@ -59,15 +59,7 @@ const SpanWrapper = styled.div`
 
 function TxSummary(props: Props) {
   return (
-    <div
-      style={{
-        boxShadow: '0px 0px 6px #00000010',
-        background: '#fff',
-        paddingTop: 20,
-        paddingBottom: 20,
-        borderRadius: 25,
-      }}
-    >
+    <div>
       <div
         style={{
           fontSize: 25,
