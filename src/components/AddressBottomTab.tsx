@@ -93,7 +93,7 @@ function AddressBottomTab(props: Props) {
             </span>
             <span style={{ color: '#1C1C1C', fontSize: 15, fontWeight: 900 }}>
               {props.balance
-                ? (props.balance.toNumber() / 10 ** 18).toFixed(4)
+                ? (props.balance.toNumber() / 10 ** 18).toFixed(2)
                 : 'Checking'}
             </span>
           </div>
