@@ -5,7 +5,6 @@ import BuyingStage from '../core/enums/BuyingStage';
 import { getElPrice } from '../core/clients/CoingeckoClient';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import BuyingStatusBar from '../components/BuyingStatusBar';
 import { useAssetToken, useElysiaToken } from '../hooks/useContract';
 import { BigNumber } from 'bignumber.js';
 import ConnectWallet from '../components/ConnectWallet';
@@ -16,7 +15,6 @@ import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   completeTransactionRequest,
-  getWhitelistRequest,
 } from '../core/clients/EspressoClient';
 import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
@@ -47,7 +45,7 @@ function Buying(props: Props) {
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    stage: BuyingStage.WHITELIST_CHECK,
+    stage: BuyingStage.ALLOWANCE_CHECK,
     elPricePerToken: 0.003,
     loading: true,
     error: false,
@@ -60,8 +58,6 @@ function Buying(props: Props) {
   const [totalSupply, setTotalSupply] = useState<Supply>(undefined);
   const longLoading = [
     BuyingStage.ALLOWANCE_PENDING,
-    BuyingStage.WHITELIST_REQUEST,
-    BuyingStage.WHITELIST_PENDING,
     BuyingStage.TRANSACTION_PENDING,
   ].includes(state.stage);
 
@@ -91,27 +87,6 @@ function Buying(props: Props) {
       .catch(e => {
         setState({ ...state, error: true });
       });
-  };
-
-  const checkWhitelisted = () => {
-    if (account !== props.transactionRequest.userAddresses[0]) {
-      setState({
-        ...state,
-        stage: BuyingStage.WHITELIST_RETRY,
-        message: props.transactionRequest.userAddresses[0].substr(0, 10) + '**',
-      });
-
-      return;
-    }
-
-    assetToken?.isWhitelisted(account).then((res: any) => {
-      setState({
-        ...state,
-        stage: res
-          ? BuyingStage.ALLOWANCE_CHECK
-          : BuyingStage.WHITELIST_REQUEST,
-      });
-    });
   };
 
   const checkAllowance = () => {
@@ -219,31 +194,6 @@ function Buying(props: Props) {
     });
   };
 
-  const requestWhitelist = () => {
-    getWhitelistRequest(id)
-      .then(res => {
-        console.log(res.data);
-        if (res.data.status === 'new' || !res.data.txHash) {
-          setCounter(counter + 1);
-        } else if (res.data.status === 'error') {
-          serverError();
-        } else {
-          setState({
-            ...state,
-            stage: BuyingStage.WHITELIST_PENDING,
-            txHash: res.data.txHash,
-          });
-        }
-      })
-      .catch(e => {
-        if (e.status === 404) {
-          history.push('/notfound');
-        } else {
-          serverError();
-        }
-      });
-  };
-
   const getTotalSupply = () => {
     assetToken?.totalSupply().then((res: BigNumber) => {
       const supply = new BigNumber(res.toString());
@@ -262,8 +212,13 @@ function Buying(props: Props) {
   useEffect(connectWallet, []);
   useEffect(loadElPrice, []);
   useEffect(getTotalSupply, [assetToken]);
-  useEffect(getBalance, [account]);
-  useEffect(checkWhitelisted, [account]);
+  useEffect(() => {
+    if (!account) return;
+    getBalance();
+    checkAllowance();
+  },
+    [account]
+  );
 
   useEffect(() => {
     switch (state.stage) {
@@ -309,19 +264,6 @@ function Buying(props: Props) {
           checkPendingTx(
             BuyingStage.TRANSACTION_RESULT,
             BuyingStage.TRANSACTION_RETRY,
-          );
-        }, 2000);
-        break;
-      case BuyingStage.WHITELIST_REQUEST:
-        timer = setTimeout(() => {
-          requestWhitelist();
-        }, 3000);
-        break;
-      case BuyingStage.WHITELIST_PENDING:
-        timer = setTimeout(() => {
-          checkPendingTx(
-            BuyingStage.ALLOWANCE_CHECK,
-            BuyingStage.WHITELIST_RETRY,
           );
         }, 2000);
         break;
@@ -375,13 +317,6 @@ function Buying(props: Props) {
                     )} ($ ${expectedReturnUsd.toFixed(2)})`}
                   </p>
                 </div>
-                <BuyingStatusBar
-                  transactionRequest={props.transactionRequest}
-                  stage={state.stage}
-                  loading={state.loading}
-                  error={state.error}
-                  message={state.message}
-                />
                 {[
                   BuyingStage.ALLOWANCE_RETRY,
                   BuyingStage.TRANSACTION_RETRY,
@@ -389,12 +324,7 @@ function Buying(props: Props) {
                     <Button
                       title={t(`Buying.${state.stage}Button`)}
                       clickHandler={() => {
-                        if (state.stage.includes('Whitelist')) {
-                          setState({
-                            ...state,
-                            stage: BuyingStage.WHITELIST_CHECK,
-                          });
-                        } else if (state.stage.includes('Transaction')) {
+                        if (state.stage.includes('Transaction')) {
                           setState({
                             ...state,
                             stage: BuyingStage.TRANSACTION,

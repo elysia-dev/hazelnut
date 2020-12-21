@@ -11,16 +11,18 @@ import BigNumber from 'bignumber.js';
 import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
-import { completeTransactionRequest } from '../core/clients/EspressoClient';
+import { completeTransactionRequest, getWhitelistRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
+import InterestStage from '../core/enums/InterestStage';
 
 type Props = {
   transactionRequest: TransactionRequest;
 };
 
 type State = {
+  stage: InterestStage;
   loading: boolean;
   elPricePerToken: number;
   error: boolean;
@@ -39,6 +41,7 @@ function Interest(props: Props) {
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
+    stage: InterestStage.WHITELIST_CHECK,
     loading: false,
     elPricePerToken: 0.03,
     error: false,
@@ -49,6 +52,12 @@ function Interest(props: Props) {
   const [interest, setInterest] = useState<string>('');
   const [counter, setCounter] = useState<number>(0);
   const [balance, setBalance] = useState<Balance>(undefined);
+
+  const longLoading = [
+    InterestStage.WHITELIST_REQUEST,
+    InterestStage.WHITELIST_PENDING,
+    InterestStage.TRANSACTION_PENDING,
+  ].includes(state.stage);
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -85,6 +94,27 @@ function Interest(props: Props) {
     });
   };
 
+  const checkWhitelisted = () => {
+    if (account !== props.transactionRequest.userAddresses[0]) {
+      setState({
+        ...state,
+        stage: InterestStage.WHITELIST_RETRY,
+        message: props.transactionRequest.userAddresses[0].substr(0, 10) + '**',
+      });
+
+      return;
+    }
+
+    assetToken?.isWhitelisted(account).then((res: any) => {
+      setState({
+        ...state,
+        stage: res
+          ? InterestStage.TRANSACTION
+          : InterestStage.WHITELIST_REQUEST,
+      });
+    });
+  };
+
   const createTransaction = () => {
     assetToken?.populateTransaction.claimReward().then(populatedTransaction => {
       library.provider
@@ -104,6 +134,7 @@ function Interest(props: Props) {
             ...state,
             error: false,
             loading: true,
+            stage: InterestStage.TRANSACTION_PENDING,
             txHash,
           });
         })
@@ -111,31 +142,25 @@ function Interest(props: Props) {
           setState({
             ...state,
             message: error.message,
+            stage: InterestStage.TRANSACTION_RETRY,
             error: true,
           });
         });
     });
   };
 
-  const checkPendingTx = () => {
+  const checkPendingTx = (nextStage: InterestStage, prevStage: InterestStage) => {
     library?.getTransactionReceipt(state.txHash).then((res: any) => {
       if (res && res.status === 1) {
-        completeTransactionRequest(id);
-        history.push({
-          pathname: '/txCompletion',
-          state: {
-            type: TransactionType.INTEREST,
-            product: props.transactionRequest.productTitle,
-            value: interest,
-          },
+        setState({
+          ...state,
+          stage: nextStage,
+          txHash: '',
         });
       } else if (res && res.status !== 1) {
         setState({
           ...state,
-          loading: false,
-          error: true,
-          message: 'Transaction is failed',
-          txHash: '',
+          stage: prevStage,
         });
       } else {
         setCounter(counter + 1);
@@ -143,31 +168,106 @@ function Interest(props: Props) {
     });
   };
 
+  const requestWhitelist = () => {
+    getWhitelistRequest(id)
+      .then(res => {
+        console.log(res.data);
+        if (res.data.status === 'new' || !res.data.txHash) {
+          setCounter(counter + 1);
+        } else if (res.data.status === 'error') {
+          serverError();
+        } else {
+          setState({
+            ...state,
+            stage: InterestStage.WHITELIST_PENDING,
+            txHash: res.data.txHash,
+          });
+        }
+      })
+      .catch(e => {
+        if (e.status === 404) {
+          history.push('/notfound');
+        } else {
+          serverError();
+        }
+      });
+  };
+
+  const serverError = () => {
+    setState({
+      ...state,
+      error: true,
+      message: 'Elysia Server Internal error',
+    });
+  };
+
   useEffect(loadElPrice, []);
   useEffect(connectWallet, []);
-  useEffect(getBalance, [account]);
   useEffect(() => {
-    if (account) {
-      loadInterest();
-      setTimeout(() => {
-        createTransaction();
-      }, 1000);
-    }
+    if (!account) return;
+    getBalance();
+    loadInterest();
+    checkWhitelisted();
   }, [account]);
   useEffect(() => {
-    if (state.txHash) {
-      setTimeout(() => {
-        checkPendingTx();
-      }, 1000);
+    switch (state.stage) {
+      case InterestStage.TRANSACTION:
+        account && createTransaction();
+        break;
+      case InterestStage.TRANSACTION_RESULT:
+        completeTransactionRequest(id);
+        setTimeout(() => {
+          history.push({
+            pathname: '/txCompletion',
+            state: {
+              type: TransactionType.INTEREST,
+              product: props.transactionRequest.productTitle,
+            },
+          });
+        }, 3000);
+        break;
+      default:
+        return;
     }
-  }, [state.txHash, counter]);
+  }, [state.stage]);
+  useEffect(() => {
+    let timer: number;
+
+    switch (state.stage) {
+      case InterestStage.TRANSACTION_PENDING:
+        timer = setTimeout(() => {
+          checkPendingTx(
+            InterestStage.TRANSACTION_RESULT,
+            InterestStage.TRANSACTION_RETRY,
+          );
+        }, 2000);
+        break;
+      case InterestStage.WHITELIST_REQUEST:
+        timer = setTimeout(() => {
+          requestWhitelist();
+        }, 3000);
+        break;
+      case InterestStage.WHITELIST_PENDING:
+        timer = setTimeout(() => {
+          checkPendingTx(
+            InterestStage.TRANSACTION,
+            InterestStage.WHITELIST_RETRY,
+          );
+        }, 2000);
+        break;
+    }
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [state.stage, counter]);
 
   if (!account) {
     return <ConnectWallet handler={connectWallet} />;
   } else {
     return (
       <>
-        { state.loading && <Loading />}
+        { longLoading && <Loading />}
         <div style={{ filter: state.loading ? "blur(10px)" : "none" }}>
           <BoxLayout style={{ background: '#F9F9F9' }}>
             <TxSummary
@@ -178,28 +278,23 @@ function Interest(props: Props) {
               title={`${t('Interest.Title')} (${props.transactionRequest.productTitle
                 })`}
             />
-            {state.error && (
-              <>
-                <div
-                  style={{
-                    marginLeft: 'auto',
-                    marginRight: 'auto',
-                    marginTop: 10,
-                    color: '#1c1c1c',
-                    textDecorationLine: 'underline',
-                    textAlign: 'center',
-                    width: 312,
-                  }}
-                >
-                  {state.message}
-                </div>
+            {
+              [
+                InterestStage.WHITELIST_RETRY,
+                InterestStage.TRANSACTION_RETRY,
+              ].includes(state.stage) && (
                 <Button
-                  style={{ marginTop: 20 }}
-                  title={t(`Buying.TransactionRetryButton`)}
-                  clickHandler={createTransaction}
+                  title={t(`Buying.${state.stage}Button`)}
+                  clickHandler={() => {
+                    if (state.stage.includes('Transaction')) {
+                      createTransaction();
+                    } else {
+                      checkWhitelisted();
+                    }
+                  }}
                 />
-              </>
-            )}
+              )
+            }
           </BoxLayout>
           <AddressBottomTab address={account} balance={balance} />
         </div>
