@@ -9,7 +9,6 @@ import { useAssetToken, useElysiaToken } from '../hooks/useContract';
 import { BigNumber } from 'bignumber.js';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
-import Button from '../components/Button';
 import Loading from '../components/Loading';
 import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';

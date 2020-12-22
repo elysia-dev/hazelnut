@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import TransactionRequest from '../core/types/TransactionRequest';
+import EL from '../images/el.png';
+import AssetToken from '../images/asset_token.png';
+import BlueArrow from '../images/blue_arrow.png';
 
 type Props = {
-  inUnit: string;
+  inUnit: 'EL' | string;
   inValue: string;
-  outUnit: string;
+  outUnit: 'EL' | string;
   outValue: string;
   title: string;
   transactionRequest: TransactionRequest;
@@ -28,7 +31,26 @@ const BigSpan = styled.div`
   font-weight: bold;
 `;
 
-function TxSummary(props: Props) {
+type LogoProps = {
+  type: 'EL' | string
+}
+
+const Logo = (props: LogoProps) => {
+  return (
+    <div
+      style={{
+        width: 30,
+        height: 30,
+        backgroundImage: `url(${props.type === 'EL' ? EL : AssetToken})`,
+        backgroundSize: "cover",
+        borderRadius: 15,
+        boxShadow: "0 0 10px #00000029"
+      }}
+    />
+  )
+}
+
+const TxSummary = (props: Props) => {
   return (
     <div style={{ margin: "0px 15px" }}>
       <div
@@ -75,24 +97,29 @@ function TxSummary(props: Props) {
             padding: 15,
             boxShadow: "0 0 10px #00000029"
           }}>
-          <InnerBox style={{ marginBottom: 30 }}>
-            <div style={{ height: 20 }}>
-              <SmallSpan style={{ float: "left" }}>FROM</SmallSpan>
-              <SmallSpan style={{ float: "right" }}>VALUE</SmallSpan>
+          <InnerBox>
+            <div style={{ height: 20, display: "flex" }}>
+              <SmallSpan >FROM</SmallSpan>
+              <SmallSpan style={{ marginLeft: "auto" }}>VALUE</SmallSpan>
             </div>
-            <div style={{ height: 20 }}>
-              <BigSpan style={{ float: "left" }}>{props.outUnit}</BigSpan>
-              <BigSpan style={{ float: "right" }}>{props.outValue}</BigSpan>
+            <div style={{ height: 30, display: "flex", alignItems: "center" }}>
+              <Logo type={props.outUnit} />
+              <BigSpan style={{ marginLeft: 6 }} >{props.outUnit}</BigSpan>
+              <BigSpan style={{ marginLeft: "auto" }}>{props.outValue}</BigSpan>
             </div>
           </InnerBox>
+          <div style={{ height: 30, textAlign: "center" }}>
+            <img style={{ width: 15, marginTop: 5 }} src={BlueArrow} />
+          </div>
           <InnerBox>
-            <div style={{ height: 20 }}>
-              <SmallSpan style={{ float: "left" }}>TO</SmallSpan>
-              <SmallSpan style={{ float: "right" }}>VALUE</SmallSpan>
+            <div style={{ height: 20, display: "flex" }}>
+              <SmallSpan>TO</SmallSpan>
+              <SmallSpan style={{ marginLeft: "auto" }}>VALUE</SmallSpan>
             </div>
-            <div style={{ height: 20 }}>
-              <BigSpan style={{ float: "left" }}>{props.inUnit}</BigSpan>
-              <BigSpan style={{ float: "right" }}>{props.inValue}</BigSpan>
+            <div style={{ height: 30, display: "flex", alignItems: "center" }}>
+              <Logo type={props.inUnit} />
+              <BigSpan style={{ marginLeft: 6 }} >{props.inUnit}</BigSpan>
+              <BigSpan style={{ marginLeft: "auto" }}>{props.inValue}</BigSpan>
             </div>
           </InnerBox>
         </div>
