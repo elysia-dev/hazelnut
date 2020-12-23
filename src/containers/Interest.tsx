@@ -18,6 +18,8 @@ import RequestStage from '../core/enums/RequestStage';
 import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
+import InterestSuccess from './../images/success_interest.svg';
+import Swal from '../core/utils/Swal';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -160,7 +162,6 @@ function Interest(props: Props) {
     });
   };
 
-  useEffect(connectWallet, []);
   useEffect(() => {
     if (!account) return;
     loadInterest();
@@ -174,15 +175,23 @@ function Interest(props: Props) {
         break;
       case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id);
-        setTimeout(() => {
-          history.push({
-            pathname: '/txCompletion',
-            state: {
-              type: TransactionType.INTEREST,
+        Swal.fire({
+          title: t('Completion.Interest'),
+          html: t(
+            'Completion.InterestResult',
+            {
               product: props.transactionRequest.product.title,
-            },
-          });
-        }, 3000);
+              value: interest
+            }
+          ),
+          confirmButtonText: t('Completion.ReturnToApp'),
+          imageUrl: InterestSuccess,
+          imageWidth: 180,
+          allowOutsideClick: false,
+        }).then((res) => {
+          if (res.isConfirmed) {
+          }
+        })
         break;
       default:
         return;

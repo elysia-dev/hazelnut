@@ -16,6 +16,8 @@ import Loading from '../components/Loading';
 import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
+import Swal from '../core/utils/Swal';
+import RefundSuccess from './../images/success_refund.svg';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -95,14 +97,23 @@ function Refund(props: Props) {
   useEffect(() => {
     if (txResult.status === TxStatus.SUCCESS) {
       completeTransactionRequest(id);
-      history.push({
-        pathname: '/txCompletion',
-        state: {
-          type: TransactionType.REFUND,
-          product: props.transactionRequest.product.title,
-          value: expectedElValue.toFixed(2),
-        },
-      });
+      Swal.fire({
+        title: t('Completion.Refund'),
+        html: t(
+          'Completion.RefundResult',
+          {
+            product: props.transactionRequest.product.title,
+            value: expectedElValue.toFixed(2)
+          }
+        ),
+        confirmButtonText: t('Completion.ReturnToApp'),
+        imageUrl: RefundSuccess,
+        imageWidth: 275,
+        allowOutsideClick: false,
+      }).then((res) => {
+        if (res.isConfirmed) {
+        }
+      })
     } else if (txResult.status === TxStatus.FAIL) {
       setState({
         ...state,
