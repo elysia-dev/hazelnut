@@ -21,7 +21,7 @@ import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import BuyingSuccess from './../images/success_buying.svg';
-import Swal from '../core/utils/Swal';
+import Swal, { SwalWithReact } from '../core/utils/Swal';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -51,11 +51,6 @@ function Buying(props: Props) {
   });
 
   const txResult = useWatingTx(state.txHash);
-
-  const loading = [
-    RequestStage.ALLOWANCE_PENDING,
-    RequestStage.TRANSACTION_PENDING,
-  ].includes(state.stage);
 
   const expectedElValue = (props.transactionRequest.amount || 0) *
     props.transactionRequest.product.usdPricePerToken / elPricePerToken;
@@ -143,7 +138,15 @@ function Buying(props: Props) {
   );
 
   useEffect(() => {
+    console.log(state.stage);
     switch (state.stage) {
+      case RequestStage.ALLOWANCE_PENDING: case RequestStage.TRANSACTION_PENDING:
+        SwalWithReact.fire({
+          html: <Loading />,
+          title: t(`Buying.${state.stage}`),
+          showConfirmButton: false,
+        })
+        break;
       case RequestStage.ALLOWANCE_CHECK:
         account && checkAllowance();
         break;
@@ -175,6 +178,7 @@ function Buying(props: Props) {
         })
         break;
       case RequestStage.TRANSACTION:
+        SwalWithReact.close();
         account && createTransaction();
         break;
       case RequestStage.TRANSACTION_RESULT:
@@ -230,59 +234,56 @@ function Buying(props: Props) {
     return <ConnectWallet handler={() => { activate(InjectedConnector) }} />;
   } else {
     return (
-      <>
-        { loading && <Loading message={t(`Buying.${state.stage}`)} />}
-        <div style={{ filter: loading ? "blur(10px)" : "none" }}>
-          <BoxLayout>
-            <div style={{ height: 500 }}>
-              <TxSummary
-                inUnit={props.transactionRequest.product.tokenName}
-                inValue={props.transactionRequest.amount.toString()}
-                outUnit={'EL'}
-                outValue={expectedElValue.toFixed(2)}
-                title={t('Buying.CreateTransaction')}
-                transactionRequest={props.transactionRequest}
-              />
+      <div>
+        <BoxLayout>
+          <div style={{ height: 500 }}>
+            <TxSummary
+              inUnit={props.transactionRequest.product.tokenName}
+              inValue={props.transactionRequest.amount.toString()}
+              outUnit={'EL'}
+              outValue={expectedElValue.toFixed(2)}
+              title={t('Buying.CreateTransaction')}
+              transactionRequest={props.transactionRequest}
+            />
+            <div
+              style={{
+                height: 40,
+                backgroundColor: "#F6F6F8",
+                margin: "0px 15px",
+                padding: "0px 15px",
+                borderBottomLeftRadius: 10,
+                borderBottomRightRadius: 10,
+              }}
+            >
+              <div style={{ fontSize: 10 }}>
+                {t('Buying.Annual')}
+              </div>
               <div
                 style={{
-                  height: 40,
-                  backgroundColor: "#F6F6F8",
-                  margin: "0px 15px",
-                  padding: "0px 15px",
-                  borderBottomLeftRadius: 10,
-                  borderBottomRightRadius: 10,
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
                 }}
               >
-                <div style={{ fontSize: 10 }}>
-                  {t('Buying.Annual')}
+                <div
+                  style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
+                >
+                  {t('Buying.ExpectedReturn')}
                 </div>
                 <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}
+                  style={{ color: '#1c1c1c', fontSize: 15 }}
                 >
-                  <div
-                    style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
-                  >
-                    {t('Buying.ExpectedReturn')}
-                  </div>
-                  <div
-                    style={{ color: '#1c1c1c', fontSize: 15 }}
-                  >
-                    EL
+                  EL
                    <strong style={{ marginLeft: "5px" }}>
-                      {expectedReturn.toFixed(2)}
-                    </strong>
-                  </div>
+                    {expectedReturn.toFixed(2)}
+                  </strong>
                 </div>
               </div>
             </div>
-          </BoxLayout>
-          <AddressBottomTab />
-        </div>
-      </>
+          </div>
+        </BoxLayout>
+        <AddressBottomTab />
+      </div>
     );
   }
 }
