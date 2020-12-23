@@ -15,7 +15,7 @@ import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
 import InterestStage from '../core/enums/InterestStage';
-import useElPrice from '../hooks/useElPrice';
+import { useElPrice } from '../hooks/useElysia';
 
 type Props = {
   transactionRequest: TransactionRequest;

@@ -17,7 +17,7 @@ import {
 import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
-import useElPrice from '../hooks/useElPrice';
+import { useElPrice, useTotalSupply } from '../hooks/useElysia';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -30,8 +30,6 @@ type State = {
   txHash: string;
 };
 
-type Supply = BigNumber | undefined;
-
 function Buying(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
@@ -39,6 +37,7 @@ function Buying(props: Props) {
   const elToken = useElysiaToken();
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
+  const totalSupply = useTotalSupply(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -49,7 +48,6 @@ function Buying(props: Props) {
   });
 
   const [counter, setCounter] = useState<number>(0);
-  const [totalSupply, setTotalSupply] = useState<Supply>(undefined);
   const loading = [
     BuyingStage.ALLOWANCE_PENDING,
     BuyingStage.TRANSACTION_PENDING,
@@ -160,14 +158,6 @@ function Buying(props: Props) {
     });
   };
 
-  const getTotalSupply = () => {
-    assetToken?.totalSupply().then((res: BigNumber) => {
-      const supply = new BigNumber(res.toString());
-      setTotalSupply(supply);
-    });
-  };
-
-  useEffect(getTotalSupply, [assetToken]);
   useEffect(() => {
     if (!account) return;
     checkAllowance();
@@ -193,7 +183,7 @@ function Buying(props: Props) {
               product: props.transactionRequest.product.title,
               value: totalSupply
                 ? (
-                  props.transactionRequest.amount / totalSupply.toNumber()
+                  (new BigNumber(props.transactionRequest.amount)).div(totalSupply).multipliedBy(100)
                 ).toFixed(4)
                 : '--',
             },
