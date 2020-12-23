@@ -20,8 +20,8 @@ import { useElPrice, useTotalSupply } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import { PopulatedTransaction } from '@ethersproject/contracts';
-import Swal from 'sweetalert2'
 import BuyingSuccess from './../images/success_buying.svg';
+import Swal from '../core/utils/Swal';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -181,7 +181,7 @@ function Buying(props: Props) {
         completeTransactionRequest(id);
         Swal.fire({
           title: t('Completion.Buying'),
-          text: t(
+          html: t(
             'Completion.BuyingResult',
             {
               product: props.transactionRequest.product.title,
