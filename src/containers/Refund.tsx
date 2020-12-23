@@ -11,12 +11,11 @@ import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
-import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
 import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
-import Swal from '../core/utils/Swal';
+import Swal, { SwalWithReact } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
 
 type Props = {
@@ -24,24 +23,17 @@ type Props = {
 };
 
 type State = {
-  loading: boolean;
-  error: boolean;
-  message: string;
   txHash: string;
 };
 
 function Refund(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
-  const history = useHistory();
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    loading: false,
-    error: false,
-    message: '',
     txHash: '',
   });
   const txResult = useWatingTx(state.txHash);
@@ -70,19 +62,27 @@ function Refund(props: Props) {
             ],
           })
           .then((txHash: string) => {
+            SwalWithReact.fire({
+              html: <Loading />,
+              title: t('Buying.TransactionPending'),
+              showConfirmButton: false,
+            })
             setState({
               ...state,
-              loading: true,
-              error: false,
               txHash,
             });
           })
           .catch((error: any) => {
-            setState({
-              ...state,
-              message: error.message,
-              error: true,
-            });
+            Swal.fire({
+              text: error.message,
+              icon: 'error',
+              confirmButtonText: t('Buying.TransactionRetryButton'),
+              allowOutsideClick: false,
+            }).then((res) => {
+              if (res.isConfirmed) {
+                createTransaction();
+              }
+            })
           });
       });
   };
@@ -115,13 +115,16 @@ function Refund(props: Props) {
         }
       })
     } else if (txResult.status === TxStatus.FAIL) {
-      setState({
-        ...state,
-        loading: false,
-        error: true,
-        message: 'Transaction is failed',
-        txHash: '',
-      });
+      Swal.fire({
+        text: t('Buying.TransactionRetry'),
+        icon: 'error',
+        confirmButtonText: t('Buying.TransactionRetryButton'),
+        allowOutsideClick: false,
+      }).then((res) => {
+        if (res.isConfirmed) {
+          createTransaction();
+        }
+      })
     }
   }, [txResult.status]);
 
@@ -129,44 +132,19 @@ function Refund(props: Props) {
     return <ConnectWallet handler={connectWallet} />;
   } else {
     return (
-      <>
-        { state.loading && <Loading />}
-        <div style={{ filter: state.loading ? "blur(10px)" : "none" }}>
-          <BoxLayout style={{ background: '#F9F9F9' }}>
-            <TxSummary
-              outUnit={props.transactionRequest.product.tokenName}
-              outValue={props.transactionRequest.amount.toString()}
-              inUnit={'EL'}
-              inValue={expectedElValue.toFixed(2)}
-              title={t('Refund.Title')}
-              transactionRequest={props.transactionRequest}
-            />
-            {state.error && (
-              <div
-                style={{
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                  marginTop: 10,
-                  color: '#1c1c1c',
-                  textDecorationLine: 'underline',
-                  textAlign: 'center',
-                  width: 312,
-                }}
-              >
-                {state.message}
-              </div>
-            )}
-            {state.error && (
-              <Button
-                style={{ marginTop: 50 }}
-                title={t(`Buying.TransactionRetryButton`)}
-                clickHandler={createTransaction}
-              />
-            )}
-          </BoxLayout>
-          <AddressBottomTab />
-        </div>
-      </>
+      <div>
+        <BoxLayout style={{ background: '#F9F9F9' }}>
+          <TxSummary
+            outUnit={props.transactionRequest.product.tokenName}
+            outValue={props.transactionRequest.amount.toString()}
+            inUnit={'EL'}
+            inValue={expectedElValue.toFixed(2)}
+            title={t('Refund.Title')}
+            transactionRequest={props.transactionRequest}
+          />
+        </BoxLayout>
+        <AddressBottomTab />
+      </div>
     );
   }
 }
