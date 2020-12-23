@@ -10,17 +10,18 @@ import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import Loading from '../components/Loading';
 import BoxLayout from '../components/BoxLayout';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
   completeTransactionRequest,
 } from '../core/clients/EspressoClient';
 import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
-import TransactionType from '../core/enums/TransactionType';
 import { useElPrice, useTotalSupply } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import { PopulatedTransaction } from '@ethersproject/contracts';
+import Swal from 'sweetalert2'
+import BuyingSuccess from './../images/success_buying.svg';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -36,7 +37,6 @@ type State = {
 function Buying(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
-  const history = useHistory();
   const elToken = useElysiaToken();
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
@@ -68,7 +68,6 @@ function Buying(props: Props) {
     elToken
       ?.allowance(account, props.transactionRequest.product.contractAddress)
       .then((res: BigNumber) => {
-        console.log(res);
         const allownace = new BigNumber(res.toString());
         setState({
           ...state,
@@ -92,8 +91,8 @@ function Buying(props: Props) {
     elToken?.populateTransaction
       .approve(props.transactionRequest.product.contractAddress, '1' + '0'.repeat(25))
       .then(populatedTransaction => {
-        sendTx(populatedTransaction, RequestStage.ALLOWANCE_PENDING, RequestStage.ALLOWANCE_RETRY);
-      });
+        sendTx(populatedTransaction, RequestStage.ALLOWANCE_PENDING, RequestStage.ALLOWANCE_CHECK);
+      })
   };
 
   const sendTx = (
@@ -129,35 +128,77 @@ function Buying(props: Props) {
 
   useEffect(() => {
     if (!account) return;
-    checkAllowance();
+    Swal.close();
+
+    if (state.stage === RequestStage.ALLOWANCE_CHECK) {
+      checkAllowance();
+    } else {
+      setState({
+        ...state,
+        stage: RequestStage.ALLOWANCE_CHECK,
+      })
+    }
   },
     [account]
   );
 
   useEffect(() => {
-    console.group(state.stage)
     switch (state.stage) {
       case RequestStage.ALLOWANCE_CHECK:
         account && checkAllowance();
+        break;
+      case RequestStage.ALLOWANCE_RETRY:
+        Swal.fire({
+          text: t('Buying.AllowanceRetry'),
+          icon: 'info',
+          confirmButtonText: t('Buying.AllowanceRetryButton'),
+          allowOutsideClick: false,
+        }).then((res) => {
+          if (res.isConfirmed) {
+            approve();
+          }
+        })
+        break;
+      case RequestStage.TRANSACTION_RETRY:
+        Swal.fire({
+          text: t('Buying.TransactionRetry'),
+          icon: 'error',
+          confirmButtonText: t('Buying.TransactionRetryButton'),
+          allowOutsideClick: false,
+        }).then((res) => {
+          if (res.isConfirmed) {
+            setState({
+              ...state,
+              stage: RequestStage.TRANSACTION,
+            })
+          }
+        })
         break;
       case RequestStage.TRANSACTION:
         account && createTransaction();
         break;
       case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id);
-        setTimeout(() => {
-          history.push({
-            pathname: '/txCompletion',
-            state: {
-              type: TransactionType.BUYING,
+        Swal.fire({
+          title: t('Completion.Buying'),
+          text: t(
+            'Completion.BuyingResult',
+            {
               product: props.transactionRequest.product.title,
-              value: totalSupply
-                ?
+              value: totalSupply ?
                 (new BigNumber(props.transactionRequest.amount)).div(totalSupply).multipliedBy(100).toFixed(1)
                 : '--',
-            },
-          });
-        }, 3000);
+            }
+          ),
+          confirmButtonText: t('Completion.ReturnToApp'),
+          imageUrl: BuyingSuccess,
+          imageWidth: 275,
+          allowOutsideClick: false,
+        }).then((res) => {
+          if (res.isConfirmed) {
+            console.log("Go to hell");
+          }
+        })
         break;
       default:
         return;

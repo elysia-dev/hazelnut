@@ -36,6 +36,7 @@
     "react-spinkit": "^3.0.0",
     "react-transition-group": "^4.4.1",
     "styled-components": "^5.2.0",
+    "sweetalert2": "^10.12.5",
     "typescript": "~3.7.2"
   },
   "scripts": {

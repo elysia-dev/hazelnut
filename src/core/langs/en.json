@@ -20,6 +20,7 @@
       "Annual": "Annual",
       "ExpectedReturn": "Expected return"
     },
+    "Cancel": "cancel",
     "Refund": {
       "Title": "Refund"
     },
@@ -31,7 +32,7 @@
       "Buying": "지분소유 완료!",
       "Refund": "환불 완료!",
       "InterestResult": "엘리시아 {{product}}의 \n이자수익 EL {{value}}를 받으셨습니다!",
-      "BuyingResult": "엘리시아 {{product}}의 \n지분 {{value}}의 건물주가 되셨습니다!",
+      "BuyingResult": "엘리시아 {{product}}의 \n지분 {{value}}%의 건물주가 되셨습니다!",
       "RefundResult": "엘리시아 {{product}}의 \n투자금 EL {{value}}이 환불되었습니다!",
       "ReturnToApp": "앱에서 확인하기"
     },
