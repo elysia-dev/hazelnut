@@ -278,21 +278,6 @@ function Buying(props: Props) {
                   </div>
                 </div>
               </div>
-              {state.txHash && (
-                <span
-                  style={{
-                    textAlign: 'center',
-                    fontSize: 10,
-                    width: '90%',
-                    paddingLeft: '5%',
-                    paddingRight: '5%',
-                    display: 'block',
-                    wordBreak: 'break-all',
-                  }}
-                >
-                  {state.txHash}
-                </span>
-              )}
             </div>
           </BoxLayout>
           <AddressBottomTab />
