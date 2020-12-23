@@ -7,19 +7,17 @@ import { useAssetToken } from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import BigNumber from 'bignumber.js';
-import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
 import { completeTransactionRequest, getWhitelistRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
-import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
 import RequestStage from '../core/enums/RequestStage';
 import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import InterestSuccess from './../images/success_interest.svg';
-import Swal from '../core/utils/Swal';
+import Swal, { SwalWithReact } from '../core/utils/Swal';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -28,8 +26,6 @@ type Props = {
 type State = {
   stage: RequestStage;
   loading: boolean;
-  error: boolean;
-  message: string;
   txHash: string;
 };
 
@@ -44,8 +40,6 @@ function Interest(props: Props) {
   const [state, setState] = useState<State>({
     stage: RequestStage.WHITELIST_CHECK,
     loading: false,
-    error: false,
-    message: '',
     txHash: '',
   });
 
@@ -79,7 +73,6 @@ function Interest(props: Props) {
       setState({
         ...state,
         stage: RequestStage.WHITELIST_RETRY,
-        message: props.transactionRequest.userAddresses[0].substr(0, 10) + '**',
       });
 
       return;
@@ -112,7 +105,6 @@ function Interest(props: Props) {
         .then((txHash: string) => {
           setState({
             ...state,
-            error: false,
             loading: true,
             stage: RequestStage.TRANSACTION_PENDING,
             txHash,
@@ -121,9 +113,7 @@ function Interest(props: Props) {
         .catch((error: any) => {
           setState({
             ...state,
-            message: error.message,
             stage: RequestStage.TRANSACTION_RETRY,
-            error: true,
           });
         });
     });
@@ -132,11 +122,10 @@ function Interest(props: Props) {
   const requestWhitelist = () => {
     getWhitelistRequest(id)
       .then(res => {
-        console.log(res.data);
         if (res.data.status === 'new' || !res.data.txHash) {
           setCounter(counter + 1);
         } else if (res.data.status === 'error') {
-          serverError();
+          history.push('/serverError');
         } else {
           setState({
             ...state,
@@ -145,21 +134,9 @@ function Interest(props: Props) {
           });
         }
       })
-      .catch(e => {
-        if (e.status === 404) {
-          history.push('/notfound');
-        } else {
-          serverError();
-        }
+      .catch(() => {
+        history.push('/serverError');
       });
-  };
-
-  const serverError = () => {
-    setState({
-      ...state,
-      error: true,
-      message: 'Elysia Server Internal error',
-    });
   };
 
   useEffect(() => {
@@ -170,8 +147,33 @@ function Interest(props: Props) {
 
   useEffect(() => {
     switch (state.stage) {
+      case RequestStage.WHITELIST_REQUEST:
+      case RequestStage.WHITELIST_PENDING:
+      case RequestStage.TRANSACTION_PENDING:
+        SwalWithReact.fire({
+          html: <Loading />,
+          title: t(`Buying.${state.stage}`),
+          showConfirmButton: false,
+        })
+        break;
       case RequestStage.TRANSACTION:
+        SwalWithReact.close();
         account && createTransaction();
+        break;
+      case RequestStage.TRANSACTION_RETRY:
+        Swal.fire({
+          text: t('Buying.TransactionRetry'),
+          icon: 'error',
+          confirmButtonText: t('Buying.TransactionRetryButton'),
+          allowOutsideClick: false,
+        }).then((res) => {
+          if (res.isConfirmed) {
+            setState({
+              ...state,
+              stage: RequestStage.TRANSACTION,
+            })
+          }
+        })
         break;
       case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id);
@@ -235,39 +237,19 @@ function Interest(props: Props) {
     return <ConnectWallet handler={connectWallet} />;
   } else {
     return (
-      <>
-        { longLoading && <Loading />}
-        <div style={{ filter: state.loading ? "blur(10px)" : "none" }}>
-          <BoxLayout style={{ background: '#F9F9F9' }}>
-            <TxSummary
-              inUnit={'EL'}
-              inValue={interest}
-              outUnit={''}
-              outValue={'0'}
-              title={t('Interest.Title')}
-              transactionRequest={props.transactionRequest}
-            />
-            {
-              [
-                RequestStage.WHITELIST_RETRY,
-                RequestStage.TRANSACTION_RETRY,
-              ].includes(state.stage) && (
-                <Button
-                  title={t(`Buying.${state.stage}Button`)}
-                  clickHandler={() => {
-                    if (state.stage.includes('Transaction')) {
-                      createTransaction();
-                    } else {
-                      checkWhitelisted();
-                    }
-                  }}
-                />
-              )
-            }
-          </BoxLayout>
-          <AddressBottomTab />
-        </div>
-      </>
+      <div>
+        <BoxLayout style={{ background: '#F9F9F9' }}>
+          <TxSummary
+            inUnit={'EL'}
+            inValue={interest}
+            outUnit={''}
+            outValue={'0'}
+            title={t('Interest.Title')}
+            transactionRequest={props.transactionRequest}
+          />
+        </BoxLayout>
+        <AddressBottomTab />
+      </div>
     );
   }
 }

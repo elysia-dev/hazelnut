@@ -1,14 +1,10 @@
 import React from "react";
 import BoxLayout from "../BoxLayout";
 
-type Props = {
-  message: string
-}
-
-function ServerError(props: Props) {
+function ServerError() {
   return (
     <BoxLayout>
-      <h1 style={{ textAlign: 'center' }}>{props.message}</h1>;
+      <h1 style={{ textAlign: 'center' }}>Server Error</h1>;
     </BoxLayout>
   )
 }

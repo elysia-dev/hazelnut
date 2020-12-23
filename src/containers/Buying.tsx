@@ -30,7 +30,6 @@ type Props = {
 type State = {
   stage: RequestStage;
   error: boolean;
-  message: string;
   txHash: string;
 };
 
@@ -46,7 +45,6 @@ function Buying(props: Props) {
   const [state, setState] = useState<State>({
     stage: RequestStage.ALLOWANCE_CHECK,
     error: false,
-    message: '',
     txHash: '',
   });
 
@@ -69,7 +67,6 @@ function Buying(props: Props) {
           stage: allownace.gte(new BigNumber(expectedElValue + '0'.repeat(18)))
             ? RequestStage.TRANSACTION
             : RequestStage.ALLOWANCE_RETRY,
-          message: '',
         });
       });
   };
@@ -227,7 +224,7 @@ function Buying(props: Props) {
   }, [txResult.status]);
 
   if (state.error) {
-    return <ServerError message={state.message} />;
+    return <ServerError />;
   } else if (!account) {
     return <ConnectWallet handler={() => { activate(InjectedConnector) }} />;
   } else {

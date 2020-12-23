@@ -5,6 +5,7 @@ import NotFound from './components/errors/Notfound';
 import './i18n';
 import EthAddress from './containers/EthAddress';
 import './fonts/font.css';
+import ServerError from './components/errors/ServerError';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/ethAddress/:id">
           <EthAddress />
         </Route>
+        <Route path="/serverError" exact={true} component={ServerError} />
         <Route path="*" exact={true} component={NotFound} />
       </Switch>
     </Router>
