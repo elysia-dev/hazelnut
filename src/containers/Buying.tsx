@@ -138,7 +138,6 @@ function Buying(props: Props) {
   );
 
   useEffect(() => {
-    console.log(state.stage);
     switch (state.stage) {
       case RequestStage.ALLOWANCE_PENDING: case RequestStage.TRANSACTION_PENDING:
         SwalWithReact.fire({
@@ -200,7 +199,6 @@ function Buying(props: Props) {
           allowOutsideClick: false,
         }).then((res) => {
           if (res.isConfirmed) {
-            console.log("Go to hell");
           }
         })
         break;
