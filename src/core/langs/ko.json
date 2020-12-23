@@ -17,7 +17,8 @@
       "TransactionResult": "부동산 토큰 교환을 위한 트랜잭션이 성공적으로 만들어 졌습니다.",
       "TransactionRetry": "트랜잭션을 만들 수 없습니다.",
       "TransactionRetryButton": "트랜잭션 생성",
-      "ExpectedAnnualReturn": "연 기대 적립금"
+      "Annual": "연",
+      "ExpectedReturn": "기대 적립금"
     },
     "Refund": {
       "Title": "환불하기"

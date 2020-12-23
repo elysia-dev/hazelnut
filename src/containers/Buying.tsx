@@ -68,7 +68,6 @@ function Buying(props: Props) {
     expectedElValue *
     parseFloat(props.transactionRequest.product.expectedAnnualReturn) *
     0.01;
-  const expectedReturnUsd = expectedReturn * state.elPricePerToken;
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -288,27 +287,35 @@ function Buying(props: Props) {
                 style={{
                   height: 40,
                   backgroundColor: "#F6F6F8",
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
                   margin: "0px 15px",
                   padding: "0px 15px",
                   borderBottomLeftRadius: 10,
                   borderBottomRightRadius: 10,
                 }}
               >
-                <div
-                  style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
-                >
-                  {t('Buying.ExpectedAnnualReturn')}
+                <div style={{ fontSize: 10 }}>
+                  {t('Buying.Annual')}
                 </div>
                 <div
-                  style={{ color: '#1c1c1c', fontSize: 15 }}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                  }}
                 >
-                  EL
+                  <div
+                    style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
+                  >
+                    {t('Buying.ExpectedReturn')}
+                  </div>
+                  <div
+                    style={{ color: '#1c1c1c', fontSize: 15 }}
+                  >
+                    EL
                    <strong style={{ marginLeft: "5px" }}>
-                    {expectedReturn.toFixed(2)}
-                  </strong>
+                      {expectedReturn.toFixed(2)}
+                    </strong>
+                  </div>
                 </div>
               </div>
               {state.txHash && (

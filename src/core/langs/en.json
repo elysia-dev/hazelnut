@@ -17,7 +17,8 @@
       "TransactionResult": "Transaction for property token swap has been successfully created.",
       "TransactionRetry": "Unable to create tx.",
       "TransactionRetryButton": "Create a transaction",
-      "ExpectedAnnualReturn": "Annual expected return"
+      "Annual": "Annual",
+      "ExpectedReturn": "Expected return"
     },
     "Refund": {
       "Title": "Refund"

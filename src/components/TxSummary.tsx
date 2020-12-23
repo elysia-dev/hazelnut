@@ -123,7 +123,7 @@ const TxSummary = (props: Props) => {
             </div>
           </InnerBox>
         </div>
-        <div style={{ height: 30 }}></div>
+        <div style={{ height: 15 }}></div>
       </div>
     </div>
   );

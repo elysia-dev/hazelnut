@@ -17,7 +17,8 @@
       "TransactionPending": "等待允许交易",
       "TransactionRetry": "无法创建交易。",
       "TransactionRetryButton": "交易",
-      "ExpectedAnnualReturn": "年度预期收益"
+      "Annual": "年",
+      "ExpectedReturn": "度预期收益"
     },
     "Refund": {
       "Title": "退款"
