@@ -16,6 +16,8 @@ import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
 import InterestStage from '../core/enums/InterestStage';
 import { useElPrice } from '../hooks/useElysia';
+import { useWatingTx } from '../hooks/useWatingTx';
+import TxStatus from '../core/enums/TxStatus';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -45,8 +47,9 @@ function Interest(props: Props) {
     txHash: '',
   });
 
-  const [interest, setInterest] = useState<string>('');
+  const txResult = useWatingTx(state.txHash);
   const [counter, setCounter] = useState<number>(0);
+  const [interest, setInterest] = useState<string>('');
 
   const longLoading = [
     InterestStage.WHITELIST_REQUEST,
@@ -124,25 +127,6 @@ function Interest(props: Props) {
     });
   };
 
-  const checkPendingTx = (nextStage: InterestStage, prevStage: InterestStage) => {
-    library?.getTransactionReceipt(state.txHash).then((res: any) => {
-      if (res && res.status === 1) {
-        setState({
-          ...state,
-          stage: nextStage,
-          txHash: '',
-        });
-      } else if (res && res.status !== 1) {
-        setState({
-          ...state,
-          stage: prevStage,
-        });
-      } else {
-        setCounter(counter + 1);
-      }
-    });
-  };
-
   const requestWhitelist = () => {
     getWhitelistRequest(id)
       .then(res => {
@@ -182,6 +166,7 @@ function Interest(props: Props) {
     loadInterest();
     checkWhitelisted();
   }, [account]);
+
   useEffect(() => {
     switch (state.stage) {
       case InterestStage.TRANSACTION:
@@ -203,37 +188,39 @@ function Interest(props: Props) {
         return;
     }
   }, [state.stage]);
+
   useEffect(() => {
     let timer: number;
 
-    switch (state.stage) {
-      case InterestStage.TRANSACTION_PENDING:
-        timer = setTimeout(() => {
-          checkPendingTx(
-            InterestStage.TRANSACTION_RESULT,
-            InterestStage.TRANSACTION_RETRY,
-          );
-        }, 2000);
-        break;
-      case InterestStage.WHITELIST_REQUEST:
-        timer = setTimeout(() => {
-          requestWhitelist();
-        }, 3000);
-        break;
-      case InterestStage.WHITELIST_PENDING:
-        timer = setTimeout(() => {
-          checkPendingTx(
-            InterestStage.TRANSACTION,
-            InterestStage.WHITELIST_RETRY,
-          );
-        }, 2000);
-        break;
+    if (state.stage == InterestStage.WHITELIST_REQUEST) {
+      timer = setTimeout(() => {
+        requestWhitelist();
+      }, 3000);
     }
 
     return () => {
       clearTimeout(timer);
     };
   }, [state.stage, counter]);
+
+  useEffect(() => {
+    if (![TxStatus.SUCCESS, TxStatus.FAIL].includes(txResult.status)) return;
+
+    switch (state.stage) {
+      case InterestStage.TRANSACTION_PENDING:
+        setState({
+          ...state,
+          stage: txResult.status === TxStatus.SUCCESS ? InterestStage.TRANSACTION_RESULT : InterestStage.TRANSACTION_RETRY
+        })
+        break;
+      case InterestStage.WHITELIST_PENDING:
+        setState({
+          ...state,
+          stage: txResult.status === TxStatus.SUCCESS ? InterestStage.TRANSACTION : InterestStage.TRANSACTION_RETRY
+        })
+        break;
+    }
+  }, [txResult.status]);
 
   if (!account) {
     return <ConnectWallet handler={connectWallet} />;

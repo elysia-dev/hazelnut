@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import { useAssetToken, useElysiaToken } from '../hooks/useContract';
+import { useAssetToken } from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import Button from '../components/Button';
@@ -14,6 +14,8 @@ import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
 import { useElPrice } from '../hooks/useElysia';
+import { useWatingTx } from '../hooks/useWatingTx';
+import TxStatus from '../core/enums/TxStatus';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -30,7 +32,6 @@ function Refund(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
-  const elToken = useElysiaToken();
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
@@ -41,7 +42,7 @@ function Refund(props: Props) {
     message: '',
     txHash: '',
   });
-  const [counter, setCounter] = useState<number>(0);
+  const txResult = useWatingTx(state.txHash);
 
   const expectedElValue = (props.transactionRequest.amount || 0) *
     props.transactionRequest.product.usdPricePerToken / elPricePerToken;
@@ -84,45 +85,34 @@ function Refund(props: Props) {
       });
   };
 
-  const checkPendingTx = () => {
-    library?.getTransactionReceipt(state.txHash).then((res: any) => {
-      if (res && res.status === 1) {
-        completeTransactionRequest(id);
-        history.push({
-          pathname: '/txCompletion',
-          state: {
-            type: TransactionType.REFUND,
-            product: props.transactionRequest.product.title,
-            value: expectedElValue.toFixed(2),
-          },
-        });
-      } else if (res && res.status !== 1) {
-        setState({
-          ...state,
-          loading: false,
-          error: true,
-          message: 'Transaction is failed',
-          txHash: '',
-        });
-      } else {
-        setCounter(counter + 1);
-      }
-    });
-  };
-
   useEffect(connectWallet, []);
   useEffect(() => {
     if (account) {
       createTransaction();
     }
   }, [account]);
+
   useEffect(() => {
-    if (state.txHash) {
-      setTimeout(() => {
-        checkPendingTx();
-      }, 1000);
+    if (txResult.status === TxStatus.SUCCESS) {
+      completeTransactionRequest(id);
+      history.push({
+        pathname: '/txCompletion',
+        state: {
+          type: TransactionType.REFUND,
+          product: props.transactionRequest.product.title,
+          value: expectedElValue.toFixed(2),
+        },
+      });
+    } else if (txResult.status === TxStatus.FAIL) {
+      setState({
+        ...state,
+        loading: false,
+        error: true,
+        message: 'Transaction is failed',
+        txHash: '',
+      });
     }
-  }, [state.txHash, counter]);
+  }, [txResult.status]);
 
   if (!account) {
     return <ConnectWallet handler={connectWallet} />;

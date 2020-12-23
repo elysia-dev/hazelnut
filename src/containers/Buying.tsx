@@ -18,6 +18,8 @@ import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
 import { useElPrice, useTotalSupply } from '../hooks/useElysia';
+import { useWatingTx } from '../hooks/useWatingTx';
+import TxStatus from '../core/enums/TxStatus';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -47,7 +49,8 @@ function Buying(props: Props) {
     txHash: '',
   });
 
-  const [counter, setCounter] = useState<number>(0);
+  const txResult = useWatingTx(state.txHash);
+
   const loading = [
     BuyingStage.ALLOWANCE_PENDING,
     BuyingStage.TRANSACTION_PENDING,
@@ -64,6 +67,7 @@ function Buying(props: Props) {
     elToken
       ?.allowance(account, props.transactionRequest.product.contractAddress)
       .then((res: BigNumber) => {
+        console.log(res);
         const allownace = new BigNumber(res.toString());
         setState({
           ...state,
@@ -139,25 +143,6 @@ function Buying(props: Props) {
       });
   };
 
-  const checkPendingTx = (nextStage: BuyingStage, prevStage: BuyingStage) => {
-    library?.getTransactionReceipt(state.txHash).then((res: any) => {
-      if (res && res.status === 1) {
-        setState({
-          ...state,
-          stage: nextStage,
-          txHash: '',
-        });
-      } else if (res && res.status !== 1) {
-        setState({
-          ...state,
-          stage: prevStage,
-        });
-      } else {
-        setCounter(counter + 1);
-      }
-    });
-  };
-
   useEffect(() => {
     if (!account) return;
     checkAllowance();
@@ -166,6 +151,7 @@ function Buying(props: Props) {
   );
 
   useEffect(() => {
+    console.group(state.stage)
     switch (state.stage) {
       case BuyingStage.ALLOWANCE_CHECK:
         account && checkAllowance();
@@ -182,9 +168,8 @@ function Buying(props: Props) {
               type: TransactionType.BUYING,
               product: props.transactionRequest.product.title,
               value: totalSupply
-                ? (
-                  (new BigNumber(props.transactionRequest.amount)).div(totalSupply).multipliedBy(100)
-                ).toFixed(4)
+                ?
+                (new BigNumber(props.transactionRequest.amount)).div(totalSupply).multipliedBy(100).toFixed(1)
                 : '--',
             },
           });
@@ -196,28 +181,23 @@ function Buying(props: Props) {
   }, [state.stage]);
 
   useEffect(() => {
-    let timer: number;
+    if (![TxStatus.SUCCESS, TxStatus.FAIL].includes(txResult.status)) return;
 
     switch (state.stage) {
       case BuyingStage.ALLOWANCE_PENDING:
-        timer = setTimeout(() => {
-          checkPendingTx(BuyingStage.TRANSACTION, BuyingStage.ALLOWANCE_RETRY);
-        }, 2000);
+        setState({
+          ...state,
+          stage: txResult.status === TxStatus.SUCCESS ? BuyingStage.TRANSACTION : BuyingStage.ALLOWANCE_RETRY
+        })
         break;
       case BuyingStage.TRANSACTION_PENDING:
-        timer = setTimeout(() => {
-          checkPendingTx(
-            BuyingStage.TRANSACTION_RESULT,
-            BuyingStage.TRANSACTION_RETRY,
-          );
-        }, 2000);
+        setState({
+          ...state,
+          stage: txResult.status === TxStatus.SUCCESS ? BuyingStage.TRANSACTION_RESULT : BuyingStage.TRANSACTION_RETRY
+        })
         break;
     }
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [state.stage, counter]);
+  }, [txResult.status]);
 
   if (state.error) {
     return <ServerError message={state.message} />;
