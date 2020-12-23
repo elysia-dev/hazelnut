@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
-import BuyingStage from '../core/enums/BuyingStage';
+import RequestStage from '../core/enums/RequestStage';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import { useAssetToken, useElysiaToken } from '../hooks/useContract';
@@ -20,13 +20,14 @@ import TransactionType from '../core/enums/TransactionType';
 import { useElPrice, useTotalSupply } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
+import { PopulatedTransaction } from '@ethersproject/contracts';
 
 type Props = {
   transactionRequest: TransactionRequest;
 };
 
 type State = {
-  stage: BuyingStage;
+  stage: RequestStage;
   error: boolean;
   message: string;
   txHash: string;
@@ -43,7 +44,7 @@ function Buying(props: Props) {
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    stage: BuyingStage.ALLOWANCE_CHECK,
+    stage: RequestStage.ALLOWANCE_CHECK,
     error: false,
     message: '',
     txHash: '',
@@ -52,8 +53,8 @@ function Buying(props: Props) {
   const txResult = useWatingTx(state.txHash);
 
   const loading = [
-    BuyingStage.ALLOWANCE_PENDING,
-    BuyingStage.TRANSACTION_PENDING,
+    RequestStage.ALLOWANCE_PENDING,
+    RequestStage.TRANSACTION_PENDING,
   ].includes(state.stage);
 
   const expectedElValue = (props.transactionRequest.amount || 0) *
@@ -72,8 +73,8 @@ function Buying(props: Props) {
         setState({
           ...state,
           stage: allownace.gte(new BigNumber(expectedElValue + '0'.repeat(18)))
-            ? BuyingStage.TRANSACTION
-            : BuyingStage.ALLOWANCE_RETRY,
+            ? RequestStage.TRANSACTION
+            : RequestStage.ALLOWANCE_RETRY,
           message: '',
         });
       });
@@ -83,32 +84,7 @@ function Buying(props: Props) {
     assetToken?.populateTransaction
       .purchase(props.transactionRequest.amount)
       .then(populatedTransaction => {
-        library.provider
-          .request({
-            method: 'eth_sendTransaction',
-            params: [
-              {
-                to: populatedTransaction.to,
-                from: account,
-                data: populatedTransaction.data,
-                chainId: 3,
-              },
-            ],
-          })
-          .then((txHash: string) => {
-            setState({
-              ...state,
-              stage: BuyingStage.TRANSACTION_PENDING,
-              txHash,
-            });
-          })
-          .catch((error: any) => {
-            setState({
-              ...state,
-              stage: BuyingStage.TRANSACTION_RETRY,
-              message: error.message,
-            });
-          });
+        sendTx(populatedTransaction, RequestStage.TRANSACTION_PENDING, RequestStage.TRANSACTION_RETRY);
       });
   };
 
@@ -116,32 +92,40 @@ function Buying(props: Props) {
     elToken?.populateTransaction
       .approve(props.transactionRequest.product.contractAddress, '1' + '0'.repeat(25))
       .then(populatedTransaction => {
-        library.provider
-          .request({
-            method: 'eth_sendTransaction',
-            params: [
-              {
-                to: populatedTransaction.to,
-                from: account,
-                data: populatedTransaction.data,
-              },
-            ],
-          })
-          .then((txHash: string) => {
-            setState({
-              ...state,
-              stage: BuyingStage.ALLOWANCE_PENDING,
-              txHash,
-            });
-          })
-          .catch((error: any) => {
-            setState({
-              ...state,
-              stage: BuyingStage.ALLOWANCE_RETRY,
-            });
-          });
+        sendTx(populatedTransaction, RequestStage.ALLOWANCE_PENDING, RequestStage.ALLOWANCE_RETRY);
       });
   };
+
+  const sendTx = (
+    populatedTransaction: PopulatedTransaction,
+    nextStage: RequestStage,
+    prevStage: RequestStage,
+  ) => {
+    library.provider
+      .request({
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: populatedTransaction.to,
+            from: account,
+            data: populatedTransaction.data,
+          },
+        ],
+      })
+      .then((txHash: string) => {
+        setState({
+          ...state,
+          stage: nextStage,
+          txHash,
+        });
+      })
+      .catch((error: any) => {
+        setState({
+          ...state,
+          stage: prevStage,
+        });
+      });
+  }
 
   useEffect(() => {
     if (!account) return;
@@ -153,13 +137,13 @@ function Buying(props: Props) {
   useEffect(() => {
     console.group(state.stage)
     switch (state.stage) {
-      case BuyingStage.ALLOWANCE_CHECK:
+      case RequestStage.ALLOWANCE_CHECK:
         account && checkAllowance();
         break;
-      case BuyingStage.TRANSACTION:
+      case RequestStage.TRANSACTION:
         account && createTransaction();
         break;
-      case BuyingStage.TRANSACTION_RESULT:
+      case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id);
         setTimeout(() => {
           history.push({
@@ -184,16 +168,16 @@ function Buying(props: Props) {
     if (![TxStatus.SUCCESS, TxStatus.FAIL].includes(txResult.status)) return;
 
     switch (state.stage) {
-      case BuyingStage.ALLOWANCE_PENDING:
+      case RequestStage.ALLOWANCE_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? BuyingStage.TRANSACTION : BuyingStage.ALLOWANCE_RETRY
+          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION : RequestStage.ALLOWANCE_RETRY
         })
         break;
-      case BuyingStage.TRANSACTION_PENDING:
+      case RequestStage.TRANSACTION_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? BuyingStage.TRANSACTION_RESULT : BuyingStage.TRANSACTION_RETRY
+          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION_RESULT : RequestStage.TRANSACTION_RETRY
         })
         break;
     }

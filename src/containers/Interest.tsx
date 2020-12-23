@@ -14,7 +14,7 @@ import { completeTransactionRequest, getWhitelistRequest } from '../core/clients
 import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
-import InterestStage from '../core/enums/InterestStage';
+import RequestStage from '../core/enums/RequestStage';
 import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
@@ -24,7 +24,7 @@ type Props = {
 };
 
 type State = {
-  stage: InterestStage;
+  stage: RequestStage;
   loading: boolean;
   error: boolean;
   message: string;
@@ -40,7 +40,7 @@ function Interest(props: Props) {
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    stage: InterestStage.WHITELIST_CHECK,
+    stage: RequestStage.WHITELIST_CHECK,
     loading: false,
     error: false,
     message: '',
@@ -52,9 +52,9 @@ function Interest(props: Props) {
   const [interest, setInterest] = useState<string>('');
 
   const longLoading = [
-    InterestStage.WHITELIST_REQUEST,
-    InterestStage.WHITELIST_PENDING,
-    InterestStage.TRANSACTION_PENDING,
+    RequestStage.WHITELIST_REQUEST,
+    RequestStage.WHITELIST_PENDING,
+    RequestStage.TRANSACTION_PENDING,
   ].includes(state.stage);
 
   const connectWallet = () => {
@@ -76,7 +76,7 @@ function Interest(props: Props) {
     if (account !== props.transactionRequest.userAddresses[0]) {
       setState({
         ...state,
-        stage: InterestStage.WHITELIST_RETRY,
+        stage: RequestStage.WHITELIST_RETRY,
         message: props.transactionRequest.userAddresses[0].substr(0, 10) + '**',
       });
 
@@ -87,8 +87,8 @@ function Interest(props: Props) {
       setState({
         ...state,
         stage: res
-          ? InterestStage.TRANSACTION
-          : InterestStage.WHITELIST_REQUEST,
+          ? RequestStage.TRANSACTION
+          : RequestStage.WHITELIST_REQUEST,
       });
     });
   };
@@ -112,7 +112,7 @@ function Interest(props: Props) {
             ...state,
             error: false,
             loading: true,
-            stage: InterestStage.TRANSACTION_PENDING,
+            stage: RequestStage.TRANSACTION_PENDING,
             txHash,
           });
         })
@@ -120,7 +120,7 @@ function Interest(props: Props) {
           setState({
             ...state,
             message: error.message,
-            stage: InterestStage.TRANSACTION_RETRY,
+            stage: RequestStage.TRANSACTION_RETRY,
             error: true,
           });
         });
@@ -138,7 +138,7 @@ function Interest(props: Props) {
         } else {
           setState({
             ...state,
-            stage: InterestStage.WHITELIST_PENDING,
+            stage: RequestStage.WHITELIST_PENDING,
             txHash: res.data.txHash,
           });
         }
@@ -169,10 +169,10 @@ function Interest(props: Props) {
 
   useEffect(() => {
     switch (state.stage) {
-      case InterestStage.TRANSACTION:
+      case RequestStage.TRANSACTION:
         account && createTransaction();
         break;
-      case InterestStage.TRANSACTION_RESULT:
+      case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id);
         setTimeout(() => {
           history.push({
@@ -192,7 +192,7 @@ function Interest(props: Props) {
   useEffect(() => {
     let timer: number;
 
-    if (state.stage == InterestStage.WHITELIST_REQUEST) {
+    if (state.stage == RequestStage.WHITELIST_REQUEST) {
       timer = setTimeout(() => {
         requestWhitelist();
       }, 3000);
@@ -207,16 +207,16 @@ function Interest(props: Props) {
     if (![TxStatus.SUCCESS, TxStatus.FAIL].includes(txResult.status)) return;
 
     switch (state.stage) {
-      case InterestStage.TRANSACTION_PENDING:
+      case RequestStage.TRANSACTION_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? InterestStage.TRANSACTION_RESULT : InterestStage.TRANSACTION_RETRY
+          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION_RESULT : RequestStage.TRANSACTION_RETRY
         })
         break;
-      case InterestStage.WHITELIST_PENDING:
+      case RequestStage.WHITELIST_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? InterestStage.TRANSACTION : InterestStage.TRANSACTION_RETRY
+          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION : RequestStage.TRANSACTION_RETRY
         })
         break;
     }
@@ -240,8 +240,8 @@ function Interest(props: Props) {
             />
             {
               [
-                InterestStage.WHITELIST_RETRY,
-                InterestStage.TRANSACTION_RETRY,
+                RequestStage.WHITELIST_RETRY,
+                RequestStage.TRANSACTION_RETRY,
               ].includes(state.stage) && (
                 <Button
                   title={t(`Buying.${state.stage}Button`)}
