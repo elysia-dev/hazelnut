@@ -4,7 +4,6 @@ import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import { useAssetToken, useElysiaToken } from '../hooks/useContract';
-import { getElPrice } from '../core/clients/CoingeckoClient';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import BigNumber from 'bignumber.js';
@@ -16,6 +15,7 @@ import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
 import InterestStage from '../core/enums/InterestStage';
+import useElPrice from '../hooks/useElPrice';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -24,7 +24,6 @@ type Props = {
 type State = {
   stage: InterestStage;
   loading: boolean;
-  elPricePerToken: number;
   error: boolean;
   message: string;
   txHash: string;
@@ -37,13 +36,13 @@ function Interest(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elToken = useElysiaToken();
+  const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
     stage: InterestStage.WHITELIST_CHECK,
     loading: false,
-    elPricePerToken: 0.03,
     error: false,
     message: '',
     txHash: '',
@@ -68,23 +67,10 @@ function Interest(props: Props) {
       setInterest(
         new BigNumber(res.toString())
           .div(new BigNumber('1' + '0'.repeat(18)))
-          .div(new BigNumber(state.elPricePerToken))
+          .div(new BigNumber(elPricePerToken))
           .toFormat(3),
       );
     });
-  };
-
-  const loadElPrice = () => {
-    getElPrice()
-      .then(res => {
-        setState({
-          ...state,
-          elPricePerToken: res.data.elysia.usd,
-        });
-      })
-      .catch(e => {
-        setState({ ...state, error: true, message: t('Error.PriceServer') });
-      });
   };
 
   const getBalance = () => {
@@ -201,7 +187,6 @@ function Interest(props: Props) {
     });
   };
 
-  useEffect(loadElPrice, []);
   useEffect(connectWallet, []);
   useEffect(() => {
     if (!account) return;

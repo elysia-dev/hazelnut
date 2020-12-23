@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
-import { getElPrice } from '../core/clients/CoingeckoClient';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import { useAssetToken, useElysiaToken } from '../hooks/useContract';
@@ -15,13 +14,13 @@ import AddressBottomTab from '../components/AddressBottomTab';
 import { BigNumber } from 'bignumber.js';
 import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
+import useElPrice from '../hooks/useElPrice';
 
 type Props = {
   transactionRequest: TransactionRequest;
 };
 
 type State = {
-  elPricePerToken: number;
   loading: boolean;
   error: boolean;
   message: string;
@@ -35,11 +34,11 @@ function Refund(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elToken = useElysiaToken();
+  const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    elPricePerToken: 0.003,
     loading: false,
     error: false,
     message: '',
@@ -49,23 +48,10 @@ function Refund(props: Props) {
   const [balance, setBalance] = useState<Balance>(undefined);
 
   const expectedElValue = (props.transactionRequest.amount || 0) *
-    props.transactionRequest.product.usdPricePerToken / state.elPricePerToken;
+    props.transactionRequest.product.usdPricePerToken / elPricePerToken;
 
   const connectWallet = () => {
     activate(InjectedConnector);
-  };
-
-  const loadElPrice = () => {
-    getElPrice()
-      .then(res => {
-        setState({
-          ...state,
-          elPricePerToken: res.data.elysia.usd,
-        });
-      })
-      .catch(e => {
-        setState({ ...state, error: true, message: t('Error.PriceServer') });
-      });
   };
 
   const getBalance = () => {
@@ -136,7 +122,6 @@ function Refund(props: Props) {
   };
 
   useEffect(connectWallet, []);
-  useEffect(loadElPrice, []);
   useEffect(getBalance, [account]);
   useEffect(() => {
     if (account) {

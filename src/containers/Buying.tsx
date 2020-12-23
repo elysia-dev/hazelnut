@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
 import BuyingStage from '../core/enums/BuyingStage';
-import { getElPrice } from '../core/clients/CoingeckoClient';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import { useAssetToken, useElysiaToken } from '../hooks/useContract';
@@ -18,6 +17,7 @@ import {
 import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
 import TransactionType from '../core/enums/TransactionType';
+import useElPrice from '../hooks/useElPrice';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -25,7 +25,6 @@ type Props = {
 
 type State = {
   stage: BuyingStage;
-  elPricePerToken: number;
   loading: boolean;
   error: boolean;
   message: string;
@@ -40,12 +39,12 @@ function Buying(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elToken = useElysiaToken();
+  const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
     stage: BuyingStage.ALLOWANCE_CHECK,
-    elPricePerToken: 0.003,
     loading: true,
     error: false,
     message: '',
@@ -61,25 +60,11 @@ function Buying(props: Props) {
   ].includes(state.stage);
 
   const expectedElValue = (props.transactionRequest.amount || 0) *
-    props.transactionRequest.product.usdPricePerToken / state.elPricePerToken;
+    props.transactionRequest.product.usdPricePerToken / elPricePerToken;
   const expectedReturn =
     expectedElValue *
     parseFloat(props.transactionRequest.product.expectedAnnualReturn) *
     0.01;
-
-  const loadElPrice = () => {
-    getElPrice()
-      .then(res => {
-        setState({
-          ...state,
-          elPricePerToken: res.data.elysia.usd,
-          loading: false,
-        });
-      })
-      .catch(e => {
-        setState({ ...state, error: true });
-      });
-  };
 
   const checkAllowance = () => {
     elToken
@@ -193,7 +178,6 @@ function Buying(props: Props) {
     });
   };
 
-  useEffect(loadElPrice, []);
   useEffect(getTotalSupply, [assetToken]);
   useEffect(() => {
     if (!account) return;
