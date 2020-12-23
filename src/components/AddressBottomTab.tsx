@@ -1,13 +1,21 @@
+import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useElysiaToken } from '../hooks/useContract';
 import AccountIcon from './AccountIcon';
 
-type Props = {
-  address: string;
-  balance: BigNumber | undefined;
-};
+function AddressBottomTab() {
+  const elToken = useElysiaToken();
+  const [balance, setBalance] = useState<BigNumber | undefined>(undefined);
+  const { account } = useWeb3React();
 
-function AddressBottomTab(props: Props) {
+  useEffect(() => {
+    elToken?.balanceOf(account).then((res: BigNumber) => {
+      const balance = new BigNumber(res.toString());
+      setBalance(balance);
+    });
+  }, [account]);
+
   return (
     <div
       style={{
@@ -49,7 +57,7 @@ function AddressBottomTab(props: Props) {
               textAlign: 'center',
             }}
           >
-            {`${props.address.substring(0, 6)}...${props.address.substring(props.address.length - 4)}`}
+            {`${account?.substring(0, 6)}...${account?.substring(account?.length - 4)}`}
           </span>
           <div style={{ marginLeft: 10 }}>
             <AccountIcon />
@@ -70,8 +78,8 @@ function AddressBottomTab(props: Props) {
             {process.env.NODE_ENV === 'production' ? 'EL ' : 'ELRS '}
           </div>
           <div style={{ color: '#1C1C1C', fontSize: 15, fontWeight: 900, marginLeft: 5 }}>
-            {props.balance
-              ? (props.balance.toNumber() / 10 ** 18).toFixed(2)
+            {balance
+              ? (balance.toNumber() / 10 ** 18).toFixed(2)
               : 'Checking'}
           </div>
         </div>

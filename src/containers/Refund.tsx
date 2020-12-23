@@ -11,7 +11,6 @@ import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
-import { BigNumber } from 'bignumber.js';
 import TransactionType from '../core/enums/TransactionType';
 import Loading from '../components/Loading';
 import useElPrice from '../hooks/useElPrice';
@@ -26,8 +25,6 @@ type State = {
   message: string;
   txHash: string;
 };
-
-type Balance = BigNumber | undefined;
 
 function Refund(props: Props) {
   const { t } = useTranslation();
@@ -45,20 +42,12 @@ function Refund(props: Props) {
     txHash: '',
   });
   const [counter, setCounter] = useState<number>(0);
-  const [balance, setBalance] = useState<Balance>(undefined);
 
   const expectedElValue = (props.transactionRequest.amount || 0) *
     props.transactionRequest.product.usdPricePerToken / elPricePerToken;
 
   const connectWallet = () => {
     activate(InjectedConnector);
-  };
-
-  const getBalance = () => {
-    elToken?.balanceOf(account).then((res: BigNumber) => {
-      const balance = new BigNumber(res.toString());
-      setBalance(balance);
-    });
   };
 
   const createTransaction = () => {
@@ -122,7 +111,6 @@ function Refund(props: Props) {
   };
 
   useEffect(connectWallet, []);
-  useEffect(getBalance, [account]);
   useEffect(() => {
     if (account) {
       createTransaction();
@@ -175,7 +163,7 @@ function Refund(props: Props) {
               />
             )}
           </BoxLayout>
-          <AddressBottomTab address={account} balance={balance} />
+          <AddressBottomTab />
         </div>
       </>
     );

@@ -25,13 +25,11 @@ type Props = {
 
 type State = {
   stage: BuyingStage;
-  loading: boolean;
   error: boolean;
   message: string;
   txHash: string;
 };
 
-type Balance = BigNumber | undefined;
 type Supply = BigNumber | undefined;
 
 function Buying(props: Props) {
@@ -45,16 +43,14 @@ function Buying(props: Props) {
 
   const [state, setState] = useState<State>({
     stage: BuyingStage.ALLOWANCE_CHECK,
-    loading: true,
     error: false,
     message: '',
     txHash: '',
   });
 
   const [counter, setCounter] = useState<number>(0);
-  const [balance, setBalance] = useState<Balance>(undefined);
   const [totalSupply, setTotalSupply] = useState<Supply>(undefined);
-  const longLoading = [
+  const loading = [
     BuyingStage.ALLOWANCE_PENDING,
     BuyingStage.TRANSACTION_PENDING,
   ].includes(state.stage);
@@ -79,13 +75,6 @@ function Buying(props: Props) {
           message: '',
         });
       });
-  };
-
-  const getBalance = () => {
-    elToken?.balanceOf(account).then((res: BigNumber) => {
-      const balance = new BigNumber(res.toString());
-      setBalance(balance);
-    });
   };
 
   const createTransaction = () => {
@@ -181,7 +170,6 @@ function Buying(props: Props) {
   useEffect(getTotalSupply, [assetToken]);
   useEffect(() => {
     if (!account) return;
-    getBalance();
     checkAllowance();
   },
     [account]
@@ -248,8 +236,8 @@ function Buying(props: Props) {
   } else {
     return (
       <>
-        { longLoading && <Loading message={t(`Buying.${state.stage}`)} />}
-        <div style={{ filter: longLoading ? "blur(10px)" : "none" }}>
+        { loading && <Loading message={t(`Buying.${state.stage}`)} />}
+        <div style={{ filter: loading ? "blur(10px)" : "none" }}>
           <BoxLayout>
             <div style={{ height: 500 }}>
               <TxSummary
@@ -312,7 +300,7 @@ function Buying(props: Props) {
               )}
             </div>
           </BoxLayout>
-          <AddressBottomTab address={account} balance={balance} />
+          <AddressBottomTab />
         </div>
       </>
     );

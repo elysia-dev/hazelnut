@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import { useAssetToken, useElysiaToken } from '../hooks/useContract';
+import { useAssetToken } from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import BigNumber from 'bignumber.js';
@@ -29,13 +29,10 @@ type State = {
   txHash: string;
 };
 
-type Balance = BigNumber | undefined;
-
 function Interest(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
-  const elToken = useElysiaToken();
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
@@ -50,7 +47,6 @@ function Interest(props: Props) {
 
   const [interest, setInterest] = useState<string>('');
   const [counter, setCounter] = useState<number>(0);
-  const [balance, setBalance] = useState<Balance>(undefined);
 
   const longLoading = [
     InterestStage.WHITELIST_REQUEST,
@@ -70,13 +66,6 @@ function Interest(props: Props) {
           .div(new BigNumber(elPricePerToken))
           .toFormat(3),
       );
-    });
-  };
-
-  const getBalance = () => {
-    elToken?.balanceOf(account).then((res: BigNumber) => {
-      const balance = new BigNumber(res.toString());
-      setBalance(balance);
     });
   };
 
@@ -190,7 +179,6 @@ function Interest(props: Props) {
   useEffect(connectWallet, []);
   useEffect(() => {
     if (!account) return;
-    getBalance();
     loadInterest();
     checkWhitelisted();
   }, [account]);
@@ -281,7 +269,7 @@ function Interest(props: Props) {
               )
             }
           </BoxLayout>
-          <AddressBottomTab address={account} balance={balance} />
+          <AddressBottomTab />
         </div>
       </>
     );
