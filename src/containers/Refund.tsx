@@ -48,10 +48,8 @@ function Refund(props: Props) {
   const [counter, setCounter] = useState<number>(0);
   const [balance, setBalance] = useState<Balance>(undefined);
 
-  const expectedUsdValue =
-    (props.transactionRequest.amount || 0) *
-    props.transactionRequest.product.usdPricePerToken;
-  const expectedElValue = expectedUsdValue / state.elPricePerToken;
+  const expectedElValue = (props.transactionRequest.amount || 0) *
+    props.transactionRequest.product.usdPricePerToken / state.elPricePerToken;
 
   const connectWallet = () => {
     activate(InjectedConnector);

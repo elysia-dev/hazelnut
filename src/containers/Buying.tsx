@@ -60,18 +60,12 @@ function Buying(props: Props) {
     BuyingStage.TRANSACTION_PENDING,
   ].includes(state.stage);
 
-  const expectedUsdValue =
-    (props.transactionRequest.amount || 0) *
-    props.transactionRequest.product.usdPricePerToken;
-  const expectedElValue = expectedUsdValue / state.elPricePerToken;
+  const expectedElValue = (props.transactionRequest.amount || 0) *
+    props.transactionRequest.product.usdPricePerToken / state.elPricePerToken;
   const expectedReturn =
     expectedElValue *
     parseFloat(props.transactionRequest.product.expectedAnnualReturn) *
     0.01;
-
-  const connectWallet = () => {
-    activate(InjectedConnector);
-  };
 
   const loadElPrice = () => {
     getElPrice()
@@ -199,7 +193,6 @@ function Buying(props: Props) {
     });
   };
 
-  useEffect(connectWallet, []);
   useEffect(loadElPrice, []);
   useEffect(getTotalSupply, [assetToken]);
   useEffect(() => {
@@ -267,7 +260,7 @@ function Buying(props: Props) {
   if (state.error) {
     return <ServerError message={state.message} />;
   } else if (!account) {
-    return <ConnectWallet handler={connectWallet} />;
+    return <ConnectWallet handler={() => { activate(InjectedConnector) }} />;
   } else {
     return (
       <>
