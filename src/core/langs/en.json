@@ -10,7 +10,7 @@
       "WhitelistPending": "Waiting for transaction.",
       "AllowanceCheck": "Token Value Check",
       "AllowanceRetry": "You do not have a sufficient allowance amount.\nPlease make an allowance amount transaction to proceed.",
-      "AllowanceRetryButton": "Allow AssetToken to spend your EL",
+      "AllowanceRetryButton": "Allow Elysia to spend your EL",
       "AllowancePending": "Waiting for transaction",
       "Transaction": "Create a transaction",
       "TransactionPending": "Waiting for transaction",
