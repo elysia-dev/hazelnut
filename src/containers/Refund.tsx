@@ -124,7 +124,7 @@ function Refund(props: Props) {
   } else {
     return (
       <div>
-        <BoxLayout style={{ background: '#F9F9F9' }}>
+        <BoxLayout>
           <TxSummary
             outUnit={props.transactionRequest.product.tokenName}
             outValue={props.transactionRequest.amount.toString()}

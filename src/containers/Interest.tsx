@@ -239,7 +239,7 @@ function Interest(props: Props) {
   } else {
     return (
       <div>
-        <BoxLayout style={{ background: '#F9F9F9' }}>
+        <BoxLayout>
           <TxSummary
             inUnit={'EL'}
             inValue={interest}
