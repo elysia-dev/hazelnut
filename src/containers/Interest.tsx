@@ -160,6 +160,18 @@ function Interest(props: Props) {
           showConfirmButton: false,
         })
         break;
+      case RequestStage.WHITELIST_RETRY:
+        RetrySwal.fire({
+          icon: 'error',
+          confirmButtonText: t('Retry'),
+          html: `${t('Buying.WhitelistRetry')}<br>${props.transactionRequest.userAddresses[0]}`,
+          showCloseButton: true
+        }).then((res) => {
+          if (res.isConfirmed) {
+            checkWhitelisted();
+          }
+        })
+        break;
       case RequestStage.TRANSACTION:
         SwalWithReact.close();
         account && createTransaction();

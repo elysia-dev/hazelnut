@@ -103,7 +103,7 @@ function Refund(props: Props) {
         ),
         imageUrl: RefundSuccess,
         imageWidth: 275,
-        allowOutsideClick: false,
+        showConfirmButton: false,
       })
     } else if (txResult.status === TxStatus.FAIL) {
       RetrySwal.fire({
