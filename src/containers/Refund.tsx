@@ -17,6 +17,7 @@ import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
+import useDeeplink from '../hooks/useDeeplink';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -32,6 +33,7 @@ function Refund(props: Props) {
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
+  const deeplink = useDeeplink();
 
   const [state, setState] = useState<State>({
     txHash: '',
@@ -112,6 +114,7 @@ function Refund(props: Props) {
         allowOutsideClick: false,
       }).then((res) => {
         if (res.isConfirmed) {
+          deeplink.goToApp();
         }
       })
     } else if (txResult.status === TxStatus.FAIL) {

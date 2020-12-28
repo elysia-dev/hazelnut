@@ -38,7 +38,8 @@
     "styled-components": "^5.2.0",
     "sweetalert2": "^10.12.5",
     "sweetalert2-react-content": "^3.2.2",
-    "typescript": "~3.7.2"
+    "typescript": "~3.7.2",
+    "use-mobile-detect-hook": "^1.0.3"
   },
   "scripts": {
     "start": "PORT=5000 react-scripts start",
