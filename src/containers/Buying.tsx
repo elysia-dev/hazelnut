@@ -22,7 +22,6 @@ import TxStatus from '../core/enums/TxStatus';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import BuyingSuccess from './../images/success_buying.svg';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
-import useDeeplink from '../hooks/useDeeplink';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -41,7 +40,6 @@ function Buying(props: Props) {
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const totalSupply = useTotalSupply(props.transactionRequest.product.contractAddress);
-  const deeplink = useDeeplink();
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -192,14 +190,10 @@ function Buying(props: Props) {
                 : '--',
             }
           ),
-          confirmButtonText: t('Completion.ReturnToApp'),
+          showConfirmButton: false,
           imageUrl: BuyingSuccess,
           imageWidth: 275,
           allowOutsideClick: false,
-        }).then((res) => {
-          if (res.isConfirmed) {
-            deeplink.goToApp();
-          }
         })
         break;
       default:

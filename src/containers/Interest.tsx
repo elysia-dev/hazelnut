@@ -18,7 +18,6 @@ import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import InterestSuccess from './../images/success_interest.svg';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
-import useDeeplink from '../hooks/useDeeplink';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -37,7 +36,6 @@ function Interest(props: Props) {
   const elPricePerToken = useElPrice();
   const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
   const { id } = useParams<{ id: string }>();
-  const deeplink = useDeeplink();
 
   const [state, setState] = useState<State>({
     stage: RequestStage.WHITELIST_CHECK,
@@ -188,14 +186,10 @@ function Interest(props: Props) {
               value: interest
             }
           ),
-          confirmButtonText: t('Completion.ReturnToApp'),
           imageUrl: InterestSuccess,
           imageWidth: 180,
           allowOutsideClick: false,
-        }).then((res) => {
-          if (res.isConfirmed) {
-            deeplink.goToApp();
-          }
+          showConfirmButton: false,
         })
         break;
       default:
