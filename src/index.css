@@ -58,3 +58,7 @@ code {
 .swal2-error {
   margin-top: 52px !important;
 }
+
+button:active {
+  opacity: 0.7;
+}

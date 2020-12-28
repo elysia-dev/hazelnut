@@ -8,7 +8,7 @@ type Props = {
 
 function Button(props: Props) {
   return (
-    <div
+    <button
       style={{
         ...props.style,
         backgroundColor: "#3679B5",
@@ -18,13 +18,12 @@ function Button(props: Props) {
         cursor: "pointer",
         marginLeft: 'auto',
         marginRight: 'auto',
-        maxWidth: 340,
+        width: "100%",
       }}
       onClick={props.clickHandler}
     >
       <div
         style={{
-          paddingTop: 14,
           color: "#fff",
           fontSize: 16,
           textAlign: "center",
@@ -33,7 +32,7 @@ function Button(props: Props) {
       >
         {props.title}
       </div>
-    </div>
+    </button>
   )
 }
 
