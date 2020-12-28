@@ -18,6 +18,7 @@ import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import InterestSuccess from './../images/success_interest.svg';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
+import Button from '../components/Button';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -142,7 +143,10 @@ function Interest(props: Props) {
   useEffect(() => {
     if (!account) return;
     loadInterest();
-    checkWhitelisted();
+    setState({
+      ...state,
+      stage: RequestStage.WHITELIST_CHECK
+    })
   }, [account]);
 
   useEffect(() => {
@@ -165,7 +169,7 @@ function Interest(props: Props) {
           text: t('Buying.TransactionRetry'),
           icon: 'error',
           confirmButtonText: t('Retry'),
-          allowOutsideClick: false,
+          showCloseButton: true
         }).then((res) => {
           if (res.isConfirmed) {
             setState({
@@ -244,10 +248,16 @@ function Interest(props: Props) {
             title={t('Interest.Title')}
             transactionRequest={props.transactionRequest}
           />
+          <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
+            <Button
+              clickHandler={() => { checkWhitelisted() }}
+              title={t("Buying.TransactionRetryButton")}
+            />
+          </div>
           <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab />
-      </div>
+      </div >
     );
   }
 }

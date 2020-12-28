@@ -77,7 +77,7 @@ function Refund(props: Props) {
               text: error.message,
               icon: 'error',
               confirmButtonText: t('Buying.TransactionRetryButton'),
-              allowOutsideClick: false,
+              showCloseButton: true,
             }).then((res) => {
               if (res.isConfirmed) {
                 createTransaction();
@@ -88,11 +88,6 @@ function Refund(props: Props) {
   };
 
   useEffect(connectWallet, []);
-  useEffect(() => {
-    if (account) {
-      createTransaction();
-    }
-  }, [account]);
 
   useEffect(() => {
     if (txResult.status === TxStatus.SUCCESS) {
@@ -109,14 +104,13 @@ function Refund(props: Props) {
         imageUrl: RefundSuccess,
         imageWidth: 275,
         allowOutsideClick: false,
-        showConfirmButton: false,
       })
     } else if (txResult.status === TxStatus.FAIL) {
       RetrySwal.fire({
         text: t('Buying.TransactionRetry'),
         icon: 'error',
         confirmButtonText: t('Retry'),
-        allowOutsideClick: false,
+        showConfirmButton: true,
       }).then((res) => {
         if (res.isConfirmed) {
           createTransaction();
@@ -139,6 +133,12 @@ function Refund(props: Props) {
             title={t('Refund.Title')}
             transactionRequest={props.transactionRequest}
           />
+          <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
+            <Button
+              clickHandler={() => { createTransaction() }}
+              title={t("Buying.TransactionRetryButton")}
+            />
+          </div>
           <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab />

@@ -28,7 +28,7 @@ function Button(props: Props) {
           color: "#fff",
           fontSize: 16,
           textAlign: "center",
-          fontWeight: 300,
+          fontWeight: "bold",
         }}
       >
         {props.title}

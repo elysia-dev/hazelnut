@@ -22,6 +22,7 @@ import TxStatus from '../core/enums/TxStatus';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import BuyingSuccess from './../images/success_buying.svg';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
+import Button from '../components/Button';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -150,11 +151,11 @@ function Buying(props: Props) {
         RetrySwal.fire({
           text: t('Buying.AllowanceRetry'),
           icon: 'info',
-          confirmButtonText: t('Retry'),
-          allowOutsideClick: false,
+          confirmButtonText: t('Buying.TransactionRetryButton'),
+          showCloseButton: true,
         }).then((res) => {
           if (res.isConfirmed) {
-            approve();
+            approve()
           }
         })
         break;
@@ -163,7 +164,7 @@ function Buying(props: Props) {
           text: t('Buying.TransactionRetry'),
           icon: 'error',
           confirmButtonText: t('Retry'),
-          allowOutsideClick: false,
+          showCloseButton: true,
         }).then((res) => {
           if (res.isConfirmed) {
             setState({
@@ -238,10 +239,10 @@ function Buying(props: Props) {
           />
           <div
             style={{
-              height: 40,
               backgroundColor: "#F6F6F8",
               margin: "0px 15px",
               padding: "0px 15px",
+              paddingBottom: 10,
               borderBottomLeftRadius: 10,
               borderBottomRightRadius: 10,
               marginBottom: 100,
@@ -271,6 +272,11 @@ function Buying(props: Props) {
                 </strong>
               </div>
             </div>
+            <Button
+              style={{ marginTop: 20 }}
+              clickHandler={() => { setState({ ...state, stage: RequestStage.ALLOWANCE_CHECK }) }}
+              title={t("Buying.TransactionRetryButton")}
+            />
           </div>
         </BoxLayout>
         <AddressBottomTab />
