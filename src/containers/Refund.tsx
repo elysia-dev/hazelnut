@@ -15,7 +15,7 @@ import Loading from '../components/Loading';
 import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
-import Swal, { SwalWithReact } from '../core/utils/Swal';
+import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
 
 type Props = {
@@ -115,10 +115,10 @@ function Refund(props: Props) {
         }
       })
     } else if (txResult.status === TxStatus.FAIL) {
-      Swal.fire({
+      RetrySwal.fire({
         text: t('Buying.TransactionRetry'),
         icon: 'error',
-        confirmButtonText: t('Buying.TransactionRetryButton'),
+        confirmButtonText: t('Retry'),
         allowOutsideClick: false,
       }).then((res) => {
         if (res.isConfirmed) {

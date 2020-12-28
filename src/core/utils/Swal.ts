@@ -12,5 +12,15 @@ const Swal = Sweetalert2.mixin({
 })
 
 export const SwalWithReact = withReactContent(Swal);
+export const RetrySwal = Sweetalert2.mixin({
+  customClass: {
+    popup: 'modal-content',
+    confirmButton: 'modal-btn-retry',
+    actions: 'modal-actions',
+    title: 'modal-title',
+  },
+  allowOutsideClick: false,
+})
+
 
 export default Swal;

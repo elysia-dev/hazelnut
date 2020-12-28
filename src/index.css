@@ -22,12 +22,24 @@ code {
   font-weight: bold !important;
   height: 50px !important;
 }
+.modal-btn-retry {
+  background-color: #ffffff !important;
+  border-radius: 5px !important;
+  border: solid 2px #f27474 !important;
+  width: 100% !important;
+  color: black !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  height: 50px !important;
+}
 .modal-actions {
   padding: 0 !important;
+  margin-top: auto !important;
 }
 .modal-content {
   padding: 48px 15px 36px 15px !important;
   border-radius: 10px !important;
+  min-height: 476px;
 }
 .modal-title {
   font-size: 25px !important;
@@ -36,4 +48,7 @@ code {
 }
 .swal2-html-container {
   color: #1c1c1c !important;
+}
+.swal2-error {
+  margin-top: 52px !important;
 }

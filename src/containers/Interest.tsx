@@ -17,7 +17,7 @@ import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import InterestSuccess from './../images/success_interest.svg';
-import Swal, { SwalWithReact } from '../core/utils/Swal';
+import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -161,10 +161,10 @@ function Interest(props: Props) {
         account && createTransaction();
         break;
       case RequestStage.TRANSACTION_RETRY:
-        Swal.fire({
+        RetrySwal.fire({
           text: t('Buying.TransactionRetry'),
           icon: 'error',
-          confirmButtonText: t('Buying.TransactionRetryButton'),
+          confirmButtonText: t('Retry'),
           allowOutsideClick: false,
         }).then((res) => {
           if (res.isConfirmed) {
