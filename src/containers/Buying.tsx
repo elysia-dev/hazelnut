@@ -234,48 +234,47 @@ function Buying(props: Props) {
     return (
       <div>
         <BoxLayout>
-          <div style={{ height: 500 }}>
-            <TxSummary
-              inUnit={props.transactionRequest.product.tokenName}
-              inValue={props.transactionRequest.amount.toString()}
-              outUnit={'EL'}
-              outValue={expectedElValue.toFixed(2)}
-              title={t('Buying.CreateTransaction')}
-              transactionRequest={props.transactionRequest}
-            />
+          <TxSummary
+            inUnit={props.transactionRequest.product.tokenName}
+            inValue={props.transactionRequest.amount.toString()}
+            outUnit={'EL'}
+            outValue={expectedElValue.toFixed(2)}
+            title={t('Buying.CreateTransaction')}
+            transactionRequest={props.transactionRequest}
+          />
+          <div
+            style={{
+              height: 40,
+              backgroundColor: "#F6F6F8",
+              margin: "0px 15px",
+              padding: "0px 15px",
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+              marginBottom: 100,
+            }}
+          >
+            <div style={{ fontSize: 10 }}>
+              {t('Buying.Annual')}
+            </div>
             <div
               style={{
-                height: 40,
-                backgroundColor: "#F6F6F8",
-                margin: "0px 15px",
-                padding: "0px 15px",
-                borderBottomLeftRadius: 10,
-                borderBottomRightRadius: 10,
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
               }}
             >
-              <div style={{ fontSize: 10 }}>
-                {t('Buying.Annual')}
+              <div
+                style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
+              >
+                {t('Buying.ExpectedReturn')}
               </div>
               <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
+                style={{ color: '#1c1c1c', fontSize: 15 }}
               >
-                <div
-                  style={{ color: '#1c1c1c', fontWeight: 'bold', fontSize: 15 }}
-                >
-                  {t('Buying.ExpectedReturn')}
-                </div>
-                <div
-                  style={{ color: '#1c1c1c', fontSize: 15 }}
-                >
-                  EL
+                EL
                    <strong style={{ marginLeft: "5px" }}>
-                    {expectedReturn.toFixed(2)}
-                  </strong>
-                </div>
+                  {expectedReturn.toFixed(2)}
+                </strong>
               </div>
             </div>
           </div>

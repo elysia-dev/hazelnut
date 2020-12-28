@@ -11,14 +11,16 @@ function BoxLayout(props: Props) {
       style={{
         width: '100%',
         minHeight: '100%',
-        position: 'fixed',
+        maxWidth: 500,
+        margin: "auto",
         ...props.style,
       }}
     >
       <div
         style={{
           margin: 'auto',
-          marginTop: 90,
+          height: "100%",
+          overflowY: "scroll"
         }}
       >
         {props.children}

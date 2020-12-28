@@ -52,7 +52,7 @@ const Logo = (props: LogoProps) => {
 
 const TxSummary = (props: Props) => {
   return (
-    <div style={{ margin: "0px 15px" }}>
+    <div style={{ margin: "0px 15px", paddingTop: 10 }}>
       <div
         style={{
           fontSize: 25,

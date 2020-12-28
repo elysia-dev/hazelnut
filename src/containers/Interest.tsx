@@ -250,6 +250,7 @@ function Interest(props: Props) {
             title={t('Interest.Title')}
             transactionRequest={props.transactionRequest}
           />
+          <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab />
       </div>

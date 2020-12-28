@@ -145,6 +145,7 @@ function Refund(props: Props) {
             title={t('Refund.Title')}
             transactionRequest={props.transactionRequest}
           />
+          <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab />
       </div>
