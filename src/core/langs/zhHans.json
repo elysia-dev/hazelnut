@@ -1,26 +1,26 @@
 {
   "translation": {
     "Buying": {
-      "CreateTransaction": "创建新的交易",
+      "CreateTransaction": "开始新的投资",
       "WhitelistCheck": "正在验证白名单",
       "WhitelistCheckComplete": "白名单验证完成",
       "WhitelistRetryButton": "重新验证白名单按钮",
       "WhitelistRetry": "重新验证白名单",
-      "WhitelistRequest": "请求elysia服务器",
-      "WhitelistPending": "等待允许交易",
+      "WhitelistRequest": "服务器缓冲中",
+      "WhitelistPending": "请稍等",
       "AllowanceCheck": "正在验证余额",
-      "AllowanceRetry": "重新验证余额。",
+      "AllowanceRetry": "请确认投资金额",
       "AllowanceRetryButton": "允许AssetToken花费您的EL",
-      "AllowancePending": "等待允许交易",
-      "Transaction": "交易",
+      "AllowancePending": "请稍等",
+      "Transaction": "确认投资",
       "TransactionResult": "交易结果。",
-      "TransactionPending": "等待允许交易",
-      "TransactionRetry": "无法创建交易。",
-      "TransactionRetryButton": "交易",
+      "TransactionPending": "请稍等",
+      "TransactionRetry": "系统开小差",
+      "TransactionRetryButton": "确认投资",
       "Annual": "年",
       "ExpectedReturn": "度预期收益"
     },
-    "Retry": "Retry",
+    "Retry": "请再次尝试",
     "Refund": {
       "Title": "退款"
     },
@@ -28,10 +28,10 @@
       "Title": "领取奖励"
     },
     "Completion": {
-      "Interest": "取出收益完成",
-      "Buying": "成功获得所有权",
+      "Interest": "收益提现完成",
+      "Buying": "成功获得房地产所有权！",
       "Refund": "退款完成",
-      "InterestResult": "收到了爱立厦(Elysia) {{product}}的租金收益 EL币 {{value}}",
+      "InterestResult": "收到了爱立厦(Elysia) {{product}} 的收益{{value}}个EL代币",
       "BuyingResult": "恭喜您成为爱立厦(Elysia) {{product}} {{value}}的房地产房主之一啦",
       "RefundResult": "爱立厦(Elysia) {{product}}投资EL代币{{value}}退款完成!",
       "ReturnToApp": "请在手机应用程序上确认"
@@ -43,7 +43,7 @@
       "InstallMetamask": "请安装Metamask钱包。",
       "AlreadyInstalled": "如果已经安装好Metamask钱包, ",
       "PleaseReload": "请按右下按钮重新加载。",
-      "TransactionCancled": "Transaction cancelled"
+      "TransactionCancled": "系统开小差"
     },
     "Register": {
       "ConnectWallet": "绑定钱包",
