@@ -74,7 +74,7 @@ function Refund(props: Props) {
           })
           .catch((error: any) => {
             Swal.fire({
-              text: error.message,
+              text: t('Error.TransactionCancled'),
               icon: 'error',
               confirmButtonText: t('Buying.TransactionRetryButton'),
               showCloseButton: true,

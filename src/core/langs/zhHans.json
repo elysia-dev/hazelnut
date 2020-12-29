@@ -42,7 +42,8 @@
       "InvalidAddress": "这是不正确的钱包地址，请再输入一次。",
       "InstallMetamask": "请安装Metamask钱包。",
       "AlreadyInstalled": "如果已经安装好Metamask钱包, ",
-      "PleaseReload": "请按右下按钮重新加载。"
+      "PleaseReload": "请按右下按钮重新加载。",
+      "TransactionCancled": "Transaction cancelled"
     },
     "Register": {
       "ConnectWallet": "绑定钱包",

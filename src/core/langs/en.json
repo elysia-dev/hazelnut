@@ -5,17 +5,17 @@
       "WhitelistCheck": "Checking Whitelist",
       "WhitelistCheckComplete": "Whitelist check complete",
       "WhitelistRetryButton": "Redo",
-      "WhitelistRetry": "Unable to check whitelist.\nPlease connect to the address below.",
-      "WhitelistRequest": "Requesting to elysia server.",
-      "WhitelistPending": "Waiting for transaction.",
+      "WhitelistRetry": "Unable to check whitelist,\nPlease connect to the address below",
+      "WhitelistRequest": "Requesting Elysia",
+      "WhitelistPending": "Waiting for transaction",
       "AllowanceCheck": "Token Value Check",
-      "AllowanceRetry": "You do not have a sufficient allowance amount.\nPlease make an allowance amount transaction to proceed.",
+      "AllowanceRetry": "You do not have a sufficient allowance amount\nPlease make an allowance amount transaction to proceed",
       "AllowanceRetryButton": "Allow Elysia to spend your EL",
       "AllowancePending": "Waiting for transaction",
       "Transaction": "Create a transaction",
       "TransactionPending": "Waiting for transaction",
-      "TransactionResult": "Transaction for property token swap has been successfully created.",
-      "TransactionRetry": "Unable to create tx.",
+      "TransactionResult": "Transaction for property token swap has been successfully created",
+      "TransactionRetry": "Unable to create tx",
       "TransactionRetryButton": "Create a transaction",
       "Annual": "Annual",
       "ExpectedReturn": "Expected return"
@@ -28,27 +28,28 @@
       "Title": "Claim reward"
     },
     "Completion": {
-      "Interest": "수익출금 완료!",
-      "Buying": "지분소유 완료!",
-      "Refund": "환불 완료!",
-      "InterestResult": "엘리시아 {{product}}의<br>이자수익 EL {{value}}를 받으셨습니다!",
-      "BuyingResult": "엘리시아 {{product}}의<br>지분 {{value}}%의 <b>건물주</b>가 되셨습니다!",
-      "RefundResult": "엘리시아 {{product}}의<br>투자금 EL {{value}}이 환불되었습니다!",
-      "ReturnToApp": "앱에서 확인하기"
+      "Interest": "Withdrawal complete",
+      "Buying": "Purchase complete",
+      "Refund": "Refund complete",
+      "InterestResult": "You have received EL {{value}} from {{product}}",
+      "BuyingResult": "You now own {{value}}% of {{product}}!",
+      "RefundResult": "Your investment of EL {{value}} from {{product}} has been returned",
+      "ReturnToApp": "Return to app"
     },
     "Error": {
-      "PriceServer": "EL price information could not be loaded.",
-      "BalanceServer": "EL balance information could not be loaded.",
-      "InvalidAddress": "Invalid address. Try again.",
-      "InstallMetamask": "Install metamask.",
+      "PriceServer": "EL price information could not be loaded",
+      "BalanceServer": "EL balance information could not be loaded",
+      "InvalidAddress": "Invalid address, Try again",
+      "InstallMetamask": "Install metamask",
       "AlreadyInstalled": "If you installed metamask,",
-      "PleaseReload": "Click the reload button."
+      "PleaseReload": "Click the reload button",
+      "TransactionCancled": "Transaction cancelled"
     },
     "Register": {
       "ConnectWallet": "Connect Wallet",
       "Connect": "Connect",
-      "Connected": "Your address is registerd.",
-      "Duplicated": "Wallet address is duplicated. Use other address."
+      "Connected": "Your address is registerd",
+      "Duplicated": "Wallet address is duplicated, Use other address"
     }
   }
 }
