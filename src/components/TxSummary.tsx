@@ -80,7 +80,7 @@ const TxSummary = (props: Props) => {
         style={{
           backgroundImage: `url(${props.transactionRequest.product.data.images[0]})`,
           backgroundRepeat: "no-repeat",
-          backgroundPosition: "bottom",
+          backgroundPosition: "center",
           backgroundSize: "cover",
           height: 175,
           borderBottomRightRadius: 5,
