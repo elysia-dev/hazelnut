@@ -44,7 +44,7 @@ function Buying(props: Props) {
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    stage: RequestStage.ALLOWANCE_CHECK,
+    stage: RequestStage.WHITELIST_CHECK,
     error: false,
     txHash: '',
   });
@@ -123,14 +123,10 @@ function Buying(props: Props) {
     if (!account) return;
     Swal.close();
 
-    if (state.stage === RequestStage.ALLOWANCE_CHECK) {
-      checkAllowance();
-    } else {
-      setState({
-        ...state,
-        stage: RequestStage.ALLOWANCE_CHECK,
-      })
-    }
+    setState({
+      ...state,
+      stage: RequestStage.WHITELIST_CHECK,
+    })
   },
     [account]
   );
