@@ -8,7 +8,7 @@
       "WhitelistRetry": "Unable to check whitelist,\nPlease connect to the address below",
       "WhitelistRequest": "Requesting Elysia",
       "WhitelistPending": "Waiting for transaction",
-      "AllowanceCheck": "Token Value Check",
+      "AllowanceCheck": "Check allowance amount",
       "AllowanceRetry": "You do not have a sufficient allowance amount\nPlease make an allowance amount transaction to proceed",
       "AllowanceRetryButton": "Allow Elysia to spend your EL",
       "AllowancePending": "Waiting for transaction",

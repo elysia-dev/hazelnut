@@ -141,6 +141,11 @@ function Buying(props: Props) {
         })
         break;
       case RequestStage.ALLOWANCE_CHECK:
+        SwalWithReact.fire({
+          html: <Loading />,
+          title: t(`Buying.${state.stage}`),
+          showConfirmButton: false,
+        })
         account && checkAllowance();
         break;
       case RequestStage.ALLOWANCE_RETRY:
