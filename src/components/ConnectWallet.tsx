@@ -13,6 +13,7 @@ function ConnectWallet(props: Props) {
       <div
         style={{
           height: 200,
+          padding: "0px 10px"
         }}
       >
         <div
@@ -48,7 +49,7 @@ function ConnectWallet(props: Props) {
           ELYSIA
           </div>
       </div>
-      <div style={{ marginTop: 90 }}>
+      <div style={{ marginTop: 90, padding: "0px 10px" }}>
         <Button
           clickHandler={props.handler}
           title="Connect wallet"
