@@ -1,8 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import Button from '../Button';
 
 function InstallMetamask() {
   const { t } = useTranslation();
+
+  function refreshPage() {
+    window.location.reload();
+  }
 
   return (
     <div
@@ -10,6 +15,7 @@ function InstallMetamask() {
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: '50%',
+        padding: '0px 10px',
       }}
     >
       <h1
@@ -31,16 +37,10 @@ function InstallMetamask() {
       >
         {t('Error.AlreadyInstalled')}
       </p>
-      <p
-        style={{
-          fontWeight: 200,
-          alignSelf: 'center',
-          textAlign: 'center',
-          color: '#A7A7A7',
-        }}
-      >
-        {t('Error.PleaseReload')}
-      </p>
+      <Button
+        clickHandler={refreshPage}
+        title={t('Error.PleaseReload')}
+      />
     </div>
   );
 }

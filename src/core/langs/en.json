@@ -40,9 +40,9 @@
       "PriceServer": "EL price information could not be loaded",
       "BalanceServer": "EL balance information could not be loaded",
       "InvalidAddress": "Invalid address, Try again",
-      "InstallMetamask": "Install metamask",
+      "InstallMetamask": "Metamask not loaded",
       "AlreadyInstalled": "If you installed metamask,",
-      "PleaseReload": "Click the reload button",
+      "PleaseReload": "Reload",
       "TransactionCancled": "Transaction cancelled"
     },
     "Register": {

@@ -12,6 +12,7 @@ import { getTransactionRequest } from "../core/clients/EspressoClient";
 import { useTranslation } from "react-i18next";
 import LanguageType from "../core/enums/LanguageType";
 import AddressBottomTab from "../components/AddressBottomTab";
+import InstallMetamask from "../components/errors/InstallMetamask";
 
 type ParamTypes = {
   id: string
@@ -48,27 +49,7 @@ function Requests() {
       );
     } else {
       return (
-        <div style={{ justifyContent: 'center', justifyItems: 'center' }}>
-          <div style={{ width: 312, height: 20, marginLeft: 'auto', marginRight: 'auto', display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-            <button
-              style={{
-                backgroundColor: "#D0D8DF",
-                borderRadius: 10,
-                borderWidth: 0,
-                width: 312,
-                height: 50,
-                cursor: 'pointer'
-              }}
-              onClick={() =>
-                window.location.href = 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en'
-              }
-            >
-              <p style={{ color: "#fff", fontWeight: "bold", fontSize: 15 }}>
-                Install Metamask
-          </p>
-            </button>
-          </div>
-        </div>
+        <InstallMetamask />
       )
     }
   } else {
@@ -78,7 +59,6 @@ function Requests() {
       </div>
     )
   }
-
 }
 
 export default Requests;
