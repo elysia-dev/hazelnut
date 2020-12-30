@@ -13,9 +13,10 @@ export const getTransactionRequest = (
 
 export const completeTransactionRequest = (
   id: string,
+  txHash: string,
 ): Promise<AxiosResponse<void>> => {
   return Axios.put(
-    `${process.env.REACT_APP_API_URL}/transactionRequests/${id}/complete`,
+    `${process.env.REACT_APP_API_URL}/transactionRequests/${id}/complete/${txHash}`,
   );
 };
 

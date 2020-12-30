@@ -91,7 +91,7 @@ function Refund(props: Props) {
 
   useEffect(() => {
     if (txResult.status === TxStatus.SUCCESS) {
-      completeTransactionRequest(id);
+      completeTransactionRequest(id, state.txHash);
       Swal.fire({
         title: t('Completion.Refund'),
         html: t(

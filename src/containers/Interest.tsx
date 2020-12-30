@@ -192,7 +192,7 @@ function Interest(props: Props) {
         })
         break;
       case RequestStage.TRANSACTION_RESULT:
-        completeTransactionRequest(id);
+        completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Interest'),
           html: t(

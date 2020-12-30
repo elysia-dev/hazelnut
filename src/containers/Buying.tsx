@@ -179,7 +179,7 @@ function Buying(props: Props) {
         account && createTransaction();
         break;
       case RequestStage.TRANSACTION_RESULT:
-        completeTransactionRequest(id);
+        completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Buying'),
           html: t(
