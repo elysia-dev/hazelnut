@@ -1,5 +1,5 @@
-import Sweetalert2 from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
+import Sweetalert2 from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const Swal = Sweetalert2.mixin({
   customClass: {
@@ -9,7 +9,7 @@ const Swal = Sweetalert2.mixin({
     title: 'modal-title',
   },
   allowOutsideClick: false,
-})
+});
 
 export const SwalWithReact = withReactContent(Swal);
 export const RetrySwal = Sweetalert2.mixin({
@@ -20,7 +20,6 @@ export const RetrySwal = Sweetalert2.mixin({
     title: 'modal-title',
   },
   allowOutsideClick: false,
-})
-
+});
 
 export default Swal;
