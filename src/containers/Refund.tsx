@@ -30,7 +30,9 @@ function Refund(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const elPricePerToken = useElPrice();
-  const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
+  const assetToken = useAssetToken(
+    props.transactionRequest.product.contractAddress,
+  );
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -38,8 +40,10 @@ function Refund(props: Props) {
   });
   const txResult = useWatingTx(state.txHash);
 
-  const expectedElValue = (props.transactionRequest.amount || 0) *
-    props.transactionRequest.product.usdPricePerToken / elPricePerToken;
+  const expectedElValue =
+    ((props.transactionRequest.amount || 0) *
+      props.transactionRequest.product.usdPricePerToken) /
+    elPricePerToken;
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -66,7 +70,7 @@ function Refund(props: Props) {
               html: <Loading />,
               title: t('Buying.TransactionPending'),
               showConfirmButton: false,
-            })
+            });
             setState({
               ...state,
               txHash,
@@ -78,11 +82,11 @@ function Refund(props: Props) {
               icon: 'error',
               confirmButtonText: t('Buying.TransactionRetryButton'),
               showCloseButton: true,
-            }).then((res) => {
+            }).then(res => {
               if (res.isConfirmed) {
                 createTransaction();
               }
-            })
+            });
           });
       });
   };
@@ -94,28 +98,26 @@ function Refund(props: Props) {
       completeTransactionRequest(id, state.txHash);
       Swal.fire({
         title: t('Completion.Refund'),
-        html: t(
-          'Completion.RefundResult',
-          {
-            product: props.transactionRequest.product.title,
-            value: expectedElValue.toFixed(2)
-          }
-        ),
+        html: `<div style="font-size: 15px;"> ${t('Completion.RefundResult', {
+          product: props.transactionRequest.product.title,
+          value: expectedElValue.toFixed(2),
+        })}
+        </div>`,
         imageUrl: RefundSuccess,
         imageWidth: 275,
         showConfirmButton: false,
-      })
+      });
     } else if (txResult.status === TxStatus.FAIL) {
       RetrySwal.fire({
         text: t('Buying.TransactionRetry'),
         icon: 'error',
         confirmButtonText: t('Retry'),
         showConfirmButton: true,
-      }).then((res) => {
+      }).then(res => {
         if (res.isConfirmed) {
           createTransaction();
         }
-      })
+      });
     }
   }, [txResult.status]);
 
@@ -135,8 +137,10 @@ function Refund(props: Props) {
           />
           <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Button
-              clickHandler={() => { createTransaction() }}
-              title={t("Buying.TransactionRetryButton")}
+              clickHandler={() => {
+                createTransaction();
+              }}
+              title={t('Buying.TransactionRetryButton')}
             />
           </div>
           <div style={{ height: 100 }}></div>

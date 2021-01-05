@@ -9,7 +9,10 @@ import TxSummary from '../components/TxSummary';
 import BigNumber from 'bignumber.js';
 import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
-import { completeTransactionRequest, getWhitelistRequest } from '../core/clients/EspressoClient';
+import {
+  completeTransactionRequest,
+  getWhitelistRequest,
+} from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
 import Loading from '../components/Loading';
 import RequestStage from '../core/enums/RequestStage';
@@ -35,7 +38,9 @@ function Interest(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elPricePerToken = useElPrice();
-  const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
+  const assetToken = useAssetToken(
+    props.transactionRequest.product.contractAddress,
+  );
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -82,9 +87,7 @@ function Interest(props: Props) {
     assetToken?.isWhitelisted(account).then((res: any) => {
       setState({
         ...state,
-        stage: res
-          ? RequestStage.TRANSACTION
-          : RequestStage.WHITELIST_REQUEST,
+        stage: res ? RequestStage.TRANSACTION : RequestStage.WHITELIST_REQUEST,
       });
     });
   };
@@ -145,8 +148,8 @@ function Interest(props: Props) {
     loadInterest();
     setState({
       ...state,
-      stage: RequestStage.WHITELIST_CHECK
-    })
+      stage: RequestStage.WHITELIST_CHECK,
+    });
   }, [account]);
 
   useEffect(() => {
@@ -158,19 +161,21 @@ function Interest(props: Props) {
           html: <Loading />,
           title: t(`Buying.${state.stage}`),
           showConfirmButton: false,
-        })
+        });
         break;
       case RequestStage.WHITELIST_RETRY:
         RetrySwal.fire({
           icon: 'error',
           confirmButtonText: t('Retry'),
-          html: `${t('Buying.WhitelistRetry')}<br>${props.transactionRequest.userAddresses[0]}`,
-          showCloseButton: true
-        }).then((res) => {
+          html: `${t('Buying.WhitelistRetry')}<br>${
+            props.transactionRequest.userAddresses[0]
+          }`,
+          showCloseButton: true,
+        }).then(res => {
           if (res.isConfirmed) {
             checkWhitelisted();
           }
-        })
+        });
         break;
       case RequestStage.TRANSACTION:
         SwalWithReact.close();
@@ -181,32 +186,33 @@ function Interest(props: Props) {
           text: t('Buying.TransactionRetry'),
           icon: 'error',
           confirmButtonText: t('Retry'),
-          showCloseButton: true
-        }).then((res) => {
+          showCloseButton: true,
+        }).then(res => {
           if (res.isConfirmed) {
             setState({
               ...state,
               stage: RequestStage.TRANSACTION,
-            })
+            });
           }
-        })
+        });
         break;
       case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Interest'),
-          html: t(
+          html: `<div style="font-size: 15px;"> ${t(
             'Completion.InterestResult',
             {
               product: props.transactionRequest.product.title,
-              value: interest
-            }
-          ),
+              value: interest,
+            },
+          )}
+          </div>`,
           imageUrl: InterestSuccess,
           imageWidth: 180,
           allowOutsideClick: false,
           showConfirmButton: false,
-        })
+        });
         break;
       default:
         return;
@@ -234,14 +240,20 @@ function Interest(props: Props) {
       case RequestStage.TRANSACTION_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION_RESULT : RequestStage.TRANSACTION_RETRY
-        })
+          stage:
+            txResult.status === TxStatus.SUCCESS
+              ? RequestStage.TRANSACTION_RESULT
+              : RequestStage.TRANSACTION_RETRY,
+        });
         break;
       case RequestStage.WHITELIST_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION : RequestStage.TRANSACTION_RETRY
-        })
+          stage:
+            txResult.status === TxStatus.SUCCESS
+              ? RequestStage.TRANSACTION
+              : RequestStage.TRANSACTION_RETRY,
+        });
         break;
     }
   }, [txResult.status]);
@@ -262,14 +274,16 @@ function Interest(props: Props) {
           />
           <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Button
-              clickHandler={() => { checkWhitelisted() }}
-              title={t("Buying.TransactionRetryButton")}
+              clickHandler={() => {
+                checkWhitelisted();
+              }}
+              title={t('Buying.TransactionRetryButton')}
             />
           </div>
           <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab />
-      </div >
+      </div>
     );
   }
 }

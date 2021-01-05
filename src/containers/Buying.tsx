@@ -11,9 +11,7 @@ import TxSummary from '../components/TxSummary';
 import Loading from '../components/Loading';
 import BoxLayout from '../components/BoxLayout';
 import { useParams } from 'react-router-dom';
-import {
-  completeTransactionRequest,
-} from '../core/clients/EspressoClient';
+import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
 import { useElPrice, useTotalSupply } from '../hooks/useElysia';
@@ -39,8 +37,12 @@ function Buying(props: Props) {
   const { activate, library, account } = useWeb3React();
   const elToken = useElysiaToken();
   const elPricePerToken = useElPrice();
-  const assetToken = useAssetToken(props.transactionRequest.product.contractAddress);
-  const totalSupply = useTotalSupply(props.transactionRequest.product.contractAddress);
+  const assetToken = useAssetToken(
+    props.transactionRequest.product.contractAddress,
+  );
+  const totalSupply = useTotalSupply(
+    props.transactionRequest.product.contractAddress,
+  );
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -51,8 +53,10 @@ function Buying(props: Props) {
 
   const txResult = useWatingTx(state.txHash);
 
-  const expectedElValue = (props.transactionRequest.amount || 0) *
-    props.transactionRequest.product.usdPricePerToken / elPricePerToken;
+  const expectedElValue =
+    ((props.transactionRequest.amount || 0) *
+      props.transactionRequest.product.usdPricePerToken) /
+    elPricePerToken;
   const expectedReturn =
     expectedElValue *
     parseFloat(props.transactionRequest.product.expectedAnnualReturn) *
@@ -76,16 +80,27 @@ function Buying(props: Props) {
     assetToken?.populateTransaction
       .purchase(props.transactionRequest.amount)
       .then(populatedTransaction => {
-        sendTx(populatedTransaction, RequestStage.TRANSACTION_PENDING, RequestStage.TRANSACTION_RETRY);
+        sendTx(
+          populatedTransaction,
+          RequestStage.TRANSACTION_PENDING,
+          RequestStage.TRANSACTION_RETRY,
+        );
       });
   };
 
   const approve = () => {
     elToken?.populateTransaction
-      .approve(props.transactionRequest.product.contractAddress, '1' + '0'.repeat(25))
+      .approve(
+        props.transactionRequest.product.contractAddress,
+        '1' + '0'.repeat(25),
+      )
       .then(populatedTransaction => {
-        sendTx(populatedTransaction, RequestStage.ALLOWANCE_PENDING, RequestStage.ALLOWANCE_CHECK);
-      })
+        sendTx(
+          populatedTransaction,
+          RequestStage.ALLOWANCE_PENDING,
+          RequestStage.ALLOWANCE_CHECK,
+        );
+      });
   };
 
   const sendTx = (
@@ -117,7 +132,7 @@ function Buying(props: Props) {
           stage: prevStage,
         });
       });
-  }
+  };
 
   useEffect(() => {
     if (!account) return;
@@ -126,39 +141,40 @@ function Buying(props: Props) {
     setState({
       ...state,
       stage: RequestStage.WHITELIST_CHECK,
-    })
-  },
-    [account]
-  );
+    });
+  }, [account]);
 
   useEffect(() => {
     switch (state.stage) {
-      case RequestStage.ALLOWANCE_PENDING: case RequestStage.TRANSACTION_PENDING:
+      case RequestStage.ALLOWANCE_PENDING:
+      case RequestStage.TRANSACTION_PENDING:
         SwalWithReact.fire({
           html: <Loading />,
           title: t(`Buying.${state.stage}`),
           showConfirmButton: false,
-        })
+        });
         break;
       case RequestStage.ALLOWANCE_CHECK:
         SwalWithReact.fire({
           html: <Loading />,
           title: t(`Buying.${state.stage}`),
           showConfirmButton: false,
-        })
+        });
         account && checkAllowance();
         break;
       case RequestStage.ALLOWANCE_RETRY:
         RetrySwal.fire({
-          text: t('Buying.AllowanceRetry'),
+          html: `<div style="font-size:15px; margin-top: 20px;"> ${t(
+            'Buying.AllowanceRetry',
+          )}</div>`,
           icon: 'info',
           confirmButtonText: t('Buying.TransactionRetryButton'),
           showCloseButton: true,
-        }).then((res) => {
+        }).then(res => {
           if (res.isConfirmed) {
-            approve()
+            approve();
           }
-        })
+        });
         break;
       case RequestStage.TRANSACTION_RETRY:
         RetrySwal.fire({
@@ -166,14 +182,14 @@ function Buying(props: Props) {
           icon: 'error',
           confirmButtonText: t('Retry'),
           showCloseButton: true,
-        }).then((res) => {
+        }).then(res => {
           if (res.isConfirmed) {
             setState({
               ...state,
               stage: RequestStage.TRANSACTION,
-            })
+            });
           }
-        })
+        });
         break;
       case RequestStage.TRANSACTION:
         SwalWithReact.close();
@@ -183,20 +199,25 @@ function Buying(props: Props) {
         completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Buying'),
-          html: t(
-            'Completion.BuyingResult',
-            {
-              product: props.transactionRequest.product.title,
-              value: totalSupply ?
-                (new BigNumber(props.transactionRequest.amount)).div(totalSupply).multipliedBy(100).toFixed(1)
-                : '--',
-            }
-          ),
+          html: `<div style="font-size:15px;">
+              ${t('Completion.BuyingResult', {
+                product: props.transactionRequest.product.title,
+                value: totalSupply
+                  ? new BigNumber(props.transactionRequest.amount)
+                      .div(totalSupply)
+                      .multipliedBy(100)
+                      .toFixed(1)
+                  : '--',
+              })}
+              <br />
+              ${t('Buying.Success')}
+            </div>
+          `,
           showConfirmButton: false,
           imageUrl: BuyingSuccess,
           imageWidth: 275,
           allowOutsideClick: false,
-        })
+        });
         break;
       default:
         return;
@@ -210,14 +231,20 @@ function Buying(props: Props) {
       case RequestStage.ALLOWANCE_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION : RequestStage.ALLOWANCE_RETRY
-        })
+          stage:
+            txResult.status === TxStatus.SUCCESS
+              ? RequestStage.TRANSACTION
+              : RequestStage.ALLOWANCE_RETRY,
+        });
         break;
       case RequestStage.TRANSACTION_PENDING:
         setState({
           ...state,
-          stage: txResult.status === TxStatus.SUCCESS ? RequestStage.TRANSACTION_RESULT : RequestStage.TRANSACTION_RETRY
-        })
+          stage:
+            txResult.status === TxStatus.SUCCESS
+              ? RequestStage.TRANSACTION_RESULT
+              : RequestStage.TRANSACTION_RETRY,
+        });
         break;
     }
   }, [txResult.status]);
@@ -225,7 +252,13 @@ function Buying(props: Props) {
   if (state.error) {
     return <ServerError />;
   } else if (!account) {
-    return <ConnectWallet handler={() => { activate(InjectedConnector) }} />;
+    return (
+      <ConnectWallet
+        handler={() => {
+          activate(InjectedConnector);
+        }}
+      />
+    );
   } else {
     return (
       <div>
@@ -240,18 +273,16 @@ function Buying(props: Props) {
           />
           <div
             style={{
-              backgroundColor: "#F6F6F8",
-              margin: "0px 15px",
-              padding: "0px 15px",
+              backgroundColor: '#F6F6F8',
+              margin: '0px 15px',
+              padding: '0px 15px',
               paddingBottom: 10,
               borderBottomLeftRadius: 10,
               borderBottomRightRadius: 10,
               marginBottom: 100,
             }}
           >
-            <div style={{ fontSize: 10 }}>
-              {t('Buying.Annual')}
-            </div>
+            <div style={{ fontSize: 10 }}>{t('Buying.Annual')}</div>
             <div
               style={{
                 display: 'flex',
@@ -264,19 +295,19 @@ function Buying(props: Props) {
               >
                 {t('Buying.ExpectedReturn')}
               </div>
-              <div
-                style={{ color: '#1c1c1c', fontSize: 15 }}
-              >
+              <div style={{ color: '#1c1c1c', fontSize: 15 }}>
                 EL
-                   <strong style={{ marginLeft: "5px" }}>
+                <strong style={{ marginLeft: '5px' }}>
                   {expectedReturn.toFixed(2)}
                 </strong>
               </div>
             </div>
             <Button
               style={{ marginTop: 20 }}
-              clickHandler={() => { setState({ ...state, stage: RequestStage.ALLOWANCE_CHECK }) }}
-              title={t("Buying.TransactionRetryButton")}
+              clickHandler={() => {
+                setState({ ...state, stage: RequestStage.ALLOWANCE_CHECK });
+              }}
+              title={t('Buying.TransactionRetryButton')}
             />
           </div>
         </BoxLayout>
