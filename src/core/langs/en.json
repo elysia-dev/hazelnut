@@ -18,9 +18,14 @@
       "TransactionRetry": "Unable to create tx",
       "TransactionRetryButton": "Create a transaction",
       "Annual": "Annual",
-      "ExpectedReturn": "Expected return"
+      "ExpectedReturn": "Expected return",
+      "Success": "Go back to the Elysia app<br>and check out purchased asset!"
     },
     "Retry": "Retry",
+    "Loading": {
+      "Maximum": "It may take up to two minutes",
+      "PleaseWait": "Please don't shut down and wait"
+    },
     "Refund": {
       "Title": "Refund"
     },

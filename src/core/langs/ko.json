@@ -5,11 +5,11 @@
       "WhitelistCheck": "Whitelist 확인 중",
       "WhitelistCheckComplete": "Whitelist 확인 완료",
       "WhitelistRetryButton": "다시하기",
-      "WhitelistRetry": "화이트 리스트 확인에 실패했습니다\n아래 주소로 연결해주세요",
+      "WhitelistRetry": "화이트 리스트 확인에 실패했습니다<br>아래 주소로 연결해주세요",
       "WhitelistRequest": "엘리시아 서버로 요청중입니다",
       "WhitelistPending": "트랜잭션 대기중",
       "AllowanceCheck": "허용 금액 확인",
-      "AllowanceRetry": "충분한 허용 금액을 가지고 있지 않습니다\n진행을 위해 허용 금액 트랜잭션을 만들어 주세요",
+      "AllowanceRetry": "충분한 허용 금액을 가지고 있지 않습니다<br>진행을 위해 허용 금액 트랜잭션을<br> 만들어 주세요",
       "AllowanceRetryButton": "Elysia의 EL 출금 허용하기",
       "AllowancePending": "트랜잭션 대기중",
       "Transaction": "트랜잭션 생성",
@@ -18,9 +18,14 @@
       "TransactionRetry": "트랜잭션을 만들 수 없습니다",
       "TransactionRetryButton": "트랜잭션 생성",
       "Annual": "연",
-      "ExpectedReturn": "기대 적립금"
+      "ExpectedReturn": "기대 적립금",
+      "Success": "엘리시아 앱으로 돌아가서<br>구매한 상품을 확인해보세요!"
     },
     "Retry": "다시 시도하기",
+    "Loading": {
+      "Maximum": "최대 2분 소요될 수 있습니다",
+      "PleaseWait": "종료하지 마시고 기다려주세요!"
+    },
     "Refund": {
       "Title": "환불하기"
     },
@@ -32,9 +37,9 @@
       "Buying": "부동산 구매 완료!",
       "Refund": "환불 완료!",
       "InterestResult": "엘리시아 {{product}}의<br>이자수익 EL {{value}}를 받으셨습니다!",
-      "BuyingResult": "{{product}}의<br>지분 {{value}}%를 확보하셨습니다",
+      "BuyingResult": "{{product}}의<br>지분 {{value}}%를 확보하셨습니다.",
       "RefundResult": "엘리시아 {{product}}의<br>투자금 EL {{value}}이 환불되었습니다!",
-      "ReturnToApp": "앱에서 확인하기"
+      "ReturnToApp": "앱으로 돌아가기"
     },
     "Error": {
       "PriceServer": "EL 가격 정보를 불러오지 못했습니다",

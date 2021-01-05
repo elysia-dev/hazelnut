@@ -18,9 +18,14 @@
       "TransactionRetry": "系统开小差",
       "TransactionRetryButton": "确认投资",
       "Annual": "年",
-      "ExpectedReturn": "度预期收益"
+      "ExpectedReturn": "度预期收益",
+      "Success": "请回到爱立厦(ELYSIA)APP页面后,<br>再次确认购买的房地产产品。"
     },
     "Retry": "请再次尝试",
+    "Loading": {
+      "Maximum": "最多需要2分钟",
+      "PleaseWait": "正在运行中，请稍等。"
+    },
     "Refund": {
       "Title": "退款"
     },
