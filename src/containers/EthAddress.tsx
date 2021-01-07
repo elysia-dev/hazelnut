@@ -7,7 +7,7 @@ import Register from '../components/Register';
 import { checkValidRegister } from '../core/clients/EspressoClient';
 import { useTranslation } from 'react-i18next';
 import InstallMetamask from '../components/errors/InstallMetamask';
-import LanguageType from "../core/enums/LanguageType";
+import LanguageType from '../core/enums/LanguageType';
 import { setServers } from 'dns';
 
 type ParamTypes = {
@@ -22,7 +22,7 @@ function EthAddress() {
 
   useEffect(() => {
     checkValidRegister(id)
-      .then((res) => {
+      .then(res => {
         i18n.changeLanguage(res.data.language || LanguageType.EN);
         setLoading(false);
       })
@@ -34,7 +34,7 @@ function EthAddress() {
   }, []);
 
   if (id !== undefined && !loading) {
-    if (window.ethereum?.isMetaMask) {
+    if (window.ethereum?.isMetaMask || window.ethereum?.isImToken) {
       return (
         <Web3ReactProvider getLibrary={getLibrary}>
           <Register id={id} />
