@@ -5,6 +5,7 @@ import InjectedConnector from '../core/connectors/InjectedConnector';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { registerEthAddress } from '../core/clients/EspressoClient';
+import Logo from './../images/logo.png';
 
 type Props = {
   id: string;
@@ -129,17 +130,14 @@ function Register(props: Props) {
         }}
       >
         <img
-          src={require('../images/metamask_logo.png')}
-          srcSet={`${require('../images/metamask_logo@2x.png')} 2x, ${require('../images/metamask_logo@3x.png')} 3x`}
+          src={Logo}
           style={{
             display: 'flex',
             width: 90,
-            height: 90,
+            // height: 90,
             marginLeft: 'auto',
             marginRight: 'auto',
             alignSelf: 'center',
-            // marginTop: 30,
-            // marginBottom: 30,
           }}
         />
       </div>
