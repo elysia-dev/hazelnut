@@ -15,7 +15,7 @@ function InstallMetamask() {
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: '50%',
-        padding: '0px 10px',
+        padding: '0% 5%',
       }}
     >
       <h1
@@ -33,14 +33,12 @@ function InstallMetamask() {
           alignSelf: 'center',
           textAlign: 'center',
           color: '#A7A7A7',
+          bottom: 75,
         }}
       >
         {t('Error.AlreadyInstalled')}
       </p>
-      <Button
-        clickHandler={refreshPage}
-        title={t('Error.PleaseReload')}
-      />
+      <Button clickHandler={refreshPage} title={t('Error.PleaseReload')} />
     </div>
   );
 }
