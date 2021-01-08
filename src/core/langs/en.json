@@ -45,7 +45,7 @@
       "PriceServer": "EL price information could not be loaded",
       "BalanceServer": "EL balance information could not be loaded",
       "InvalidAddress": "Invalid address, Try again",
-      "InstallMetamask": "Metamask not loaded",
+      "InstallMetamask": "Cannot load Metamask or ImToken",
       "AlreadyInstalled": "If you installed metamask,",
       "PleaseReload": "Reload",
       "TransactionCancled": "Transaction cancelled"

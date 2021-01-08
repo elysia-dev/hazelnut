@@ -45,7 +45,7 @@
       "PriceServer": "EL 가격 정보를 불러오지 못했습니다",
       "BalanceServer": "EL 잔고를 불러오지 못했습니다",
       "InvalidAddress": "올바르지 않은 지갑 주소입니다 다시 시도해주세요",
-      "InstallMetamask": "메타마스크 로드 안됨",
+      "InstallMetamask": "메타마스크 혹은 아임토큰을 로드할 수 없습니다",
       "AlreadyInstalled": "이미 설치하셨다면,",
       "PleaseReload": "다시 로드하기",
       "TransactionCancled": "트랜잭션이 거절되었습니다"
