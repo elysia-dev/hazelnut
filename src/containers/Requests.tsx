@@ -42,7 +42,6 @@ function Requests() {
 
   if (transactionRequest) {
     if (window.ethereum?.isMetaMask || window.ethereum?.isImToken) {
-      console.log(window.ethereum);
       return (
         <div>
           <Web3ReactProvider getLibrary={getLibrary}>
