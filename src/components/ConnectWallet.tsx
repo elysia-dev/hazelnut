@@ -59,7 +59,7 @@ function ConnectWallet(props: Props) {
         style={{
           position: 'fixed',
           width: '95%',
-          bottom: 15,
+          bottom: 20,
           padding: '0px 10px',
         }}
       >
