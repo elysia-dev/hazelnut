@@ -61,7 +61,6 @@ function Refund(props: Props) {
                 to: populatedTransaction.to,
                 from: account,
                 data: populatedTransaction.data,
-                chainId: 3,
               },
             ],
           })
