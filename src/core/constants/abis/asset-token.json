@@ -13,7 +13,11 @@
         "internalType": "uint256",
         "name": "rewardPerBlock_",
         "type": "uint256"
-      }
+      },
+      { "internalType": "uint256", "name": "latitude_", "type": "uint256" },
+      { "internalType": "uint256", "name": "longitude_", "type": "uint256" },
+      { "internalType": "uint256", "name": "assetPrice_", "type": "uint256" },
+      { "internalType": "uint256", "name": "interestRate_", "type": "uint256" }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -80,6 +84,19 @@
       }
     ],
     "name": "NewRewardPerBlock",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "priceContractAddress",
+        "type": "address"
+      }
+    ],
+    "name": "NewSetPriceContract",
     "type": "event"
   },
   {
@@ -226,6 +243,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "_assetPrice",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "name": "_balances",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -242,6 +266,27 @@
   {
     "inputs": [],
     "name": "_elPrice",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_interestRate",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_latitude",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_longitude",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -374,6 +419,13 @@
   },
   {
     "inputs": [],
+    "name": "getOracleContract",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getPrice",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -479,6 +531,15 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "oracle_price",
+    "outputs": [
+      { "internalType": "contract OraclePrice", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "uint256", "name": "amount", "type": "uint256" }
     ],
@@ -509,7 +570,7 @@
     "inputs": [
       { "internalType": "address[]", "name": "accounts", "type": "address[]" }
     ],
-    "name": "removeAddressesToWhitelist",
+    "name": "removeAddressesFromWhitelist",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -548,6 +609,19 @@
       { "internalType": "uint256", "name": "price_", "type": "uint256" }
     ],
     "name": "setPrice",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "priceContractAddress_",
+        "type": "address"
+      }
+    ],
+    "name": "setPriceContract",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "nonpayable",
     "type": "function"
