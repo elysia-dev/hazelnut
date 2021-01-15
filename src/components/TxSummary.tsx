@@ -55,28 +55,43 @@ const TxSummary = (props: Props) => {
     <div style={{ margin: '0px 15px', paddingTop: 10 }}>
       <div
         style={{
-          fontSize: 25,
-          fontWeight: 'bold',
-          marginBottom: 12,
-          textAlign: 'center',
-          whiteSpace: 'pre-wrap',
+          flexDirection: 'row',
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
-        {props.title}
-      </div>
-      <div style={{ textAlign: 'center', marginBottom: 30 }}>
-        <span
+        <div
           style={{
-            background: '#F6F6F8',
-            padding: '4px 19px',
-            fontSize: 15,
-            color: '#5C5B5B',
-            borderRadius: 5,
+            fontSize: 20,
             fontWeight: 'bold',
+            marginBottom: 12,
+            textAlign: 'right',
+            whiteSpace: 'pre-wrap',
           }}
         >
-          {props.transactionRequest.product.tokenName}
-        </span>
+          {props.title}
+        </div>
+        <div
+          style={{
+            paddingTop: 2,
+            marginLeft: 10,
+            textAlign: 'center',
+            marginBottom: 30,
+          }}
+        >
+          <span
+            style={{
+              background: '#F6F6F8',
+              padding: '4px 19px',
+              fontSize: 15,
+              color: '#5C5B5B',
+              borderRadius: 5,
+              fontWeight: 'bold',
+            }}
+          >
+            {props.transactionRequest.product.tokenName}
+          </span>
+        </div>
       </div>
       <div
         style={{
