@@ -143,6 +143,19 @@ function Interest(props: Props) {
   };
 
   useEffect(() => {
+    if (account && props.transactionRequest.userAddresses[0] !== account) {
+      RetrySwal.fire({
+        html: `<div style="font-size:15px; margin-top: 20px;">
+          ${t('Error.CheckAccount')}
+          </div>`,
+        icon: 'info',
+        confirmButtonText: t('Error.Check'),
+        showCloseButton: true,
+      });
+    }
+  }, [account]);
+
+  useEffect(() => {
     if (!account) return;
     loadInterest();
     setState({

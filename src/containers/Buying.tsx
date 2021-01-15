@@ -145,6 +145,19 @@ function Buying(props: Props) {
   }, [account]);
 
   useEffect(() => {
+    if (account && props.transactionRequest.userAddresses[0] !== account) {
+      RetrySwal.fire({
+        html: `<div style="font-size:15px; margin-top: 20px;">
+          ${t('Error.CheckAccount')}
+          </div>`,
+        icon: 'info',
+        confirmButtonText: t('Error.Check'),
+        showCloseButton: true,
+      });
+    }
+  }, [account]);
+
+  useEffect(() => {
     switch (state.stage) {
       case RequestStage.ALLOWANCE_PENDING:
       case RequestStage.TRANSACTION_PENDING:
