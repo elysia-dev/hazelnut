@@ -48,7 +48,9 @@
       "InstallMetamask": "Metamask或ImToken加载失败",
       "AlreadyInstalled": "如果已经安装好Metamask钱包, ",
       "PleaseReload": "重新加载",
-      "TransactionCancled": "系统开小差"
+      "TransactionCancled": "系统开小差",
+      "CheckAccount": "该钱包地址没有和爱立厦(ELYSIA)App绑定。<br>请再次检查钱包地址。",
+      "Check": "确认"
     },
     "Register": {
       "ConnectWallet": "绑定钱包",

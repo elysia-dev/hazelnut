@@ -48,7 +48,9 @@
       "InstallMetamask": "Cannot load Metamask or ImToken",
       "AlreadyInstalled": "If you installed metamask,",
       "PleaseReload": "Reload",
-      "TransactionCancled": "Transaction cancelled"
+      "TransactionCancled": "Transaction cancelled",
+      "CheckAccount": "This address isn't registered with the Elysia app.<br>Please check the address.",
+      "Check": "Check"
     },
     "Register": {
       "ConnectWallet": "Connect Wallet",
