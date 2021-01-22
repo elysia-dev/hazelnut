@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import { Web3Provider } from '@ethersproject/providers'
 import getContract from '../core/utils/getContract'
 import { useWeb3React } from '@web3-react/core'
-import ASSET_TOKEN_ABI from '../core/constants/abis/asset-token.json';
 import ERC20_ABI from '../core/constants/abis/erc20.json';
+import ContractResponse from '../core/types/ContratResponse'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
@@ -21,10 +21,8 @@ function useContract(address: string | undefined, ABI: any, withSignerIfPossible
   }, [address, ABI, library, withSignerIfPossible, account])
 }
 
-export function useAssetToken(address: string): Contract | null {
-  return useContract(address, ASSET_TOKEN_ABI, false)
-}
-
 export function useElysiaToken(): Contract | null {
   return useContract(process.env.REACT_APP_ELYSIA_TOKEN_ADDRESS, ERC20_ABI, false)
 }
+
+export default useContract

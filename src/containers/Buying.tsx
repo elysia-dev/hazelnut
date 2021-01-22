@@ -4,7 +4,7 @@ import TransactionRequest from '../core/types/TransactionRequest';
 import RequestStage from '../core/enums/RequestStage';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import { useAssetToken, useElysiaToken } from '../hooks/useContract';
+import useContract, { useElysiaToken } from '../hooks/useContract';
 import { BigNumber } from 'bignumber.js';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
@@ -14,13 +14,14 @@ import { useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
-import { useElPrice, useTotalSupply } from '../hooks/useElysia';
+import { useElPrice, useEthPrice, useTotalSupply } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import BuyingSuccess from './../images/success_buying.svg';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import Button from '../components/Button';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -36,13 +37,10 @@ function Buying(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const elToken = useElysiaToken();
-  const elPricePerToken = useElPrice();
-  const assetToken = useAssetToken(
-    props.transactionRequest.product.contractAddress,
-  );
-  const totalSupply = useTotalSupply(
-    props.transactionRequest.product.contractAddress,
-  );
+  const elPrice = useElPrice();
+  const ethPrice = useEthPrice();
+  const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
+  const totalSupply = useTotalSupply(assetToken);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -53,23 +51,33 @@ function Buying(props: Props) {
 
   const txResult = useWatingTx(state.txHash);
 
-  const expectedElValue =
+  const expectedOutValue =
     ((props.transactionRequest.amount || 0) *
       props.transactionRequest.product.usdPricePerToken) /
-    elPricePerToken;
+    (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ? ethPrice : elPrice);
+
   const expectedReturn =
-    expectedElValue *
+    expectedOutValue *
     parseFloat(props.transactionRequest.product.expectedAnnualReturn) *
     0.01;
 
   const checkAllowance = () => {
+    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
+      setState({
+        ...state,
+        stage: RequestStage.TRANSACTION
+      })
+
+      return;
+    }
+
     elToken
       ?.allowance(account, props.transactionRequest.product.contractAddress)
       .then((res: BigNumber) => {
         const allownace = new BigNumber(res.toString());
         setState({
           ...state,
-          stage: allownace.gte(new BigNumber(expectedElValue + '0'.repeat(18)))
+          stage: allownace.gte(new BigNumber(expectedOutValue + '0'.repeat(18)))
             ? RequestStage.TRANSACTION
             : RequestStage.ALLOWANCE_RETRY,
         });
@@ -212,14 +220,14 @@ function Buying(props: Props) {
           title: t('Completion.Buying'),
           html: `<div style="font-size:15px;">
               ${t('Completion.BuyingResult', {
-                product: props.transactionRequest.product.title,
-                value: totalSupply
-                  ? new BigNumber(props.transactionRequest.amount)
-                      .div(totalSupply)
-                      .multipliedBy(100)
-                      .toFixed(1)
-                  : '--',
-              })}
+            product: props.transactionRequest.product.title,
+            value: totalSupply
+              ? new BigNumber(props.transactionRequest.amount)
+                .div(totalSupply)
+                .multipliedBy(100)
+                .toFixed(1)
+              : '--',
+          })}
               <br />
               ${t('Buying.Success')}
             </div>
@@ -277,8 +285,8 @@ function Buying(props: Props) {
           <TxSummary
             inUnit={props.transactionRequest.product.tokenName}
             inValue={props.transactionRequest.amount.toString()}
-            outUnit={'EL'}
-            outValue={expectedElValue.toFixed(2)}
+            outUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
+            outValue={expectedOutValue.toFixed(2)}
             title={t('Buying.CreateTransaction')}
             transactionRequest={props.transactionRequest}
           />
@@ -307,7 +315,7 @@ function Buying(props: Props) {
                 {t('Buying.ExpectedReturn')}
               </div>
               <div style={{ color: '#1c1c1c', fontSize: 15 }}>
-                EL
+                {props.transactionRequest.product.paymentMethod.toUpperCase()}
                 <strong style={{ marginLeft: '5px' }}>
                   {expectedReturn.toFixed(2)}
                 </strong>

@@ -1,7 +1,7 @@
+import { Contract } from '@ethersproject/contracts';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react'
-import { getElPrice } from '../core/clients/CoingeckoClient'
-import { useAssetToken } from './useContract';
+import { getElPrice, getEthPrice } from '../core/clients/CoingeckoClient'
 
 export function useElPrice(): number {
   const [price, setPrice] = useState<number>(0.3);
@@ -15,17 +15,28 @@ export function useElPrice(): number {
   return price;
 }
 
-export function useTotalSupply(address: string): BigNumber {
-  const [totalSupply, setTotalSupply] = useState<BigNumber>(new BigNumber(0));
-  const assetToken = useAssetToken(address);
+export function useEthPrice(): number {
+  const [price, setPrice] = useState<number>(0.3);
 
   useEffect(() => {
-    assetToken?.totalSupply().then((res: BigNumber) => {
+    getEthPrice().then((res) => {
+      setPrice(res.data.ethereum.usd)
+    })
+  }, [])
+
+  return price;
+}
+
+export function useTotalSupply(contract: Contract | null): BigNumber {
+  const [totalSupply, setTotalSupply] = useState<BigNumber>(new BigNumber(0));
+
+  useEffect(() => {
+    contract?.totalSupply().then((res: BigNumber) => {
       const supply = new BigNumber(res.toString());
       setTotalSupply(supply);
     });
 
-  }, [assetToken])
+  }, [contract])
 
   return totalSupply;
 }

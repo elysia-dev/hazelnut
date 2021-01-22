@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import { useAssetToken } from '../hooks/useContract';
+import useContract from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import BigNumber from 'bignumber.js';
@@ -38,9 +38,7 @@ function Interest(props: Props) {
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
   const elPricePerToken = useElPrice();
-  const assetToken = useAssetToken(
-    props.transactionRequest.product.contractAddress,
-  );
+  const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -52,12 +50,6 @@ function Interest(props: Props) {
   const txResult = useWatingTx(state.txHash);
   const [counter, setCounter] = useState<number>(0);
   const [interest, setInterest] = useState<string>('');
-
-  const longLoading = [
-    RequestStage.WHITELIST_REQUEST,
-    RequestStage.WHITELIST_PENDING,
-    RequestStage.TRANSACTION_PENDING,
-  ].includes(state.stage);
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -177,9 +169,8 @@ function Interest(props: Props) {
         RetrySwal.fire({
           icon: 'error',
           confirmButtonText: t('Retry'),
-          html: `${t('Buying.WhitelistRetry')}<br>${
-            props.transactionRequest.userAddresses[0]
-          }`,
+          html: `${t('Buying.WhitelistRetry')}<br>${props.transactionRequest.userAddresses[0]
+            }`,
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
@@ -275,7 +266,7 @@ function Interest(props: Props) {
       <div>
         <BoxLayout>
           <TxSummary
-            inUnit={'EL'}
+            inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
             inValue={interest}
             outUnit={''}
             outValue={'0'}

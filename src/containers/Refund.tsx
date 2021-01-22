@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import { useAssetToken } from '../hooks/useContract';
+import useContract from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
 import Loading from '../components/Loading';
@@ -30,9 +30,7 @@ function Refund(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const elPricePerToken = useElPrice();
-  const assetToken = useAssetToken(
-    props.transactionRequest.product.contractAddress,
-  );
+  const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -140,7 +138,7 @@ function Refund(props: Props) {
           <TxSummary
             outUnit={props.transactionRequest.product.tokenName}
             outValue={props.transactionRequest.amount.toString()}
-            inUnit={'EL'}
+            inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
             inValue={expectedElValue.toFixed(2)}
             title={t('Refund.Title')}
             transactionRequest={props.transactionRequest}
