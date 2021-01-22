@@ -4,7 +4,6 @@ import { Web3Provider } from '@ethersproject/providers'
 import getContract from '../core/utils/getContract'
 import { useWeb3React } from '@web3-react/core'
 import ERC20_ABI from '../core/constants/abis/erc20.json';
-import ContractResponse from '../core/types/ContratResponse'
 
 // returns null on errors
 function useContract(address: string | undefined, ABI: any, withSignerIfPossible = true): Contract | null {
