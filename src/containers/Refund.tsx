@@ -45,6 +45,17 @@ function Refund(props: Props) {
       props.transactionRequest.product.usdPricePerToken) /
     elPricePerToken;
 
+  const checkAccount = () => {
+    RetrySwal.fire({
+      html: `<div style="font-size:15px; margin-top: 20px;">
+          ${t('Error.CheckAccount')}
+          </div>`,
+      icon: 'info',
+      confirmButtonText: t('Error.Check'),
+      showCloseButton: true,
+    });
+  };
+
   const connectWallet = () => {
     activate(InjectedConnector);
   };
@@ -93,19 +104,6 @@ function Refund(props: Props) {
   useEffect(connectWallet, []);
 
   useEffect(() => {
-    if (account && props.transactionRequest.userAddresses[0] !== account) {
-      RetrySwal.fire({
-        html: `<div style="font-size:15px; margin-top: 20px;">
-          ${t('Error.CheckAccount')}
-          </div>`,
-        icon: 'info',
-        confirmButtonText: t('Error.Check'),
-        showCloseButton: true,
-      });
-    }
-  }, [account]);
-
-  useEffect(() => {
     if (txResult.status === TxStatus.SUCCESS) {
       completeTransactionRequest(id, state.txHash);
       Swal.fire({
@@ -150,7 +148,9 @@ function Refund(props: Props) {
           <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Button
               clickHandler={() => {
-                createTransaction();
+                account && props.transactionRequest.userAddresses[0] !== account
+                  ? checkAccount()
+                  : createTransaction();
               }}
               title={t('Buying.TransactionRetryButton')}
             />

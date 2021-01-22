@@ -76,6 +76,17 @@ function Buying(props: Props) {
       });
   };
 
+  const checkAccount = () => {
+    RetrySwal.fire({
+      html: `<div style="font-size:15px; margin-top: 20px;">
+        ${t('Error.CheckAccount')}
+        </div>`,
+      icon: 'info',
+      confirmButtonText: t('Error.Check'),
+      showCloseButton: true,
+    });
+  };
+
   const createTransaction = () => {
     assetToken?.populateTransaction
       .purchase(props.transactionRequest.amount)
@@ -142,19 +153,6 @@ function Buying(props: Props) {
       ...state,
       stage: RequestStage.WHITELIST_CHECK,
     });
-  }, [account]);
-
-  useEffect(() => {
-    if (account && props.transactionRequest.userAddresses[0] !== account) {
-      RetrySwal.fire({
-        html: `<div style="font-size:15px; margin-top: 20px;">
-          ${t('Error.CheckAccount')}
-          </div>`,
-        icon: 'info',
-        confirmButtonText: t('Error.Check'),
-        showCloseButton: true,
-      });
-    }
   }, [account]);
 
   useEffect(() => {
@@ -318,7 +316,9 @@ function Buying(props: Props) {
             <Button
               style={{ marginTop: 20 }}
               clickHandler={() => {
-                setState({ ...state, stage: RequestStage.ALLOWANCE_CHECK });
+                account && props.transactionRequest.userAddresses[0] !== account
+                  ? checkAccount()
+                  : setState({ ...state, stage: RequestStage.ALLOWANCE_CHECK });
               }}
               title={t('Buying.TransactionRetryButton')}
             />
