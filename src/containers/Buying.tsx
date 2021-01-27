@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
 import RequestStage from '../core/enums/RequestStage';
 import { useWeb3React } from '@web3-react/core';
+import { utils as EthUtils } from 'ethers';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import useContract, { useElysiaToken } from '../hooks/useContract';
 import { BigNumber } from 'bignumber.js';
@@ -100,11 +101,20 @@ function Buying(props: Props) {
     assetToken?.populateTransaction
       .purchase(props.transactionRequest.amount)
       .then(populatedTransaction => {
-        sendTx(
-          populatedTransaction,
-          RequestStage.TRANSACTION_PENDING,
-          RequestStage.TRANSACTION_RETRY,
-        );
+        if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
+          sendTx(
+            populatedTransaction,
+            RequestStage.TRANSACTION_PENDING,
+            RequestStage.TRANSACTION_RETRY,
+            EthUtils.parseEther(expectedOutValue.toString()).toHexString(),
+          );
+        } else {
+          sendTx(
+            populatedTransaction,
+            RequestStage.TRANSACTION_PENDING,
+            RequestStage.TRANSACTION_RETRY,
+          );
+        }
       });
   };
 
@@ -127,6 +137,7 @@ function Buying(props: Props) {
     populatedTransaction: PopulatedTransaction,
     nextStage: RequestStage,
     prevStage: RequestStage,
+    value?: string,
   ) => {
     library.provider
       .request({
@@ -136,6 +147,7 @@ function Buying(props: Props) {
             to: populatedTransaction.to,
             from: account,
             data: populatedTransaction.data,
+            value
           },
         ],
       })
