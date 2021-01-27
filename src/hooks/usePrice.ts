@@ -31,8 +31,6 @@ export default function usePrice(
     priceOracle?.getPrice().then((res: BigNumber) => {
       const price = res.div(`1${'0'.repeat(18)}`).toNumber()
 
-      console.log(price)
-
       if (price > 0) {
         setPrice(price)
       }
