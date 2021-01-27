@@ -24,13 +24,15 @@ export default function usePrice(
   address: string,
   abi: object,
 ): BigNumber {
-  const [price, setPrice] = useState<BigNumber>(BigNumber.from(initialValue));
+  const [[price, loaded], setPrice] = useState<[BigNumber, boolean]>([BigNumber.from(initialValue), false]);
   const priceOracle = useContract(address, abi, false)
 
   useEffect(() => {
+    if (loaded) return;
+
     priceOracle?.getPrice().then((res: BigNumber) => {
       if (res.gt(0)) {
-        setPrice(price)
+        setPrice([res, true])
       }
     }).catch((e: any) => {
       console.log(e)

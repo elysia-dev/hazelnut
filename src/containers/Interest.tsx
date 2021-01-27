@@ -43,6 +43,10 @@ function Interest(props: Props) {
   const elPrice = useElPrice();
   const ethPrice = useEthPrice();
   const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
+  const whitelistContract = useContract(
+    props.transactionRequest.whitelistContract.address,
+    props.transactionRequest.whitelistContract.abi,
+  )
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -95,12 +99,21 @@ function Interest(props: Props) {
       return;
     }
 
-    assetToken?.isWhitelisted(account).then((res: any) => {
-      setState({
-        ...state,
-        stage: res ? RequestStage.TRANSACTION : RequestStage.WHITELIST_REQUEST,
+    if (props.transactionRequest.whitelistContract) {
+      whitelistContract?.isWhitelisted(account).then((res: any) => {
+        setState({
+          ...state,
+          stage: res ? RequestStage.TRANSACTION : RequestStage.WHITELIST_REQUEST,
+        });
       });
-    });
+    } else {
+      assetToken?.isWhitelisted(account).then((res: any) => {
+        setState({
+          ...state,
+          stage: res ? RequestStage.TRANSACTION : RequestStage.WHITELIST_REQUEST,
+        });
+      });
+    }
   };
 
   const createTransaction = () => {

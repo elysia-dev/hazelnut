@@ -87,7 +87,6 @@ function Buying(props: Props) {
   };
 
   const createTransaction = () => {
-    console.log(expectedValue.toHexString());
     assetToken?.populateTransaction
       .purchase(props.transactionRequest.amount)
       .then(populatedTransaction => {

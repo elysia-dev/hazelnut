@@ -21,6 +21,12 @@ type TransactionRequest = {
   contract: {
     address: string
     abi: string
+    version: string
+  }
+  whitelistContract: {
+    address: string
+    abi: string
+    version: string
   }
 }
 
