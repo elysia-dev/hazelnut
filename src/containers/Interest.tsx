@@ -16,12 +16,13 @@ import {
 import AddressBottomTab from '../components/AddressBottomTab';
 import Loading from '../components/Loading';
 import RequestStage from '../core/enums/RequestStage';
-import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import InterestSuccess from './../images/success_interest.svg';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import Button from '../components/Button';
+import { useElPrice, useEthPrice } from '../hooks/usePrice';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -37,7 +38,8 @@ function Interest(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const history = useHistory();
-  const elPricePerToken = useElPrice();
+  const elPrice = useElPrice();
+  const ethPrice = useEthPrice();
   const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
   const { id } = useParams<{ id: string }>();
 
@@ -71,7 +73,11 @@ function Interest(props: Props) {
       setInterest(
         new BigNumber(res.toString())
           .div(new BigNumber('1' + '0'.repeat(18)))
-          .div(new BigNumber(elPricePerToken))
+          .div(new BigNumber(
+            props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ?
+              ethPrice :
+              elPrice
+          ))
           .toFormat(3),
       );
     });
