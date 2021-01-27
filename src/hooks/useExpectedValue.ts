@@ -1,24 +1,22 @@
-import BigNumber from "bignumber.js";
-import { useEffect, useState } from "react";
-import PRICE_ORACLE_ABI from '../core/constants/abis/price-oracle.json';
+import { BigNumber, utils } from 'ethers';
 import PaymentMethod from "../core/types/PaymentMethod";
 import TransactionRequest from "../core/types/TransactionRequest";
-import { useElPrice, useEthPrice } from "./useElysia";
+import getPowerOf10 from "../core/utils/getPowerOf10";
+import { useElPrice, useEthPrice } from "./usePrice";
 
 export default function useExpectedValue(
   transactionRequest: TransactionRequest,
-): number[] {
+): [BigNumber, number] {
   const elPrice = useElPrice();
   const ethPrice = useEthPrice();
 
   const expectedValue =
-    ((transactionRequest.amount || 0) *
-      transactionRequest.product.usdPricePerToken) /
-    (transactionRequest.product.paymentMethod === PaymentMethod.ETH ? ethPrice : elPrice)
+    BigNumber.from((transactionRequest.amount || 0))
+      .mul(BigNumber.from(transactionRequest.product.usdPricePerToken))
+      .mul(getPowerOf10(36))
+      .div(transactionRequest.product.paymentMethod === PaymentMethod.ETH ? ethPrice : elPrice)
 
-  const expectedReturn = expectedValue *
-    parseFloat(transactionRequest.product.expectedAnnualReturn) *
-    0.01
+  const expectedReturn = parseFloat(utils.formatEther(expectedValue)) * parseFloat(transactionRequest.product.expectedAnnualReturn) / 100;
 
   return [expectedValue, expectedReturn];
 }

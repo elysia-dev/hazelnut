@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { utils } from 'ethers';
 import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
@@ -103,7 +104,7 @@ function Refund(props: Props) {
         title: t('Completion.Refund'),
         html: `<div style="font-size: 15px;"> ${t('Completion.RefundResult', {
           product: props.transactionRequest.product.title,
-          value: expectedValue.toFixed(2),
+          value: parseFloat(utils.formatEther(expectedValue)).toFixed(4),
         })}
         </div>`,
         imageUrl: RefundSuccess,
@@ -134,7 +135,7 @@ function Refund(props: Props) {
             outUnit={props.transactionRequest.product.tokenName}
             outValue={props.transactionRequest.amount.toString()}
             inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            inValue={expectedValue.toFixed(2)}
+            inValue={parseFloat(utils.formatEther(expectedValue)).toFixed(4)}
             title={t('Refund.Title')}
             transactionRequest={props.transactionRequest}
           />

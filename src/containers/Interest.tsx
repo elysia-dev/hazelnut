@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { utils } from 'ethers';
 import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import useContract from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
-import BigNumber from 'bignumber.js';
 import BoxLayout from '../components/BoxLayout';
 import { useHistory, useParams } from 'react-router-dom';
 import {
@@ -23,6 +23,8 @@ import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import Button from '../components/Button';
 import { useElPrice, useEthPrice } from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
+import { BigNumber } from 'ethers';
+import getPowerOf10 from '../core/utils/getPowerOf10';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -51,7 +53,7 @@ function Interest(props: Props) {
 
   const txResult = useWatingTx(state.txHash);
   const [counter, setCounter] = useState<number>(0);
-  const [interest, setInterest] = useState<string>('');
+  const [interest, setInterest] = useState<number>(0);
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -71,14 +73,14 @@ function Interest(props: Props) {
   const loadInterest = () => {
     assetToken?.getReward(account).then((res: BigNumber) => {
       setInterest(
-        new BigNumber(res.toString())
-          .div(new BigNumber('1' + '0'.repeat(18)))
-          .div(new BigNumber(
+        parseFloat(utils.formatEther(res))
+        / parseFloat(
+          utils.formatEther(
             props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ?
               ethPrice :
               elPrice
-          ))
-          .toFormat(3),
+          )
+        )
       );
     });
   };
@@ -273,7 +275,7 @@ function Interest(props: Props) {
         <BoxLayout>
           <TxSummary
             inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            inValue={interest}
+            inValue={interest.toFixed(4)}
             outUnit={''}
             outValue={'0'}
             title={t('Interest.Title')}
