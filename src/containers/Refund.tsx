@@ -12,11 +12,11 @@ import { useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
 import Loading from '../components/Loading';
-import { useElPrice } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
+import useExpectedValue from '../hooks/useExpectedValue';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -29,19 +29,14 @@ type State = {
 function Refund(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
-  const elPricePerToken = useElPrice();
   const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
+  const [expectedValue] = useExpectedValue(props.transactionRequest);
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
     txHash: '',
   });
   const txResult = useWatingTx(state.txHash);
-
-  const expectedElValue =
-    ((props.transactionRequest.amount || 0) *
-      props.transactionRequest.product.usdPricePerToken) /
-    elPricePerToken;
 
   const checkAccount = () => {
     RetrySwal.fire({
@@ -108,7 +103,7 @@ function Refund(props: Props) {
         title: t('Completion.Refund'),
         html: `<div style="font-size: 15px;"> ${t('Completion.RefundResult', {
           product: props.transactionRequest.product.title,
-          value: expectedElValue.toFixed(2),
+          value: expectedValue.toFixed(2),
         })}
         </div>`,
         imageUrl: RefundSuccess,
@@ -139,7 +134,7 @@ function Refund(props: Props) {
             outUnit={props.transactionRequest.product.tokenName}
             outValue={props.transactionRequest.amount.toString()}
             inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            inValue={expectedElValue.toFixed(2)}
+            inValue={expectedValue.toFixed(2)}
             title={t('Refund.Title')}
             transactionRequest={props.transactionRequest}
           />

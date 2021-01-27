@@ -15,8 +15,7 @@ import { useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import ServerError from '../components/errors/ServerError';
 import AddressBottomTab from '../components/AddressBottomTab';
-import { useElPrice, useTotalSupply } from '../hooks/useElysia';
-import { useEthPrice } from '../hooks/usePrice';
+import { useTotalSupply } from '../hooks/useElysia';
 import { useWatingTx } from '../hooks/useWatingTx';
 import TxStatus from '../core/enums/TxStatus';
 import { PopulatedTransaction } from '@ethersproject/contracts';
@@ -24,6 +23,7 @@ import BuyingSuccess from './../images/success_buying.svg';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import Button from '../components/Button';
 import PaymentMethod from '../core/types/PaymentMethod';
+import useExpectedValue from '../hooks/useExpectedValue';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -39,9 +39,8 @@ function Buying(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const elToken = useElysiaToken();
-  const elPrice = useElPrice();
-  const ethPrice = useEthPrice();
   const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
+  const [expectedvalue, expectedReturn] = useExpectedValue(props.transactionRequest);
   const totalSupply = useTotalSupply(assetToken);
   const { id } = useParams<{ id: string }>();
 
@@ -52,16 +51,6 @@ function Buying(props: Props) {
   });
 
   const txResult = useWatingTx(state.txHash);
-
-  const expectedOutValue =
-    ((props.transactionRequest.amount || 0) *
-      props.transactionRequest.product.usdPricePerToken) /
-    (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ? ethPrice : elPrice);
-
-  const expectedReturn =
-    expectedOutValue *
-    parseFloat(props.transactionRequest.product.expectedAnnualReturn) *
-    0.01;
 
   const checkAllowance = () => {
     if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
@@ -79,7 +68,7 @@ function Buying(props: Props) {
         const allownace = new BigNumber(res.toString());
         setState({
           ...state,
-          stage: allownace.gte(new BigNumber(expectedOutValue + '0'.repeat(18)))
+          stage: allownace.gte(new BigNumber(expectedvalue + '0'.repeat(18)))
             ? RequestStage.TRANSACTION
             : RequestStage.ALLOWANCE_RETRY,
         });
@@ -106,7 +95,7 @@ function Buying(props: Props) {
             populatedTransaction,
             RequestStage.TRANSACTION_PENDING,
             RequestStage.TRANSACTION_RETRY,
-            EthUtils.parseEther(expectedOutValue.toString()).toHexString(),
+            EthUtils.parseEther(expectedvalue.toString()).toHexString(),
           );
         } else {
           sendTx(
@@ -299,7 +288,7 @@ function Buying(props: Props) {
             inUnit={props.transactionRequest.product.tokenName}
             inValue={props.transactionRequest.amount.toString()}
             outUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            outValue={expectedOutValue.toFixed(2)}
+            outValue={expectedvalue.toFixed(2)}
             title={t('Buying.CreateTransaction')}
             transactionRequest={props.transactionRequest}
           />
