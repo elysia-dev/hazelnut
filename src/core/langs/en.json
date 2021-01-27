@@ -33,13 +33,12 @@
       "Title": "Claim reward"
     },
     "Completion": {
-      "Interest": "Withdrawal complete",
-      "Buying": "Purchase complete",
-      "Refund": "Refund complete",
-      "InterestResult": "You have received<br>EL {{value}} from {{product}}",
-      "BuyingResult": "You now own {{value}}% of {{product}}!",
-      "RefundResult": "Your investment of EL {{value}}<br>from {{product}} has been returned",
-      "ReturnToApp": "Return to app"
+      "Title": "Transaction creation",
+      "InterestResult": "You will receive<br>{{paymentMethod}} {{value}} from {{product}}",
+      "BuyingResult": "You will own {{value}}% of {{product}}!",
+      "RefundResult": "Your investment of {{paymentMethod}} {{value}}<br>from {{product}} will be returned",
+      "ReturnToApp": "Return to app",
+      "Notice": "When the transaction is complete,<br> we will send a notification to the app."
     },
     "Error": {
       "PriceServer": "EL price information could not be loaded",

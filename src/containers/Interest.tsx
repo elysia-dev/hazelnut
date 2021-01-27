@@ -133,7 +133,7 @@ function Interest(props: Props) {
           setState({
             ...state,
             loading: true,
-            stage: RequestStage.TRANSACTION_PENDING,
+            stage: RequestStage.TRANSACTION_RESULT,
             txHash,
           });
         })
@@ -221,14 +221,17 @@ function Interest(props: Props) {
       case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id, state.txHash);
         Swal.fire({
-          title: t('Completion.Interest'),
+          title: t('Completion.Title'),
           html: `<div style="font-size: 15px;"> ${t(
             'Completion.InterestResult',
             {
               product: props.transactionRequest.product.title,
-              value: interest,
+              value: interest.toFixed(6),
+              paymentMethod: props.transactionRequest.product.paymentMethod,
             },
           )}
+          <br />
+          ${t('Completion.Notice')}
           </div>`,
           imageUrl: InterestSuccess,
           imageWidth: 180,

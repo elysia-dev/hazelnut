@@ -33,13 +33,12 @@
       "Title": "领取奖励"
     },
     "Completion": {
-      "Interest": "收益提现完成",
-      "Buying": "成功获得房地产所有权！",
-      "Refund": "退款完成",
-      "InterestResult": "收到了爱立厦(Elysia) {{product}}<br>的收益{{value}}个EL代币",
+      "Title": "确认投资",
+      "InterestResult": "收到了爱立厦(Elysia) {{product}}<br>的收益{{value}}个{{paymentMethod}}代币",
       "BuyingResult": "恭喜您成为爱立厦(Elysia) {{product}}<br>{{value}}的房地产房主之一啦",
-      "RefundResult": "爱立厦(Elysia) {{product}}投资<br>EL代币{{value}}退款完成!",
-      "ReturnToApp": "请在手机应用程序上确认"
+      "RefundResult": "爱立厦(Elysia) {{product}}投资<br>{{paymentMethod}}代币{{value}}退款完成!",
+      "ReturnToApp": "请在手机应用程序上确认",
+      "Notice": "交易完成后，<br>我们将向应用发送通知。"
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。",

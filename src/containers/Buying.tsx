@@ -93,7 +93,7 @@ function Buying(props: Props) {
         if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
           sendTx(
             populatedTransaction,
-            RequestStage.TRANSACTION_PENDING,
+            RequestStage.TRANSACTION_RESULT,
             RequestStage.TRANSACTION_RETRY,
             expectedValue.toHexString(),
           );
@@ -219,7 +219,7 @@ function Buying(props: Props) {
       case RequestStage.TRANSACTION_RESULT:
         completeTransactionRequest(id, state.txHash);
         Swal.fire({
-          title: t('Completion.Buying'),
+          title: t('Completion.Title'),
           html: `<div style="font-size:15px;">
               ${t('Completion.BuyingResult', {
             product: props.transactionRequest.product.title,
@@ -231,7 +231,7 @@ function Buying(props: Props) {
               : '--',
           })}
               <br />
-              ${t('Buying.Success')}
+              ${t('Completion.Notice')}
             </div>
           `,
           showConfirmButton: false,

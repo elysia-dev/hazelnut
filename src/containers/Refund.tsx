@@ -34,11 +34,6 @@ function Refund(props: Props) {
   const [expectedValue] = useExpectedValue(props.transactionRequest);
   const { id } = useParams<{ id: string }>();
 
-  const [state, setState] = useState<State>({
-    txHash: '',
-  });
-  const txResult = useWatingTx(state.txHash);
-
   const checkAccount = () => {
     RetrySwal.fire({
       html: `<div style="font-size:15px; margin-top: 20px;">
@@ -70,14 +65,20 @@ function Refund(props: Props) {
             ],
           })
           .then((txHash: string) => {
-            SwalWithReact.fire({
-              html: <Loading />,
-              title: t('Buying.TransactionPending'),
+            completeTransactionRequest(id, txHash);
+            Swal.fire({
+              title: t('Completion.Title'),
+              html: `<div style="font-size: 15px;"> ${t('Completion.RefundResult', {
+                product: props.transactionRequest.product.title,
+                value: parseFloat(utils.formatEther(expectedValue)).toFixed(4),
+                paymentMethod: props.transactionRequest.product.paymentMethod
+              })}
+                <br />
+                ${t('Completion.Notice')}
+              </div>`,
+              imageUrl: RefundSuccess,
+              imageWidth: 275,
               showConfirmButton: false,
-            });
-            setState({
-              ...state,
-              txHash,
             });
           })
           .catch((error: any) => {
@@ -96,34 +97,6 @@ function Refund(props: Props) {
   };
 
   useEffect(connectWallet, []);
-
-  useEffect(() => {
-    if (txResult.status === TxStatus.SUCCESS) {
-      completeTransactionRequest(id, state.txHash);
-      Swal.fire({
-        title: t('Completion.Refund'),
-        html: `<div style="font-size: 15px;"> ${t('Completion.RefundResult', {
-          product: props.transactionRequest.product.title,
-          value: parseFloat(utils.formatEther(expectedValue)).toFixed(4),
-        })}
-        </div>`,
-        imageUrl: RefundSuccess,
-        imageWidth: 275,
-        showConfirmButton: false,
-      });
-    } else if (txResult.status === TxStatus.FAIL) {
-      RetrySwal.fire({
-        text: t('Buying.TransactionRetry'),
-        icon: 'error',
-        confirmButtonText: t('Retry'),
-        showConfirmButton: true,
-      }).then(res => {
-        if (res.isConfirmed) {
-          createTransaction();
-        }
-      });
-    }
-  }, [txResult.status]);
 
   if (!account) {
     return <ConnectWallet handler={connectWallet} />;

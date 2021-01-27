@@ -33,12 +33,11 @@
       "Title": "이자받기"
     },
     "Completion": {
-      "Interest": "수익출금 완료!",
-      "Buying": "부동산 구매 완료!",
-      "Refund": "환불 완료!",
-      "InterestResult": "엘리시아 {{product}}의<br>이자수익 EL {{value}}를 받으셨습니다!",
-      "BuyingResult": "{{product}}의<br>지분 {{value}}%를 확보하셨습니다.",
-      "RefundResult": "엘리시아 {{product}}의<br>투자금 EL {{value}}이 환불되었습니다!",
+      "Title": "트랜잭션 생성",
+      "InterestResult": "엘리시아 {{product}}의<br>이자수익 {{paymentMethod}} {{value}}를 받을 예정입니다.",
+      "BuyingResult": "{{product}}의<br>지분 {{value}}%를 확보할 예정입니다.",
+      "RefundResult": "엘리시아 {{product}}의<br>투자금 {{paymentMethod}} {{value}}이 환불될 예정입니다.",
+      "Notice": "트랜잭션이 완료되면<br>앱으로 알림을 보내드립니다.",
       "ReturnToApp": "앱으로 돌아가기"
     },
     "Error": {
