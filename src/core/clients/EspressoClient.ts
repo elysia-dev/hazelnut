@@ -1,7 +1,6 @@
 import Axios, { AxiosResponse } from 'axios';
 import TransactionRequest from '../types/TransactionRequest';
 import EthAddressResponse from '../types/EthAddressResponse';
-import WhitelistResponse from '../types/WhitelistResponse';
 
 export const getTransactionRequest = (
   id: string,
@@ -31,8 +30,4 @@ export const registerEthAddress = (
   return Axios.put(`${process.env.REACT_APP_API_URL}/ethAddress/${id}`, {
     address: address,
   });
-};
-
-export const getWhitelistRequest = (id: string): Promise<AxiosResponse<WhitelistResponse>> => {
-  return Axios.get(`${process.env.REACT_APP_API_URL}/productWhitelist/${id}`);
 };

@@ -51,7 +51,7 @@ function Refund(props: Props) {
 
   const createTransaction = () => {
     assetToken?.populateTransaction
-      .refund(props.transactionRequest.amount)
+      .refund(utils.parseEther(props.transactionRequest.amount.toString()))
       .then(populatedTransaction => {
         library.provider
           .request({

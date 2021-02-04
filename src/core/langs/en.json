@@ -2,12 +2,6 @@
   "translation": {
     "Buying": {
       "CreateTransaction": "Create a transaction",
-      "WhitelistCheck": "Checking Whitelist",
-      "WhitelistCheckComplete": "Whitelist check complete",
-      "WhitelistRetryButton": "Redo",
-      "WhitelistRetry": "Unable to check whitelist<br>Please connect to the address below",
-      "WhitelistRequest": "Requesting Elysia",
-      "WhitelistPending": "Waiting for transaction",
       "AllowanceCheck": "Check allowance amount",
       "AllowanceRetry": "You do not have a sufficient allowance amount<br>Please make an allowance amount transaction<br>to proceed",
       "AllowanceRetryButton": "Allow Elysia to spend your EL",

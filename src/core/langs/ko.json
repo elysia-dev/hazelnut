@@ -2,12 +2,6 @@
   "translation": {
     "Buying": {
       "CreateTransaction": "트랜잭션 만들기",
-      "WhitelistCheck": "Whitelist 확인 중",
-      "WhitelistCheckComplete": "Whitelist 확인 완료",
-      "WhitelistRetryButton": "다시하기",
-      "WhitelistRetry": "화이트 리스트 확인에 실패했습니다<br>아래 주소로 연결해주세요",
-      "WhitelistRequest": "엘리시아 서버로 요청중입니다",
-      "WhitelistPending": "트랜잭션 대기중",
       "AllowanceCheck": "허용 금액 확인",
       "AllowanceRetry": "충분한 허용 금액을 가지고 있지 않습니다<br>진행을 위해 허용 금액 트랜잭션을<br> 만들어 주세요",
       "AllowanceRetryButton": "Elysia의 EL 출금 허용하기",

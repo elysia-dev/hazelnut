@@ -45,7 +45,7 @@ function Buying(props: Props) {
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
-    stage: RequestStage.WHITELIST_CHECK,
+    stage: RequestStage.INIT,
     error: false,
     txHash: '',
   });
@@ -63,7 +63,7 @@ function Buying(props: Props) {
     }
 
     elToken
-      ?.allowance(account, props.transactionRequest.product.contractAddress)
+      ?.allowance(account, props.transactionRequest.contract.address)
       .then((res: BigNumber) => {
         const allownace = new BigNumber(res.toString());
         setState({
@@ -87,30 +87,34 @@ function Buying(props: Props) {
   };
 
   const createTransaction = () => {
-    assetToken?.populateTransaction
-      .purchase(props.transactionRequest.amount)
-      .then(populatedTransaction => {
-        if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
+    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
+      assetToken?.populateTransaction
+        .purchase()
+        .then(populatedTransaction => {
           sendTx(
             populatedTransaction,
             RequestStage.TRANSACTION_RESULT,
             RequestStage.TRANSACTION_RETRY,
             expectedValue.toHexString(),
           );
-        } else {
+        })
+    } else {
+      assetToken?.populateTransaction
+        .purchase(expectedValue.toString())
+        .then(populatedTransaction => {
           sendTx(
             populatedTransaction,
             RequestStage.TRANSACTION_PENDING,
             RequestStage.TRANSACTION_RETRY,
           );
-        }
-      });
+        });
+    }
   };
 
   const approve = () => {
     elToken?.populateTransaction
       .approve(
-        props.transactionRequest.product.contractAddress,
+        props.transactionRequest.contract.address,
         '1' + '0'.repeat(25),
       )
       .then(populatedTransaction => {
@@ -161,7 +165,7 @@ function Buying(props: Props) {
 
     setState({
       ...state,
-      stage: RequestStage.WHITELIST_CHECK,
+      stage: RequestStage.INIT,
     });
   }, [account]);
 

@@ -23,11 +23,6 @@ type TransactionRequest = {
     abi: string
     version: string
   }
-  whitelistContract: {
-    address: string
-    abi: string
-    version: string
-  }
 }
 
 export default TransactionRequest;
