@@ -1,13 +1,12 @@
 import { Contract } from '@ethersproject/contracts';
-import BigNumber from 'bignumber.js';
+import { BigNumberish, constants } from 'ethers';
 import { useEffect, useState } from 'react';
 
-export function useTotalSupply(contract: Contract | null): BigNumber {
-  const [totalSupply, setTotalSupply] = useState<BigNumber>(new BigNumber(0));
+export function useTotalSupply(contract: Contract | null): BigNumberish {
+  const [totalSupply, setTotalSupply] = useState<BigNumberish>(constants.Zero);
 
   useEffect(() => {
-    contract?.totalSupply().then((res: BigNumber) => {
-      const supply = new BigNumber(res.toString());
+    contract?.totalSupply().then((supply: BigNumberish) => {
       setTotalSupply(supply);
     });
   }, [contract]);

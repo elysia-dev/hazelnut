@@ -24,6 +24,7 @@ import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import Button from '../components/Button';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useExpectedValue from '../hooks/useExpectedValue';
+import { formatEther } from 'ethers/lib/utils';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -228,11 +229,8 @@ function Buying(props: Props) {
             'Completion.BuyingResult',
             {
               product: props.transactionRequest.product.title,
-              value: totalSupply
-                ? new BigNumber(expectedValue.toString())
-                  .div(totalSupply)
-                  .multipliedBy(100)
-                  .toFixed(1)
+              value: totalSupply.toString() !== '0' ?
+                props.transactionRequest.amount / parseFloat(formatEther(totalSupply)) * 100
                 : '--',
             }
           )}<br />${t('Completion.Notice')}</div>
