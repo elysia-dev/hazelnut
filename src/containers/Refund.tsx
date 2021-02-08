@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { utils } from 'ethers';
 import TransactionRequest from '../core/types/TransactionRequest';
@@ -12,10 +12,7 @@ import BoxLayout from '../components/BoxLayout';
 import { useParams } from 'react-router-dom';
 import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
-import Loading from '../components/Loading';
-import { useWatingTx } from '../hooks/useWatingTx';
-import TxStatus from '../core/enums/TxStatus';
-import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
+import Swal, { RetrySwal } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
 import useExpectedValue from '../hooks/useExpectedValue';
 

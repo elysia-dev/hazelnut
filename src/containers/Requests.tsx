@@ -11,7 +11,6 @@ import TransactionRequest from '../core/types/TransactionRequest';
 import { getTransactionRequest } from '../core/clients/EspressoClient';
 import { useTranslation } from 'react-i18next';
 import LanguageType from '../core/enums/LanguageType';
-import AddressBottomTab from '../components/AddressBottomTab';
 import InstallMetamask from '../components/errors/InstallMetamask';
 
 type ParamTypes = {
