@@ -224,19 +224,18 @@ function Buying(props: Props) {
         completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size:15px;">
-              ${t('Completion.BuyingResult', {
-                product: props.transactionRequest.product.title,
-                value: totalSupply
-                  ? new BigNumber(props.transactionRequest.amount)
-                      .div(totalSupply)
-                      .multipliedBy(100)
-                      .toFixed(1)
-                  : '--',
-              })}
-              <br />
-              ${t('Completion.Notice')}
-            </div>
+          html: `<div style="font-size:15px;"> ${t(
+            'Completion.BuyingResult',
+            {
+              product: props.transactionRequest.product.title,
+              value: totalSupply
+                ? new BigNumber(expectedValue.toString())
+                  .div(totalSupply)
+                  .multipliedBy(100)
+                  .toFixed(1)
+                : '--',
+            }
+          )}<br />${t('Completion.Notice')}</div>
           `,
           showConfirmButton: false,
           imageUrl: BuyingSuccess,
