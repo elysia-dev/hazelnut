@@ -1,6 +1,6 @@
 import { Contract } from '@ethersproject/contracts';
 import BigNumber from 'bignumber.js';
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 export function useTotalSupply(contract: Contract | null): BigNumber {
   const [totalSupply, setTotalSupply] = useState<BigNumber>(new BigNumber(0));
@@ -10,9 +10,7 @@ export function useTotalSupply(contract: Contract | null): BigNumber {
       const supply = new BigNumber(res.toString());
       setTotalSupply(supply);
     });
-
-  }, [contract])
+  }, [contract]);
 
   return totalSupply;
 }
-
