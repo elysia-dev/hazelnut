@@ -9,9 +9,7 @@ import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import BoxLayout from '../components/BoxLayout';
 import { useParams } from 'react-router-dom';
-import {
-  completeTransactionRequest,
-} from '../core/clients/EspressoClient';
+import { completeTransactionRequest } from '../core/clients/EspressoClient';
 import AddressBottomTab from '../components/AddressBottomTab';
 import RequestStage from '../core/enums/RequestStage';
 import { useWatingTx } from '../hooks/useWatingTx';
@@ -38,7 +36,10 @@ function Interest(props: Props) {
   const { activate, library, account } = useWeb3React();
   const elPrice = useElPrice();
   const ethPrice = useEthPrice();
-  const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
+  const assetToken = useContract(
+    props.transactionRequest.contract.address,
+    props.transactionRequest.contract.abi,
+  );
   const { id } = useParams<{ id: string }>();
 
   const [state, setState] = useState<State>({
@@ -68,14 +69,15 @@ function Interest(props: Props) {
   const loadInterest = () => {
     assetToken?.getReward(account).then((res: BigNumber) => {
       setInterest(
-        parseFloat(utils.formatEther(res))
-        / parseFloat(
-          utils.formatEther(
-            props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ?
-              ethPrice :
-              elPrice
-          )
-        )
+        parseFloat(utils.formatEther(res)) /
+          parseFloat(
+            utils.formatEther(
+              props.transactionRequest.product.paymentMethod ===
+                PaymentMethod.ETH
+                ? ethPrice
+                : elPrice,
+            ),
+          ),
       );
     });
   };
@@ -204,7 +206,9 @@ function Interest(props: Props) {
           </div>
           <div style={{ height: 100 }}></div>
         </BoxLayout>
-        <AddressBottomTab />
+        <AddressBottomTab
+          paymentMethod={props.transactionRequest.product.paymentMethod}
+        />
       </div>
     );
   }

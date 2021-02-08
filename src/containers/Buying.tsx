@@ -39,8 +39,13 @@ function Buying(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const elToken = useElysiaToken();
-  const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
-  const [expectedValue, expectedReturn] = useExpectedValue(props.transactionRequest);
+  const assetToken = useContract(
+    props.transactionRequest.contract.address,
+    props.transactionRequest.contract.abi,
+  );
+  const [expectedValue, expectedReturn] = useExpectedValue(
+    props.transactionRequest,
+  );
   const totalSupply = useTotalSupply(assetToken);
   const { id } = useParams<{ id: string }>();
 
@@ -56,8 +61,8 @@ function Buying(props: Props) {
     if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
       setState({
         ...state,
-        stage: RequestStage.TRANSACTION
-      })
+        stage: RequestStage.TRANSACTION,
+      });
 
       return;
     }
@@ -88,16 +93,14 @@ function Buying(props: Props) {
 
   const createTransaction = () => {
     if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
-      assetToken?.populateTransaction
-        .purchase()
-        .then(populatedTransaction => {
-          sendTx(
-            populatedTransaction,
-            RequestStage.TRANSACTION_RESULT,
-            RequestStage.TRANSACTION_RETRY,
-            expectedValue.toHexString(),
-          );
-        })
+      assetToken?.populateTransaction.purchase().then(populatedTransaction => {
+        sendTx(
+          populatedTransaction,
+          RequestStage.TRANSACTION_RESULT,
+          RequestStage.TRANSACTION_RETRY,
+          expectedValue.toHexString(),
+        );
+      });
     } else {
       assetToken?.populateTransaction
         .purchase(expectedValue.toString())
@@ -113,10 +116,7 @@ function Buying(props: Props) {
 
   const approve = () => {
     elToken?.populateTransaction
-      .approve(
-        props.transactionRequest.contract.address,
-        '1' + '0'.repeat(25),
-      )
+      .approve(props.transactionRequest.contract.address, '1' + '0'.repeat(25))
       .then(populatedTransaction => {
         sendTx(
           populatedTransaction,
@@ -140,7 +140,7 @@ function Buying(props: Props) {
             to: populatedTransaction.to,
             from: account,
             data: populatedTransaction.data,
-            value
+            value,
           },
         ],
       })
@@ -226,14 +226,14 @@ function Buying(props: Props) {
           title: t('Completion.Title'),
           html: `<div style="font-size:15px;">
               ${t('Completion.BuyingResult', {
-            product: props.transactionRequest.product.title,
-            value: totalSupply
-              ? new BigNumber(props.transactionRequest.amount)
-                .div(totalSupply)
-                .multipliedBy(100)
-                .toFixed(1)
-              : '--',
-          })}
+                product: props.transactionRequest.product.title,
+                value: totalSupply
+                  ? new BigNumber(props.transactionRequest.amount)
+                      .div(totalSupply)
+                      .multipliedBy(100)
+                      .toFixed(1)
+                  : '--',
+              })}
               <br />
               ${t('Completion.Notice')}
             </div>
@@ -338,7 +338,9 @@ function Buying(props: Props) {
             />
           </div>
         </BoxLayout>
-        <AddressBottomTab />
+        <AddressBottomTab
+          paymentMethod={props.transactionRequest.product.paymentMethod}
+        />
       </div>
     );
   }

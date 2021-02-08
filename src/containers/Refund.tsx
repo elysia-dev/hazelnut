@@ -30,7 +30,10 @@ type State = {
 function Refund(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
-  const assetToken = useContract(props.transactionRequest.contract.address, props.transactionRequest.contract.abi);
+  const assetToken = useContract(
+    props.transactionRequest.contract.address,
+    props.transactionRequest.contract.abi,
+  );
   const [expectedValue] = useExpectedValue(props.transactionRequest);
   const { id } = useParams<{ id: string }>();
 
@@ -68,11 +71,16 @@ function Refund(props: Props) {
             completeTransactionRequest(id, txHash);
             Swal.fire({
               title: t('Completion.Title'),
-              html: `<div style="font-size: 15px;"> ${t('Completion.RefundResult', {
-                product: props.transactionRequest.product.title,
-                value: parseFloat(utils.formatEther(expectedValue)).toFixed(4),
-                paymentMethod: props.transactionRequest.product.paymentMethod
-              })}
+              html: `<div style="font-size: 15px;"> ${t(
+                'Completion.RefundResult',
+                {
+                  product: props.transactionRequest.product.title,
+                  value: parseFloat(utils.formatEther(expectedValue)).toFixed(
+                    4,
+                  ),
+                  paymentMethod: props.transactionRequest.product.paymentMethod,
+                },
+              )}
                 <br />
                 ${t('Completion.Notice')}
               </div>`,
@@ -124,7 +132,9 @@ function Refund(props: Props) {
           </div>
           <div style={{ height: 100 }}></div>
         </BoxLayout>
-        <AddressBottomTab />
+        <AddressBottomTab
+          paymentMethod={props.transactionRequest.product.paymentMethod}
+        />
       </div>
     );
   }

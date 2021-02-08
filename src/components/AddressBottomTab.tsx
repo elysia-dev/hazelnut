@@ -1,19 +1,30 @@
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import React, { useEffect, useState } from 'react';
+import PaymentMethod from '../core/types/PaymentMethod';
 import { useElysiaToken } from '../hooks/useContract';
 import AccountIcon from './AccountIcon';
 
-function AddressBottomTab() {
+type Props = {
+  paymentMethod: string;
+};
+
+function AddressBottomTab(props: Props) {
   const elToken = useElysiaToken();
   const [balance, setBalance] = useState<BigNumber | undefined>(undefined);
-  const { account } = useWeb3React();
+  const { account, library } = useWeb3React();
 
   useEffect(() => {
-    elToken?.balanceOf(account).then((res: BigNumber) => {
-      const balance = new BigNumber(res.toString());
-      setBalance(balance);
-    });
+    if (props.paymentMethod === PaymentMethod.EL) {
+      elToken?.balanceOf(account).then((res: BigNumber) => {
+        const balance = new BigNumber(res.toString());
+        setBalance(balance);
+      });
+    } else if (props.paymentMethod === PaymentMethod.ETH) {
+      library.getBalance(account).then((balance: BigNumber) => {
+        setBalance(balance);
+      });
+    }
   }, [account]);
 
   return (
@@ -45,7 +56,7 @@ function AddressBottomTab() {
             border: 'solid 1px #E5E5E5',
             padding: 10,
             display: 'flex',
-            alignItems: "center",
+            alignItems: 'center',
           }}
         >
           <span
@@ -57,7 +68,9 @@ function AddressBottomTab() {
               textAlign: 'center',
             }}
           >
-            {`${account?.substring(0, 6)}...${account?.substring(account?.length - 4)}`}
+            {`${account?.substring(0, 6)}...${account?.substring(
+              account?.length - 4,
+            )}`}
           </span>
           <div style={{ marginLeft: 10 }}>
             <AccountIcon />
@@ -65,21 +78,31 @@ function AddressBottomTab() {
         </div>
         <div
           style={{
-            border: "solid 1px #E5E5E5",
+            border: 'solid 1px #E5E5E5',
             marginLeft: 20,
             borderRadius: 5,
             padding: 10,
-            width: "100%",
-            display: "flex",
-            justifyContent: "flex-end",
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'flex-end',
           }}
         >
           <div style={{ color: '#414141', fontSize: 15 }}>
-            {process.env.NODE_ENV === 'production' ? 'EL ' : 'ELRS '}
+            {props.paymentMethod.toUpperCase()}
+            {/* {process.env.NODE_ENV === 'production' ? 'EL ' : 'ELRS '} */}
           </div>
-          <div style={{ color: '#1C1C1C', fontSize: 15, fontWeight: 900, marginLeft: 5 }}>
+          <div
+            style={{
+              color: '#1C1C1C',
+              fontSize: 15,
+              fontWeight: 900,
+              marginLeft: 5,
+            }}
+          >
             {balance
-              ? (balance.toNumber() / 10 ** 18).toFixed(2)
+              ? (balance.toNumber() / 10 ** 18).toFixed(
+                  props.paymentMethod === PaymentMethod.EL ? 2 : 4,
+                )
               : 'Checking'}
           </div>
         </div>
