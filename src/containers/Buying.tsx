@@ -230,7 +230,7 @@ function Buying(props: Props) {
             {
               product: props.transactionRequest.product.title,
               value: totalSupply.toString() !== '0' ?
-                props.transactionRequest.amount / parseFloat(formatEther(totalSupply)) * 100
+                (props.transactionRequest.amount / parseFloat(formatEther(totalSupply)) * 100).toFixed(2)
                 : '--',
             }
           )}<br />${t('Completion.Notice')}</div>
