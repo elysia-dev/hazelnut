@@ -79,7 +79,7 @@ function AddressBottomTab() {
           </div>
           <div style={{ color: '#1C1C1C', fontSize: 15, fontWeight: 900, marginLeft: 5 }}>
             {balance
-              ? (balance.toNumber() / 10 ** 18).toFixed(2)
+              ? (balance.div(new BigNumber(`1${'0'.repeat(18)}`))).toFixed(2)
               : 'Checking'}
           </div>
         </div>
