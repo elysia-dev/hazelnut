@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { utils } from 'ethers';
+import { BigNumber, BigNumberish, constants, utils } from 'ethers';
 import TransactionRequest from '../core/types/TransactionRequest';
 import { useWeb3React } from '@web3-react/core';
 import InjectedConnector from '../core/connectors/InjectedConnector';
@@ -15,13 +15,10 @@ import AddressBottomTab from '../components/AddressBottomTab';
 import Swal, { RetrySwal } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
 import useExpectedValue from '../hooks/useExpectedValue';
+import { request } from 'http';
 
 type Props = {
   transactionRequest: TransactionRequest;
-};
-
-type State = {
-  txHash: string;
 };
 
 function Refund(props: Props) {
@@ -32,6 +29,7 @@ function Refund(props: Props) {
     props.transactionRequest.contract.abi,
   );
   const [expectedValue] = useExpectedValue(props.transactionRequest);
+  const [accountBalance, setAccountBalance] = useState<BigNumberish>(constants.Zero);
   const { id } = useParams<{ id: string }>();
 
   const checkAccount = () => {
@@ -50,8 +48,14 @@ function Refund(props: Props) {
   };
 
   const createTransaction = () => {
+    const requestAmount = utils.parseEther(props.transactionRequest.amount.toString())
+
+    const amount = (BigNumber.from(accountBalance)
+      .sub(requestAmount))
+      .gte(constants.Zero) ? requestAmount : accountBalance
+
     assetToken?.populateTransaction
-      .refund(utils.parseEther(props.transactionRequest.amount.toString()))
+      .refund(amount)
       .then(populatedTransaction => {
         library.provider
           .request({
@@ -102,6 +106,11 @@ function Refund(props: Props) {
   };
 
   useEffect(connectWallet, []);
+  useEffect(() => {
+    assetToken?.balanceOf(account).then((balance: BigNumberish) => {
+      setAccountBalance(balance);
+    })
+  }, [account])
 
   if (!account) {
     return <ConnectWallet handler={connectWallet} />;
