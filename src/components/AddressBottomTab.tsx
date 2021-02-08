@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core';
-import BigNumber from 'bignumber.js';
+import { BigNumberish, utils } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import PaymentMethod from '../core/types/PaymentMethod';
 import { useElysiaToken } from '../hooks/useContract';
@@ -11,17 +11,16 @@ type Props = {
 
 function AddressBottomTab(props: Props) {
   const elToken = useElysiaToken();
-  const [balance, setBalance] = useState<BigNumber | undefined>(undefined);
+  const [balance, setBalance] = useState<BigNumberish | undefined>(undefined);
   const { account, library } = useWeb3React();
 
   useEffect(() => {
     if (props.paymentMethod === PaymentMethod.EL) {
-      elToken?.balanceOf(account).then((res: BigNumber) => {
-        const balance = new BigNumber(res.toString());
+      elToken?.balanceOf(account).then((balance: BigNumberish) => {
         setBalance(balance);
       });
     } else if (props.paymentMethod === PaymentMethod.ETH) {
-      library.getBalance(account).then((balance: BigNumber) => {
+      library.getBalance(account).then((balance: BigNumberish) => {
         setBalance(balance);
       });
     }
@@ -100,9 +99,7 @@ function AddressBottomTab(props: Props) {
             }}
           >
             {balance
-              ? balance
-                  .div(new BigNumber(`1${'0'.repeat(18)}`))
-                  .toFixed(props.paymentMethod === PaymentMethod.EL ? 2 : 4)
+              ? parseFloat(utils.formatEther(balance)).toFixed(props.paymentMethod === PaymentMethod.EL ? 2 : 4)
               : 'Checking'}
           </div>
         </div>
