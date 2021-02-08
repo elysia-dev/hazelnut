@@ -100,13 +100,9 @@ function AddressBottomTab(props: Props) {
             }}
           >
             {balance
-<<<<<<< HEAD
-              ? (balance.toNumber() / 10 ** 18).toFixed(
-                  props.paymentMethod === PaymentMethod.EL ? 2 : 4,
-                )
-=======
-              ? (balance.div(new BigNumber(`1${'0'.repeat(18)}`))).toFixed(2)
->>>>>>> a935e435f885a3a71a4191c2bf945e9eb55ca3b8
+              ? balance
+                  .div(new BigNumber(`1${'0'.repeat(18)}`))
+                  .toFixed(props.paymentMethod === PaymentMethod.EL ? 2 : 4)
               : 'Checking'}
           </div>
         </div>
