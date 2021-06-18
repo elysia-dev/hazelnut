@@ -17,8 +17,8 @@
     },
     "Retry": "Retry",
     "Loading": {
-      "Maximum": "It may take up to two minutes",
-      "PleaseWait": "Please don't shut down and wait"
+      "Maximum": "It may take up to two minutes.",
+      "PleaseWait": "Please do not close this browser."
     },
     "Refund": {
       "Title": "Refund"
@@ -27,12 +27,12 @@
       "Title": "Claim reward"
     },
     "Completion": {
-      "Title": "Transaction creation",
+      "Title": "Transaction Success",
       "InterestResult": "You will receive<br>{{paymentMethod}} {{value}} from {{product}}",
-      "BuyingResult": "You will own {{value}}% of {{product}}!",
+      "BuyingResult": "You now own {{value}}% of {{product}}!",
       "RefundResult": "Your investment of {{paymentMethod}} {{value}}<br>from {{product}} will be returned",
       "ReturnToApp": "Return to app",
-      "Notice": "When the transaction is complete,<br> we will send a notification to the app."
+      "Notice": "When the transaction is complete,<br> we will send you a notification."
     },
     "Error": {
       "PriceServer": "EL price information could not be loaded",
