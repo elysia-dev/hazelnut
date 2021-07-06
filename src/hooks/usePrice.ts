@@ -1,43 +1,40 @@
-import { BigNumber } from 'ethers';
+import React from 'react'
+import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from "react";
 import PRICE_ORACLE_ABI from '../core/constants/abis/price-oracle.json';
 import useContract from "./useContract";
 
-export function useEthPrice(): BigNumber {
-  return usePrice(
-    '1268934052030000000000',
-    process.env.REACT_APP_ETH_PRICE_ORACLE_ADDRESS || '',
-    PRICE_ORACLE_ABI
-  )
+interface IPrice {
+  elPrice: BigNumber,
+  ethPrice: BigNumber,
+  loaded: boolean
 }
 
-export function useElPrice(): BigNumber {
-  return usePrice(
-    '2447090000000000',
-    process.env.REACT_APP_EL_PRICE_ORACLE_ADDRESS || '',
-    PRICE_ORACLE_ABI
-  )
-}
+function usePrice(): IPrice {
+  const [prices, setPrices] = useState<{ elPrice: BigNumber, ethPrice: BigNumber, loaded: boolean }>({
+    elPrice: constants.One,
+    ethPrice: constants.One,
+    loaded: false,
+  })
 
-export default function usePrice(
-  initialValue: string,
-  address: string,
-  abi: object,
-): BigNumber {
-  const [[price, loaded], setPrice] = useState<[BigNumber, boolean]>([BigNumber.from(initialValue), false]);
-  const priceOracle = useContract(address, abi, false)
+  const elPriceOracle = useContract(process.env.REACT_APP_EL_PRICE_ORACLE_ADDRESS, PRICE_ORACLE_ABI, false)
+  const ethPriceOracle = useContract(process.env.REACT_APP_ETH_PRICE_ORACLE_ADDRESS, PRICE_ORACLE_ABI, false)
+
+  const loadPrices = async () => {
+    setPrices({
+      elPrice: (await elPriceOracle!.getPrice()) as BigNumber,
+      ethPrice: (await ethPriceOracle!.getPrice()) as BigNumber,
+      loaded: true,
+    })
+  }
 
   useEffect(() => {
-    if (loaded) return;
+    if(elPriceOracle && ethPriceOracle){
+      loadPrices();
+    }
+  }, [elPriceOracle, ethPriceOracle])
 
-    priceOracle?.getPrice().then((res: BigNumber) => {
-      if (res.gt(0)) {
-        setPrice([res, true])
-      }
-    }).catch((e: any) => {
-      console.log(e)
-    })
-  }, [priceOracle])
-
-  return price;
+  return prices;
 }
+
+export default usePrice

@@ -17,7 +17,7 @@ import TxStatus from '../core/enums/TxStatus';
 import InterestSuccess from './../images/success_interest.svg';
 import Swal, { RetrySwal } from '../core/utils/Swal';
 import Button from '../components/Button';
-import { useElPrice, useEthPrice } from '../hooks/usePrice';
+import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import { BigNumber } from 'ethers';
 
@@ -34,8 +34,7 @@ type State = {
 function Interest(props: Props) {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
-  const elPrice = useElPrice();
-  const ethPrice = useEthPrice();
+  const { elPrice, ethPrice, loaded } = usePrice();
   const assetToken = useContract(
     props.transactionRequest.contract.address,
     props.transactionRequest.contract.abi,
@@ -113,13 +112,13 @@ function Interest(props: Props) {
   };
 
   useEffect(() => {
-    if (!account) return;
+    if (!account || !loaded) return;
     loadInterest();
     setState({
       ...state,
       stage: RequestStage.TRANSACTION,
     });
-  }, [account]);
+  }, [account, loaded]);
 
   useEffect(() => {
     switch (state.stage) {
