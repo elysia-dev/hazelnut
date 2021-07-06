@@ -76,7 +76,7 @@ function Refund(props: Props) {
                 'Completion.RefundResult',
                 {
                   product: props.transactionRequest.product.title,
-                  value: parseFloat(utils.formatEther(expectedValue)).toFixed(
+                  value: parseFloat(utils.formatEther(expectedValue.value)).toFixed(
                     4,
                   ),
                   paymentMethod: props.transactionRequest.product.paymentMethod,
@@ -122,7 +122,7 @@ function Refund(props: Props) {
             outUnit={props.transactionRequest.product.tokenName}
             outValue={props.transactionRequest.amount.toString()}
             inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            inValue={parseFloat(utils.formatEther(expectedValue)).toFixed(4)}
+            inValue={expectedValue.loaded ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(4) : "Checking"}
             title={t('Refund.Title')}
             transactionRequest={props.transactionRequest}
           />

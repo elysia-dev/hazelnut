@@ -187,7 +187,7 @@ function Interest(props: Props) {
         <BoxLayout>
           <TxSummary
             inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            inValue={interest.toFixed(4)}
+            inValue={loaded ? interest.toFixed(4) : "Checking"}
             outUnit={''}
             outValue={'0'}
             title={t('Interest.Title')}

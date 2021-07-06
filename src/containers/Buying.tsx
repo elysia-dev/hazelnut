@@ -99,7 +99,7 @@ function Buying(props: Props) {
           populatedTransaction,
           RequestStage.TRANSACTION_RESULT,
           RequestStage.TRANSACTION_RETRY,
-          expectedValue.toHexString(),
+          expectedValue.value.toHexString(),
         );
       });
     } else {
@@ -289,7 +289,7 @@ function Buying(props: Props) {
             inUnit={props.transactionRequest.product.tokenName}
             inValue={props.transactionRequest.amount.toString()}
             outUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            outValue={parseFloat(utils.formatEther(expectedValue)).toFixed(4)}
+            outValue={expectedValue.loaded ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(4) : "Checking"}
             title={t('Buying.CreateTransaction')}
             transactionRequest={props.transactionRequest}
           />
