@@ -21,15 +21,19 @@ function usePrice(): IPrice {
   const ethPriceOracle = useContract(process.env.REACT_APP_ETH_PRICE_ORACLE_ADDRESS, PRICE_ORACLE_ABI, false)
 
   const loadPrices = async () => {
-    setPrices({
-      elPrice: (await elPriceOracle!.getPrice()) as BigNumber,
-      ethPrice: (await ethPriceOracle!.getPrice()) as BigNumber,
-      loaded: true,
-    })
+    try {
+      setPrices({
+        elPrice: (await elPriceOracle!.getPrice()) as BigNumber,
+        ethPrice: (await ethPriceOracle!.getPrice()) as BigNumber,
+        loaded: true,
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   useEffect(() => {
-    if(elPriceOracle && ethPriceOracle){
+    if (elPriceOracle && ethPriceOracle) {
       loadPrices();
     }
   }, [elPriceOracle, ethPriceOracle])
