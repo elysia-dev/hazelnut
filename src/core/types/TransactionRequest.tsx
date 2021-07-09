@@ -5,7 +5,7 @@ import PaymentMethod from "./PaymentMethod";
 type TransactionRequest = {
   type: TransactionType
   amount: number
-  userAddresses: string[]
+  userAddresses: string;
   language?: LanguageType
   product: {
     title: string

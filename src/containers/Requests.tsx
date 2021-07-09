@@ -8,36 +8,62 @@ import Refund from './Refund';
 import Interest from './Interest';
 import getLibrary from '../core/utils/getLibrary';
 import TransactionRequest from '../core/types/TransactionRequest';
-import { getTransactionRequest } from '../core/clients/EspressoClient';
+import { getProductInfo } from '../core/clients/EspressoClient';
 import { useTranslation } from 'react-i18next';
-import LanguageType from '../core/enums/LanguageType';
 import InstallMetamask from '../components/errors/InstallMetamask';
+import LanguageType from '../core/enums/LanguageType';
+import PaymentMethod from '../core/types/PaymentMethod';
+import ETH_abi from '../AssetTokenEthAbi.json'
+import assetAbi from '../AssetTokenAbi.json';
+import TokenAbi from '../core/constants/abis/asset-token.json'
+import { BigNumber } from '@ethersproject/bignumber';
+import { ethers } from 'ethers';
 
 type ParamTypes = {
-  id: string;
+  productid: string;
+  valueto: string;
+  type: TransactionType;
+  contractaddress: string;
+  useraddress: string;
+  userlanguage: LanguageType;
 };
-
 function Requests() {
-  const [transactionRequest, setTransactionRequest] = useState<
-    TransactionRequest
-  >();
-  const { id } = useParams<ParamTypes>();
+  const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
+  const { productid, valueto, type, contractaddress, useraddress, userlanguage } = useParams<ParamTypes>();
   const { i18n } = useTranslation();
   const history = useHistory();
 
-  function loadTransactionRequest() {
+
+  async function loadTransactionRequest() {
     // TODO : Validate token with api
-    getTransactionRequest(id)
-      .then(res => {
-        setTransactionRequest(res.data);
-        i18n.changeLanguage(res.data.language || LanguageType.EN);
-      })
-      .catch(() => {
-        history.push('/notFound');
-      });
+    const product  = await getProductInfo(Number(productid));
+    setTransactionRequest({
+      type: type,
+      amount: Number(valueto),
+      userAddresses: useraddress,
+      language: userlanguage,
+      product:{
+        title: product.data.title,
+        tokenName: product.data.tokenName,
+        expectedAnnualReturn: product.data.expectedAnnualReturn,
+        contractAddress: product.data.contractAddress,
+        usdPricePerToken: product.data.usdPricePerToken,
+        paymentMethod:product.data.paymentMethod,
+        data:{
+          images:product.data.data.images,
+        }
+      },
+      contract:{
+        address:contractaddress,
+        abi:JSON.stringify(product.data.paymentMethod === PaymentMethod.BNB ? ETH_abi : TokenAbi),
+        version:"v2.0.0"
+      }
+    })
   }
 
-  useEffect(loadTransactionRequest, []);
+  useEffect(() => {
+    loadTransactionRequest();
+  }, []);
 
   if (transactionRequest) {
     if (window.ethereum?.isMetaMask || window.ethereum?.isImToken) {

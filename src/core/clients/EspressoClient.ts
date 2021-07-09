@@ -31,3 +31,15 @@ export const registerEthAddress = (
     address: address,
   });
 };
+
+export const getProductInfo = (
+  productId: number,
+): Promise<AxiosResponse> => {
+  return Axios.get(`${process.env.REACT_APP_API_URL}/products?productId=${productId}`);
+};
+
+export const getProductContract = (
+  contractAddress: string,
+): Promise<AxiosResponse> => {
+  return Axios.get(`${process.env.REACT_APP_API_URL}/products?contractAddress=${contractAddress}`);
+};

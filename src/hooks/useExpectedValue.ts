@@ -8,11 +8,22 @@ import usePrice from "./usePrice";
 export default function useExpectedValue(
   transactionRequest: TransactionRequest,
 ): [{value: BigNumber, loaded: boolean}, number] {
-  const { elPrice, ethPrice, loaded } = usePrice();
+  const { elPrice, ethPrice, bnbPrice, loaded } = usePrice();
   const [expectedValue, setExpectedValue] = useState<{value: BigNumber, loaded: boolean}>({
     value: constants.Zero,
     loaded: false
   });
+  let decimalCount = 0;
+  let decimalDiv = 1;
+  const amount  = String(transactionRequest.amount);
+
+  if(amount.includes(".")){
+     const decimal =amount.substring(amount.indexOf('.') + 1);
+     Array(decimal.length).fill(0).forEach(() =>{
+       decimalDiv *= 10;
+       decimalCount += 1;
+     })
+  }
 
   // 주의
   // 아래의 순서를 지켜야, 컨트랙트와 동일한 amount를 계산할 수 있음
@@ -20,15 +31,15 @@ export default function useExpectedValue(
   useEffect(() => {
     if(loaded){
       setExpectedValue({
-        value: BigNumber.from((transactionRequest.amount || 0)).mul(
+        value: BigNumber.from(utils.parseUnits(amount,decimalCount).toHexString() || 0)
+        .mul(
           BigNumber.from(transactionRequest.product.usdPricePerToken)
             .mul(getPowerOf10(36))
-            .div(transactionRequest.product.paymentMethod === PaymentMethod.ETH ? ethPrice : elPrice)
-        ),
+            .div(transactionRequest.product.paymentMethod === PaymentMethod.ETH ? ethPrice : transactionRequest.product.paymentMethod === PaymentMethod.BNB ? bnbPrice : elPrice)
+        ).div(decimalDiv),
         loaded: true
       })
     }
-
   }, [loaded])
 
   const expectedReturn = parseFloat(utils.formatEther(expectedValue.value)) * parseFloat(transactionRequest.product.expectedAnnualReturn) / 100;

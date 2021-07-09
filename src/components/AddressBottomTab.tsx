@@ -6,6 +6,7 @@ import { useElysiaToken } from '../hooks/useContract';
 import AccountIcon from './AccountIcon';
 
 type Props = {
+  chainId: string | undefined;
   paymentMethod: string;
 };
 
@@ -19,12 +20,12 @@ function AddressBottomTab(props: Props) {
       elToken?.balanceOf(account).then((balance: BigNumberish) => {
         setBalance(balance);
       });
-    } else if (props.paymentMethod === PaymentMethod.ETH) {
+    } else if (props.paymentMethod === PaymentMethod.ETH || props.paymentMethod === PaymentMethod.BNB) {
       library.getBalance(account).then((balance: BigNumberish) => {
         setBalance(balance);
       });
     }
-  }, [account]);
+  }, [account, props.chainId]);
 
   return (
     <div

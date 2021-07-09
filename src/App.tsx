@@ -6,12 +6,11 @@ import './i18n';
 import EthAddress from './containers/EthAddress';
 import './fonts/font.css';
 import ServerError from './components/errors/ServerError';
-
 function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/requests/:id">
+        <Route path="/requests/:productid/:valueto/:type/:contractaddress/:useraddress/:userlanguage">
           <Requests />
         </Route>
         <Route path="/ethAddress/:id">
