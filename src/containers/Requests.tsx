@@ -17,23 +17,12 @@ import PaymentMethod from '../core/types/PaymentMethod';
 import ETH_abi from '../AssetTokenEthAbi.json'
 import TokenAbi from '../core/constants/abis/asset-token.json'
 
-type ParamTypes = {
-  productId: string;
-  value: string;
-  type: TransactionType;
-  contractAddress: string;
-  address: string;
-  language: LanguageType;
-};
-
 function Requests () {
   const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
   const { search } = useLocation();
   const {productId, value, type, contractAddress, address, language} = queryString.parse(search);
   const { i18n } = useTranslation();
   const history = useHistory();
-
-
 
   async function loadTransactionRequest() {
     try {
