@@ -58,8 +58,6 @@ function Buying(props: Props) {
     txHash: '',
   });
   const [chainId, setChainId] = useState<string>('');
-  const [isCheckNetwork, setIsCheckNetwork] = useState(false)
-
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
