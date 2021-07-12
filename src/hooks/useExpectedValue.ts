@@ -25,17 +25,28 @@ export default function useExpectedValue(
      })
   }
 
+
+  function paymentMethodPrice(paymentMethod: string): BigNumber {
+    if(paymentMethod === PaymentMethod.ETH){
+      return ethPrice;
+    }
+    if(paymentMethod === PaymentMethod.BNB){
+      return bnbPrice;
+    }
+    return elPrice;
+  }
+
   // 주의
   // 아래의 순서를 지켜야, 컨트랙트와 동일한 amount를 계산할 수 있음
   // 개수 * (decimal이 18인 usd 토큰 가격 / ethPrice) * decimal 18
   useEffect(() => {
     if(loaded){
       setExpectedValue({
-        value: BigNumber.from(utils.parseUnits(amount,decimalCount).toHexString() || 0)
+        value: BigNumber.from(utils.parseUnits(amount || "0",decimalCount))
         .mul(
           BigNumber.from(transactionRequest.product.usdPricePerToken)
             .mul(getPowerOf10(36))
-            .div(transactionRequest.product.paymentMethod === PaymentMethod.ETH ? ethPrice : transactionRequest.product.paymentMethod === PaymentMethod.BNB ? bnbPrice : elPrice)
+            .div(paymentMethodPrice(transactionRequest.product.paymentMethod))
         ).div(decimalDiv),
         loaded: true
       })

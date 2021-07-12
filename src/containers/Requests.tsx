@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { Web3ReactProvider } from '@web3-react/core';
 import Spinner from 'react-spinkit';
+import queryString from 'query-string';
 import TransactionType from '../core/enums/TransactionType';
 import Buying from './Buying';
 import Refund from './Refund';
@@ -14,34 +15,35 @@ import InstallMetamask from '../components/errors/InstallMetamask';
 import LanguageType from '../core/enums/LanguageType';
 import PaymentMethod from '../core/types/PaymentMethod';
 import ETH_abi from '../AssetTokenEthAbi.json'
-import assetAbi from '../AssetTokenAbi.json';
 import TokenAbi from '../core/constants/abis/asset-token.json'
-import { BigNumber } from '@ethersproject/bignumber';
-import { ethers } from 'ethers';
 
 type ParamTypes = {
-  productid: string;
-  valueto: string;
+  productId: string;
+  value: string;
   type: TransactionType;
-  contractaddress: string;
-  useraddress: string;
-  userlanguage: LanguageType;
+  contractAddress: string;
+  address: string;
+  language: LanguageType;
 };
-function Requests() {
+
+function Requests () {
   const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
-  const { productid, valueto, type, contractaddress, useraddress, userlanguage } = useParams<ParamTypes>();
+  const { search } = useLocation();
+  const {productId, value, type, contractAddress, address, language} = queryString.parse(search);
   const { i18n } = useTranslation();
   const history = useHistory();
 
 
+
   async function loadTransactionRequest() {
-    // TODO : Validate token with api
-    const product  = await getProductInfo(Number(productid));
+    try {
+        // TODO : Validate token with api
+    const product  = await getProductInfo(Number(productId));
     setTransactionRequest({
-      type: type,
-      amount: Number(valueto),
-      userAddresses: useraddress,
-      language: userlanguage,
+      type: String(type),
+      amount: Number(value),
+      userAddresses: String(address),
+      language: String(language),
       product:{
         title: product.data.title,
         tokenName: product.data.tokenName,
@@ -54,11 +56,15 @@ function Requests() {
         }
       },
       contract:{
-        address:contractaddress,
+        address:contractAddress,
         abi:JSON.stringify(product.data.paymentMethod === PaymentMethod.BNB ? ETH_abi : TokenAbi),
         version:"v2.0.0"
       }
     })
+    i18n.changeLanguage(String(language) || LanguageType.EN);
+    } catch (error) {
+      history.push('/notFound');
+    }
   }
 
   useEffect(() => {

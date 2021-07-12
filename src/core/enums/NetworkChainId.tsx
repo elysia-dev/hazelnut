@@ -6,6 +6,6 @@ enum NetworkChainId {
     Kovan = "0x2a",
     BnbTestNet = "0x61",
     BnbMainNet = "0x38",
-  }
-  
-  export default NetworkChainId
+}  
+
+export default NetworkChainId

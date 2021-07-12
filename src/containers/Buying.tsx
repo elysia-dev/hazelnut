@@ -25,9 +25,8 @@ import Button from '../components/Button';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useExpectedValue from '../hooks/useExpectedValue';
 import { formatEther } from 'ethers/lib/utils';
-import bnb_abi from '../AssetTokenBnb.json'
 import NetworkChainId from '../core/enums/NetworkChainId';
-import { changeKovan, createBnbTestNet, createKovan, isCheckChainId } from '../core/utils/createNetwork';
+import { changeKovan, createBnbTestNet, createKovan, isValidChainId } from '../core/utils/createNetwork';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -44,7 +43,7 @@ function Buying(props: Props) {
   const { activate, library, account } = useWeb3React();
   const elToken = useElysiaToken();
   const assetToken = useContract(
-    props.transactionRequest.contract.address,
+    String(props.transactionRequest.contract.address),
     props.transactionRequest.contract.abi,
   );
   const [expectedValue, expectedReturn] = useExpectedValue(
@@ -68,8 +67,8 @@ function Buying(props: Props) {
      }));
   }
 
-const networkCheck = () => {
-   return isCheckChainId(props.transactionRequest.product.paymentMethod, chainId);
+  const networkCheck = () => {
+      return isValidChainId(props.transactionRequest.product.paymentMethod, chainId);
   }
 
   const createNetwork = async () => {
@@ -217,7 +216,7 @@ const networkCheck = () => {
       ...state,
       stage: RequestStage.INIT,
     });
-  }, [!account && !chainId]);
+  }, [account, chainId]);
 
   useEffect(() => {
     switch (state.stage) {

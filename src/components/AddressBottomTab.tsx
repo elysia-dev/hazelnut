@@ -6,8 +6,8 @@ import { useElysiaToken } from '../hooks/useContract';
 import AccountIcon from './AccountIcon';
 
 type Props = {
-  chainId: string | undefined;
   paymentMethod: string;
+  chainId: string | undefined;
 };
 
 function AddressBottomTab(props: Props) {
@@ -20,12 +20,26 @@ function AddressBottomTab(props: Props) {
       elToken?.balanceOf(account).then((balance: BigNumberish) => {
         setBalance(balance);
       });
-    } else if (props.paymentMethod === PaymentMethod.ETH || props.paymentMethod === PaymentMethod.BNB) {
-      library.getBalance(account).then((balance: BigNumberish) => {
-        setBalance(balance);
-      });
+    } else {
+      currentEthOrBnb(props.paymentMethod, props.chainId || '', library, account || '')
     }
   }, [account, props.chainId]);
+
+  function currentEthOrBnb (productPayment: string, chainId: string, library: any, account: string) {
+    if(productPayment === PaymentMethod.BNB){
+            if(chainId === process.env.REACT_APP_BNB_NETWORK){
+              library.getBalance(account).then((balance: BigNumberish) => {
+                setBalance(balance);
+              })
+            }
+        } else {
+            if(chainId === process.env.REACT_APP_ETH_NETWORK){
+              library.getBalance(account).then((balance: BigNumberish) => {
+                setBalance(balance);
+              })
+            } 
+      } 
+  }
 
   return (
     <div

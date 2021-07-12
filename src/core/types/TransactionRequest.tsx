@@ -3,10 +3,10 @@ import LanguageType from "../enums/LanguageType";
 import PaymentMethod from "./PaymentMethod";
 
 type TransactionRequest = {
-  type: TransactionType
+  type: TransactionType | string;
   amount: number
-  userAddresses: string;
-  language?: LanguageType
+  userAddresses: string | string[] | null;
+  language?: LanguageType | string;
   product: {
     title: string
     tokenName: string
@@ -19,7 +19,7 @@ type TransactionRequest = {
     }
   }
   contract: {
-    address: string
+    address: string | string[] | null;
     abi: string
     version: string
   }

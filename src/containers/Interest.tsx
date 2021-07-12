@@ -36,7 +36,7 @@ function Interest(props: Props) {
   const { activate, library, account } = useWeb3React();
   const { elPrice, ethPrice, loaded } = usePrice();
   const assetToken = useContract(
-    props.transactionRequest.contract.address,
+    String(props.transactionRequest.contract.address),
     props.transactionRequest.contract.abi,
   );
   const { id } = useParams<{ id: string }>();
@@ -196,7 +196,7 @@ function Interest(props: Props) {
           <div style={{ marginTop: 20, paddingLeft: 10, paddingRight: 10 }}>
             <Button
               clickHandler={() => {
-                account && props.transactionRequest.userAddresses[0] !== account
+                account && props.transactionRequest.userAddresses !== account
                   ? checkAccount()
                   : createTransaction();
               }}
@@ -206,6 +206,7 @@ function Interest(props: Props) {
           <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab
+          chainId={''}
           paymentMethod={props.transactionRequest.product.paymentMethod}
         />
       </div>

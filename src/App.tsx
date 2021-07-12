@@ -10,7 +10,7 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/requests/:productid/:valueto/:type/:contractaddress/:useraddress/:userlanguage">
+        <Route path="/requests">
           <Requests />
         </Route>
         <Route path="/ethAddress/:id">

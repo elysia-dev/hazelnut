@@ -1,4 +1,3 @@
-
 type CoinPriceResponse = {
     elysia: {
         usd: number;
