@@ -9,6 +9,7 @@ import Refund from './Refund';
 import Interest from './Interest';
 import getLibrary from '../core/utils/getLibrary';
 import TransactionRequest from '../core/types/TransactionRequest';
+import { getTransactionRequest } from '../core/clients/EspressoClient';
 import { getProductInfo } from '../core/clients/EspressoClient';
 import { useTranslation } from 'react-i18next';
 import InstallMetamask from '../components/errors/InstallMetamask';
@@ -17,43 +18,59 @@ import PaymentMethod from '../core/types/PaymentMethod';
 import ETH_abi from '../AssetTokenEthAbi.json'
 import TokenAbi from '../core/constants/abis/asset-token.json'
 
+type ParamTypes = {
+  id: string | undefined;
+};
+
 function Requests () {
   const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
   const { search } = useLocation();
+  const { id } = useParams<ParamTypes>();
   const {productId, value, type, contractAddress, address, language} = queryString.parse(search);
   const { i18n } = useTranslation();
   const history = useHistory();
 
   async function loadTransactionRequest() {
-    try {
         // TODO : Validate token with api
-    const product  = await getProductInfo(Number(productId));
-    setTransactionRequest({
-      type: String(type),
-      amount: Number(value),
-      userAddresses: String(address),
-      language: String(language),
-      product:{
-        title: product.data.title,
-        tokenName: product.data.tokenName,
-        expectedAnnualReturn: product.data.expectedAnnualReturn,
-        contractAddress: product.data.contractAddress,
-        usdPricePerToken: product.data.usdPricePerToken,
-        paymentMethod:product.data.paymentMethod,
-        data:{
-          images:product.data.data.images,
-        }
-      },
-      contract:{
-        address:contractAddress,
-        abi:JSON.stringify(product.data.paymentMethod === PaymentMethod.BNB ? ETH_abi : TokenAbi),
-        version:"v2.0.0"
+        if(id){
+          getTransactionRequest(id)
+          .then(res => {
+            setTransactionRequest(res.data);
+            i18n.changeLanguage(res.data.language || LanguageType.EN);
+          })
+          .catch(() => {
+            history.push('/notFound');
+          });
+        } else {
+          // const product  = await getProductInfo(Number(productId));
+          getProductInfo(Number(productId)).then((product) => {
+            setTransactionRequest({
+              type: String(type),
+              amount: Number(value),
+              userAddresses: String(address),
+              language: String(language),
+              product:{
+                title: product.data.title,
+                tokenName: product.data.tokenName,
+                expectedAnnualReturn: product.data.expectedAnnualReturn,
+                contractAddress: product.data.contractAddress,
+                usdPricePerToken: product.data.usdPricePerToken,
+                paymentMethod:product.data.paymentMethod,
+                data:{
+                  images:product.data.data.images,
+                }
+              },
+              contract:{
+                address:contractAddress,
+                abi:JSON.stringify(product.data.paymentMethod === PaymentMethod.BNB ? ETH_abi : TokenAbi),
+                version:'v2.0.0'
+              }
+            })
+            i18n.changeLanguage(String(language) || LanguageType.EN);
+          }).catch(() => {
+            history.push('/notFound');
+          });;
       }
-    })
-    i18n.changeLanguage(String(language) || LanguageType.EN);
-    } catch (error) {
-      history.push('/notFound');
-    }
   }
 
   useEffect(() => {

@@ -18,7 +18,7 @@ export default function useExpectedValue(
   const amount  = String(transactionRequest.amount);
 
   if(amount.includes(".")){
-     const decimal =amount.substring(amount.indexOf('.') + 1);
+     const decimal =amount.substring(amount.indexOf(".") + 1);
      Array(decimal.length).fill(0).forEach(() =>{
        decimalDiv *= 10;
        decimalCount += 1;

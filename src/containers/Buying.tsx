@@ -26,7 +26,7 @@ import PaymentMethod from '../core/types/PaymentMethod';
 import useExpectedValue from '../hooks/useExpectedValue';
 import { formatEther } from 'ethers/lib/utils';
 import NetworkChainId from '../core/enums/NetworkChainId';
-import { changeKovan, createBnbTestNet, createKovan, isValidChainId } from '../core/utils/createNetwork';
+import { changeEthNet, createBnbNet, createEthNet, isValidChainId } from '../core/utils/createNetwork';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -70,21 +70,22 @@ function Buying(props: Props) {
   }
 
   const createNetwork = async () => {
-    try {
-      if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
-        if(chainId !== NetworkChainId.BnbTestNet){
-         await createBnbTestNet(library)
-       } 
-      } else {
-        await changeKovan(library)
+    let network: Promise<void> | undefined;
+    if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
+      network = createBnbNet(library);
+    } else {
+      network = changeEthNet(library);
     }
+    try {
+        await network
     } catch (switchChainError) {
-     try{
-       if(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
-          props.transactionRequest.product.paymentMethod === PaymentMethod.ETH){
-          await createKovan(library)
+      if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
+         props.transactionRequest.product.paymentMethod === PaymentMethod.ETH)){
+          return;
       }
-      return;
+        network = createEthNet(library);
+      try{
+        await network;
      } catch (error) {
        console.error(error);
      }
@@ -169,7 +170,6 @@ function Buying(props: Props) {
         );
       });
   };
-
 
   const sendTx = (
     populatedTransaction: PopulatedTransaction,

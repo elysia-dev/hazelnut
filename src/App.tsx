@@ -10,6 +10,9 @@ function App() {
   return (
     <Router>
       <Switch>
+        <Route path="/requests/:id">
+          <Requests />
+        </Route>
         <Route path="/requests">
           <Requests />
         </Route>

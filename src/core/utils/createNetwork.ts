@@ -5,7 +5,7 @@ import PaymentMethod from "../types/PaymentMethod";
 /**
  * bnb 네트워크로 변경(모바일) 및 생성
  */
-export async function createBnbTestNet(library: any){
+export async function createBnbNet(library: any){
     try {
         if(process.env.REACT_APP_ENV !== 'production'){
             await library.provider.request({
@@ -50,7 +50,7 @@ export async function createBnbTestNet(library: any){
 /**
  * kovan 네트워크가 없을시에 변경(모바일) 및 생성
  */
-export async function createKovan (library: any) {
+export async function createEthNet (library: any) {
     try {
         if(process.env.REACT_APP_ENV !== "production"){
             await library.provider.request({
@@ -96,7 +96,7 @@ export async function createKovan (library: any) {
 /**
  * 데스트크탑에서 코반서버로 변경해주는 메서드
  */
-export async function changeKovan (library: any) {
+export async function changeEthNet (library: any) {
     try {
         if(process.env.REACT_APP_ENV !== 'production'){
             await library.provider.request({
@@ -129,7 +129,7 @@ export  function isValidChainId (productPayment: string, chainId: string): boole
             } else {
               alert('네워크가 일치하지 않습니다.')
               return false;
-             }
+            }
       } 
 }
 
