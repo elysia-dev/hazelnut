@@ -116,20 +116,11 @@ export async function changeEthNet (library: any) {
 
 
 export  function isValidChainId (productPayment: string, chainId: string): boolean {
-    if(productPayment === PaymentMethod.BNB){
-            if(chainId === process.env.REACT_APP_BNB_NETWORK){
-            return true;
-            } else {
-              alert('네워크가 일치하지 않습니다.')
-              return false;
-            }
-        } else {
-            if(chainId === process.env.REACT_APP_ETH_NETWORK){
-              return true;
-            } else {
-              alert('네워크가 일치하지 않습니다.')
-              return false;
-            }
-      } 
+  const requiredNetworkChainID = productPayment === PaymentMethod.BNB ? process.env.REACT_APP_BNB_NETWORK : process.env.REACT_APP_ETH_NETWORK;
+        if(chainId === requiredNetworkChainID){
+          return true;
+        }
+        alert('네워크가 일치하지 않습니다.')
+        return false;
 }
 
