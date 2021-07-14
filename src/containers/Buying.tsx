@@ -141,7 +141,7 @@ function Buying(props: Props) {
           populatedTransaction,
           RequestStage.TRANSACTION_RESULT,
           RequestStage.TRANSACTION_RETRY,
-          expectedValue.value.toHexString(),
+          expectedValue.value,
         );
       });
     } else {
@@ -173,7 +173,7 @@ function Buying(props: Props) {
     populatedTransaction: PopulatedTransaction,
     nextStage: RequestStage,
     prevStage: RequestStage,
-    value?: string,
+    value?: BigNumber,
   ) => {
     library.provider.request({
         method: 'eth_sendTransaction',

@@ -64,7 +64,7 @@ function usePrice(): IPrice {
   }
 
   useEffect(() => {
-      loadPrices();
+    loadPrices();
   }, [])
 
   return prices;
