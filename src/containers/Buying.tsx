@@ -113,7 +113,6 @@ function Buying(props: Props) {
     elToken
       ?.allowance(account, props.transactionRequest.contract.address)
       .then((res: BigNumber) => {
-        console.log(res)
         setState({
           ...state,
           stage: res.gte(expectedValue.value)
