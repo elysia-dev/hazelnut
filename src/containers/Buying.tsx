@@ -24,6 +24,8 @@ import Button from '../components/Button';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useExpectedValue from '../hooks/useExpectedValue';
 import { formatEther } from 'ethers/lib/utils';
+import NetworkChainId from '../core/enums/NetworkChainId';
+import { changeEthNet, createBnbNet, createEthNet, isValidChainId } from '../core/utils/createNetwork';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -40,7 +42,7 @@ function Buying(props: Props) {
   const { activate, library, account } = useWeb3React();
   const elToken = useElysiaToken();
   const assetToken = useContract(
-    props.transactionRequest.contract.address,
+    String(props.transactionRequest.contract.address),
     props.transactionRequest.contract.abi,
   );
   const [expectedValue, expectedReturn] = useExpectedValue(
@@ -54,11 +56,52 @@ function Buying(props: Props) {
     error: false,
     txHash: '',
   });
+  const [chainId, setChainId] = useState<string>('');
+
+  const currentChainId = async () => {
+    setChainId(await library.provider.request({
+       method: 'eth_chainId'
+     }));
+  }
+
+  const networkCheck = () => {
+      return isValidChainId(props.transactionRequest.product.paymentMethod, chainId);
+  }
+
+  const createNetwork = async () => {
+    let network: Promise<void> | undefined;
+    if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
+      network = createBnbNet(library);
+    } else {
+      network = changeEthNet(library);
+    }
+    try {
+        await network
+    } catch (switchChainError) {
+      if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
+         props.transactionRequest.product.paymentMethod === PaymentMethod.ETH)){
+          return;
+      }
+        network = createEthNet(library);
+      try{
+        await network;
+     } catch (error) {
+       console.error(error);
+     }
+  } finally {
+    setState({
+      ...state,
+      stage: RequestStage.INIT,
+    })
+    currentChainId();
+  }
+}
 
   const txResult = useWatingTx(state.txHash);
 
   const checkAllowance = () => {
-    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
+    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH || 
+        props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
       setState({
         ...state,
         stage: RequestStage.TRANSACTION,
@@ -92,7 +135,8 @@ function Buying(props: Props) {
   };
 
   const createTransaction = () => {
-    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH) {
+    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH || 
+       props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
       assetToken?.populateTransaction.purchase().then(populatedTransaction => {
         sendTx(
           populatedTransaction,
@@ -103,7 +147,7 @@ function Buying(props: Props) {
       });
     } else {
       assetToken?.populateTransaction
-        .purchase(expectedValue.value)
+        .purchase(expectedValue.value.toHexString())
         .then(populatedTransaction => {
           sendTx(
             populatedTransaction,
@@ -132,8 +176,7 @@ function Buying(props: Props) {
     prevStage: RequestStage,
     value?: BigNumber,
   ) => {
-    library.provider
-      .request({
+    library.provider.request({
         method: 'eth_sendTransaction',
         params: [
           {
@@ -152,6 +195,7 @@ function Buying(props: Props) {
         });
       })
       .catch((error: any) => {
+        console.error(error);
         setState({
           ...state,
           stage: prevStage,
@@ -160,14 +204,16 @@ function Buying(props: Props) {
   };
 
   useEffect(() => {
-    if (!account) return;
+    if (!account && !chainId) return;
+    currentChainId();
+    createNetwork();
     Swal.close();
 
     setState({
       ...state,
       stage: RequestStage.INIT,
     });
-  }, [account]);
+  }, [account, chainId]);
 
   useEffect(() => {
     switch (state.stage) {
@@ -178,6 +224,16 @@ function Buying(props: Props) {
           title: t(`Buying.${state.stage}`),
           showConfirmButton: false,
         });
+        break;
+      case RequestStage.NETWORK_CHECK:
+        if(!networkCheck()){
+          createNetwork();
+        } else {
+          setState({
+            ...state,
+            stage: RequestStage.ALLOWANCE_CHECK,
+          });
+        }
         break;
       case RequestStage.ALLOWANCE_CHECK:
         SwalWithReact.fire({
@@ -288,7 +344,7 @@ function Buying(props: Props) {
             inUnit={props.transactionRequest.product.tokenName}
             inValue={props.transactionRequest.amount.toString()}
             outUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            outValue={expectedValue.loaded ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(4) : "Checking"}
+            outValue={expectedValue.loaded ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(5) : "Checking"}
             title={t('Buying.CreateTransaction')}
             transactionRequest={props.transactionRequest}
           />
@@ -326,16 +382,16 @@ function Buying(props: Props) {
             <Button
               style={{ marginTop: 20 }}
               clickHandler={() => {
-                setState({ ...state, stage: RequestStage.ALLOWANCE_CHECK });
+                account && props.transactionRequest.userAddresses !== account
+                  ? checkAccount()
+                  : setState({ ...state, stage: RequestStage.NETWORK_CHECK});
               }}
               title={t('Buying.TransactionRetryButton')}
               disabled={!expectedValue.loaded}
             />
           </div>
         </BoxLayout>
-        <AddressBottomTab
-          paymentMethod={props.transactionRequest.product.paymentMethod}
-        />
+        <AddressBottomTab chainId={chainId} paymentMethod={props.transactionRequest.product.paymentMethod} />
       </div>
     );
   }

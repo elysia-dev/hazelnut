@@ -1,5 +1,6 @@
 enum RequestStage {
   INIT = 'init',
+  NETWORK_CHECK = 'NetworkCheck',
   ALLOWANCE_CHECK = 'AllowanceCheck',
   ALLOWANCE_PENDING = 'AllowancePending',
   ALLOWANCE_RETRY = 'AllowanceRetry',

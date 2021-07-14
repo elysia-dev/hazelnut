@@ -26,6 +26,7 @@
     "i18next": "^19.8.2",
     "jazzicon": "^1.5.0",
     "prettier": "^2.1.2",
+    "query-string": "^7.0.1",
     "react": "^16.13.1",
     "react-animated-css": "^1.2.1",
     "react-dom": "^16.13.1",
