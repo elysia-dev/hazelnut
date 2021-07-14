@@ -62,7 +62,7 @@ function Requests () {
               },
               contract:{
                 address:contractAddress,
-                abi:JSON.stringify(product.data.paymentMethod === PaymentMethod.EL ? ETH_abi : TokenAbi),
+                abi:JSON.stringify(product.data.paymentMethod !== PaymentMethod.EL ? ETH_abi : TokenAbi),
                 version:'v2.0.0'
               }
             })

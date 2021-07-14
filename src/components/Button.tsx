@@ -4,6 +4,7 @@ type Props = {
   clickHandler: () => void,
   title: string,
   style?: {}
+  disabled?: boolean
 }
 
 function Button(props: Props) {
@@ -21,6 +22,7 @@ function Button(props: Props) {
         width: "100%",
       }}
       onClick={props.clickHandler}
+      disabled={props.disabled}
     >
       <div
         style={{

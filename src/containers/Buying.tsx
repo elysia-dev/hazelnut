@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import TransactionRequest from '../core/types/TransactionRequest';
 import RequestStage from '../core/enums/RequestStage';
 import { useWeb3React } from '@web3-react/core';
-import { utils, BigNumber as Big } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import useContract, { useElysiaToken } from '../hooks/useContract';
-import { BigNumber } from 'bignumber.js';
 import ConnectWallet from '../components/ConnectWallet';
 import TxSummary from '../components/TxSummary';
 import Loading from '../components/Loading';
@@ -114,10 +113,9 @@ function Buying(props: Props) {
     elToken
       ?.allowance(account, props.transactionRequest.contract.address)
       .then((res: BigNumber) => {
-        const allownace = new BigNumber(res.toString());
         setState({
           ...state,
-          stage: allownace.gte(expectedValue.toString())
+          stage: res.gte(expectedValue.value)
             ? RequestStage.TRANSACTION
             : RequestStage.ALLOWANCE_RETRY,
         });
@@ -161,7 +159,7 @@ function Buying(props: Props) {
 
   const approve = () => {
     elToken?.populateTransaction
-      .approve(props.transactionRequest.contract.address, '1' + '0'.repeat(25))
+      .approve(props.transactionRequest.contract.address, constants.MaxUint256)
       .then(populatedTransaction => {
         sendTx(
           populatedTransaction,
@@ -388,6 +386,7 @@ function Buying(props: Props) {
                   : setState({ ...state, stage: RequestStage.NETWORK_CHECK});
               }}
               title={t('Buying.TransactionRetryButton')}
+              disabled={!expectedValue.loaded}
             />
           </div>
         </BoxLayout>
