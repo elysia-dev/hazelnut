@@ -16,6 +16,8 @@ import Swal, { RetrySwal } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
 import useExpectedValue from '../hooks/useExpectedValue';
 import { request } from 'http';
+import { changeEthNet, createBnbNet, createEthNet, isValidChainId } from '../core/utils/createNetwork';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -31,6 +33,43 @@ function Refund(props: Props) {
   const [expectedValue] = useExpectedValue(props.transactionRequest);
   const [accountBalance, setAccountBalance] = useState<BigNumberish>(constants.Zero);
   const { id } = useParams<{ id: string }>();
+
+  const [chainId, setChainId] = useState<string>('');
+
+  const currentChainId = async () => {
+    setChainId(await library.provider.request({
+       method: 'eth_chainId'
+     }));
+  }
+
+  const networkCheck = () => {
+      return isValidChainId(props.transactionRequest.product.paymentMethod, chainId);
+  }
+
+  const createNetwork = async () => {
+    let network: Promise<void> | undefined;
+    if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
+      network = createBnbNet(library);
+    } else {
+      network = changeEthNet(library);
+    }
+    try {
+        await network
+    } catch (switchChainError) {
+      if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
+         props.transactionRequest.product.paymentMethod === PaymentMethod.ETH)){
+          return;
+      }
+        network = createEthNet(library);
+      try{
+        await network;
+     } catch (error) {
+       console.error(error);
+     }
+  } finally {
+    currentChainId();
+  }
+}
 
   const checkAccount = () => {
     RetrySwal.fire({
@@ -48,6 +87,10 @@ function Refund(props: Props) {
   };
 
   const createTransaction = () => {
+    if(!networkCheck()){
+      createNetwork();
+      return;
+    }
     const requestAmount = utils.parseEther(props.transactionRequest.amount.toString())
 
     const amount = (BigNumber.from(accountBalance)
@@ -110,6 +153,7 @@ function Refund(props: Props) {
     assetToken?.balanceOf(account).then((balance: BigNumberish) => {
       setAccountBalance(balance);
     })
+    createNetwork();
   }, [account])
 
   if (!account) {
@@ -139,7 +183,7 @@ function Refund(props: Props) {
           <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab
-        chainId={''}
+        chainId={chainId}
           paymentMethod={props.transactionRequest.product.paymentMethod}
         />
       </div>

@@ -20,6 +20,7 @@ import Button from '../components/Button';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import { BigNumber } from 'ethers';
+import { changeEthNet, createBnbNet, createEthNet, isValidChainId } from '../core/utils/createNetwork';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -49,6 +50,46 @@ function Interest(props: Props) {
 
   const txResult = useWatingTx(state.txHash);
   const [interest, setInterest] = useState<number>(0);
+  const [chainId, setChainId] = useState<string>('');
+
+  const currentChainId = async () => {
+    setChainId(await library.provider.request({
+       method: 'eth_chainId'
+     }));
+  }
+
+  const networkCheck = () => {
+      return isValidChainId(props.transactionRequest.product.paymentMethod, chainId);
+  }
+
+  const createNetwork = async () => {
+    let network: Promise<void> | undefined;
+    if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
+      network = createBnbNet(library);
+    } else {
+      network = changeEthNet(library);
+    }
+    try {
+        await network
+    } catch (switchChainError) {
+      if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
+         props.transactionRequest.product.paymentMethod === PaymentMethod.ETH)){
+          return;
+      }
+        network = createEthNet(library);
+      try{
+        await network;
+     } catch (error) {
+       console.error(error);
+     }
+    } finally {
+      setState({
+        ...state,
+        stage: RequestStage.INIT,
+      })
+      currentChainId();
+    }
+  }
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -82,6 +123,10 @@ function Interest(props: Props) {
   };
 
   const createTransaction = () => {
+    if(!networkCheck()){
+      createNetwork();
+      return;
+    }
     assetToken?.populateTransaction.claimReward().then(populatedTransaction => {
       library.provider
         .request({
@@ -113,11 +158,13 @@ function Interest(props: Props) {
 
   useEffect(() => {
     if (!account || !loaded) return;
+    createNetwork();
     loadInterest();
     setState({
       ...state,
       stage: RequestStage.TRANSACTION,
     });
+
   }, [account, loaded]);
 
   useEffect(() => {
@@ -206,7 +253,7 @@ function Interest(props: Props) {
           <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab
-          chainId={''}
+          chainId={chainId}
           paymentMethod={props.transactionRequest.product.paymentMethod}
         />
       </div>
