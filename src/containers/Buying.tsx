@@ -24,8 +24,12 @@ import Button from '../components/Button';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useExpectedValue from '../hooks/useExpectedValue';
 import { formatEther } from 'ethers/lib/utils';
-import NetworkChainId from '../core/enums/NetworkChainId';
-import { changeEthNet, createBnbNet, createEthNet, isValidChainId } from '../core/utils/createNetwork';
+import {
+  changeEthNet,
+  createBnbNet,
+  createEthNet,
+  isValidChainId,
+} from '../core/utils/createNetwork';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -59,49 +63,60 @@ function Buying(props: Props) {
   const [chainId, setChainId] = useState<string>('');
 
   const currentChainId = async () => {
-    setChainId(await library.provider.request({
-       method: 'eth_chainId'
-     }));
-  }
+    setChainId(
+      await library.provider.request({
+        method: 'eth_chainId',
+      }),
+    );
+  };
 
   const networkCheck = () => {
-      return isValidChainId(props.transactionRequest.product.paymentMethod, chainId);
-  }
+    return isValidChainId(
+      props.transactionRequest.product.paymentMethod,
+      chainId,
+    );
+  };
 
   const createNetwork = async () => {
     let network: Promise<void> | undefined;
-    if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
+    if (props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
       network = createBnbNet(library);
     } else {
       network = changeEthNet(library);
     }
     try {
-        await network
+      await network;
     } catch (switchChainError) {
-      if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
-         props.transactionRequest.product.paymentMethod === PaymentMethod.ETH)){
-          return;
+      if (
+        !(
+          props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
+          props.transactionRequest.product.paymentMethod === PaymentMethod.ETH
+        )
+      ) {
+        return;
       }
-        network = createEthNet(library);
-      try{
+      network = createEthNet(library);
+      try {
         await network;
-     } catch (error) {
-       console.error(error);
-     }
-  } finally {
-    setState({
-      ...state,
-      stage: RequestStage.INIT,
-    })
-    currentChainId();
-  }
-}
+      } catch (error) {
+        console.error(error);
+      }
+    } finally {
+      setState({
+        ...state,
+        stage: RequestStage.INIT,
+      });
+      currentChainId();
+    }
+  };
 
   const txResult = useWatingTx(state.txHash);
 
   const checkAllowance = () => {
-    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH || 
-        props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
+    if (
+      props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ||
+      props.transactionRequest.product.paymentMethod === PaymentMethod.BNB
+    ) {
       setState({
         ...state,
         stage: RequestStage.TRANSACTION,
@@ -134,16 +149,24 @@ function Buying(props: Props) {
   };
 
   const createTransaction = () => {
-    if (props.transactionRequest.product.paymentMethod === PaymentMethod.ETH || 
-       props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
-      assetToken?.populateTransaction.purchase().then(populatedTransaction => {
-        sendTx(
-          populatedTransaction,
-          RequestStage.TRANSACTION_RESULT,
-          RequestStage.TRANSACTION_RETRY,
-          expectedValue.value.toHexString(),
-        );
-      });
+    if (
+      props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ||
+      props.transactionRequest.product.paymentMethod === PaymentMethod.BNB
+    ) {
+      assetToken?.populateTransaction
+        .purchase()
+        .then(populatedTransaction => {
+          let expectedValueHex = expectedValue.value.toHexString()
+          const hexString = expectedValueHex[2] === '0'
+              ? expectedValueHex.substr(3)
+              : expectedValueHex;
+          sendTx(
+            populatedTransaction,
+            RequestStage.TRANSACTION_RESULT,
+            RequestStage.TRANSACTION_RETRY,
+            hexString,
+          );
+        })
     } else {
       assetToken?.populateTransaction
         .purchase(expectedValue.value.toHexString())
@@ -175,14 +198,15 @@ function Buying(props: Props) {
     prevStage: RequestStage,
     value?: string,
   ) => {
-    library.provider.request({
+    library.provider
+      .request({
         method: 'eth_sendTransaction',
         params: [
           {
             to: populatedTransaction.to,
             from: account,
             data: populatedTransaction.data,
-            value,
+            value: value,
           },
         ],
       })
@@ -225,7 +249,7 @@ function Buying(props: Props) {
         });
         break;
       case RequestStage.NETWORK_CHECK:
-        if(!networkCheck()){
+        if (!networkCheck()) {
           createNetwork();
         } else {
           setState({
@@ -279,15 +303,17 @@ function Buying(props: Props) {
         completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size:15px;"> ${t(
-            'Completion.BuyingResult',
-            {
-              product: props.transactionRequest.product.title,
-              value: totalSupply.toString() !== '0' ?
-                (props.transactionRequest.amount / parseFloat(formatEther(totalSupply)) * 100).toFixed(2)
+          html: `<div style="font-size:15px;"> ${t('Completion.BuyingResult', {
+            product: props.transactionRequest.product.title,
+            value:
+              totalSupply.toString() !== '0'
+                ? (
+                    (props.transactionRequest.amount /
+                      parseFloat(formatEther(totalSupply))) *
+                    100
+                  ).toFixed(2)
                 : '--',
-            }
-          )}<br />${t('Completion.Notice')}</div>
+          })}<br />${t('Completion.Notice')}</div>
           `,
           showConfirmButton: false,
           imageUrl: BuyingSuccess,
@@ -343,7 +369,11 @@ function Buying(props: Props) {
             inUnit={props.transactionRequest.product.tokenName}
             inValue={props.transactionRequest.amount.toString()}
             outUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            outValue={expectedValue.loaded ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(5) : "Checking"}
+            outValue={
+              expectedValue.loaded
+                ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(5)
+                : 'Checking'
+            }
             title={t('Buying.CreateTransaction')}
             transactionRequest={props.transactionRequest}
           />
@@ -381,16 +411,20 @@ function Buying(props: Props) {
             <Button
               style={{ marginTop: 20 }}
               clickHandler={() => {
-                account && props.transactionRequest.userAddresses !== account
+                account &&
+                String(props.transactionRequest.userAddresses) !== account
                   ? checkAccount()
-                  : setState({ ...state, stage: RequestStage.NETWORK_CHECK});
+                  : setState({ ...state, stage: RequestStage.NETWORK_CHECK });
               }}
               title={t('Buying.TransactionRetryButton')}
               disabled={!expectedValue.loaded}
             />
           </div>
         </BoxLayout>
-        <AddressBottomTab chainId={chainId} paymentMethod={props.transactionRequest.product.paymentMethod} />
+        <AddressBottomTab
+          chainId={chainId}
+          paymentMethod={props.transactionRequest.product.paymentMethod}
+        />
       </div>
     );
   }
