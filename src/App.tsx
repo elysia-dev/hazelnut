@@ -10,7 +10,10 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/requests/:id">
+        <Route exact={true} path="/requests/:id">
+          <Requests />
+        </Route>
+        <Route exact={true} path="/requests/:imProductId/:imValueTo/:imType/:imContractAddress/:imEthAddresses/:imLanguage">
           <Requests />
         </Route>
         <Route path="/requests">

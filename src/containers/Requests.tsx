@@ -20,15 +20,41 @@ import TokenAbi from '../core/constants/abis/asset-token.json'
 
 type ParamTypes = {
   id: string | undefined;
+  imProductId : string;
+  imValueTo: string;
+  imType: string
+  imContractAddress: string;
+  imEthAddresses: string;
+  imLanguage: string;
 };
+type TransferInfoTypes = {
+  productId: number,
+  type: string,
+  value: number,
+  address: string,
+  contractAddress: string,
+  language: string,
+}
 
 function Requests () {
   const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
   const { search } = useLocation();
   const { id } = useParams<ParamTypes>();
-  const {productId, value, type, contractAddress, address, language} = queryString.parse(search);
+  const imTokenInfo = useParams<ParamTypes>();
+  const metaMaskInfo = queryString.parse(search);
   const { i18n } = useTranslation();
   const history = useHistory();
+  const [transferInfo, setTransferInfo] = useState<TransferInfoTypes>(() => {
+    const isImtoken = window.ethereum?.isImToken;
+    return {
+          productId: isImtoken ? Number(imTokenInfo.imProductId) : Number(metaMaskInfo.productId),
+          type: isImtoken ? imTokenInfo.imType : String(metaMaskInfo.type),
+          value: isImtoken ? Number(imTokenInfo.imValueTo) : Number(metaMaskInfo.value),
+          address: isImtoken ? imTokenInfo.imEthAddresses : String(metaMaskInfo.address),
+          contractAddress: isImtoken ? imTokenInfo.imContractAddress : String(metaMaskInfo.contractAddress),
+          language: isImtoken ? imTokenInfo.imLanguage : String(metaMaskInfo.language),
+    }
+  })
 
   async function loadTransactionRequest() {
         // TODO : Validate token with api
@@ -42,13 +68,12 @@ function Requests () {
             history.push('/notFound');
           });
         } else {
-          // const product  = await getProductInfo(Number(productId));
-          getProductInfo(Number(productId)).then((product) => {
+          getProductInfo(transferInfo.productId).then((product) => {
             setTransactionRequest({
-              type: String(type),
-              amount: Number(value),
-              userAddresses: String(address),
-              language: String(language),
+              type: transferInfo.type,
+              amount: transferInfo.value,
+              userAddresses: transferInfo.address,
+              language: transferInfo.language,
               product:{
                 title: product.data.title,
                 tokenName: product.data.tokenName,
@@ -61,13 +86,14 @@ function Requests () {
                 }
               },
               contract:{
-                address:contractAddress,
+                address: transferInfo.contractAddress,
                 abi:JSON.stringify(product.data.paymentMethod !== PaymentMethod.EL ? ETH_abi : TokenAbi),
                 version:'v2.0.0'
               }
             })
-            i18n.changeLanguage(String(language) || LanguageType.EN);
-          }).catch(() => {
+            i18n.changeLanguage(transferInfo.language || LanguageType.EN);
+          })
+          .catch(() => {
             history.push('/notFound');
           });;
       }
