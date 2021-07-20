@@ -65,11 +65,16 @@ function Interest(props: Props) {
   const createNetwork = async () => {
     let network: Promise<void> | undefined;
     if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
+      if(chainId === process.env.REACT_APP_BNB_NETWORK) return;
       network = createBnbNet(library);
     } else {
+      if(chainId === process.env.REACT_APP_ETH_NETWORK) return;
       network = changeEthNet(library);
     }
     try {
+      if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
+        throw Error; 
+        }
         await network
     } catch (switchChainError) {
       if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
@@ -158,14 +163,16 @@ function Interest(props: Props) {
 
   useEffect(() => {
     if (!account || !loaded) return;
-    createNetwork();
     loadInterest();
+    currentChainId();
+    if(!chainId) return;
+    createNetwork();
     setState({
       ...state,
       stage: RequestStage.TRANSACTION,
     });
 
-  }, [account, loaded]);
+  }, [account, loaded, chainId]);
 
   useEffect(() => {
     switch (state.stage) {

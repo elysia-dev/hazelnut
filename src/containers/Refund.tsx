@@ -49,11 +49,16 @@ function Refund(props: Props) {
   const createNetwork = async () => {
     let network: Promise<void> | undefined;
     if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
+      if(chainId === process.env.REACT_APP_BNB_NETWORK) return;
       network = createBnbNet(library);
     } else {
+      if(chainId === process.env.REACT_APP_ETH_NETWORK) return;
       network = changeEthNet(library);
     }
     try {
+      if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
+        throw Error; 
+        }
         await network
     } catch (switchChainError) {
       if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
@@ -153,8 +158,10 @@ function Refund(props: Props) {
     assetToken?.balanceOf(account).then((balance: BigNumberish) => {
       setAccountBalance(balance);
     })
+    currentChainId();
+    if(!chainId) return;
     createNetwork();
-  }, [account])
+  }, [account, chainId])
 
   if (!account) {
     return <ConnectWallet handler={connectWallet} />;
