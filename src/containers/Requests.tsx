@@ -44,20 +44,10 @@ function Requests () {
   const metaMaskInfo = queryString.parse(search);
   const { i18n } = useTranslation();
   const history = useHistory();
-  const [transferInfo, setTransferInfo] = useState<TransferInfoTypes>(() => {
-    const isImtoken = window.ethereum?.isImToken;
-    return {
-          productId: isImtoken ? Number(imTokenInfo.imProductId) : Number(metaMaskInfo.productId),
-          type: isImtoken ? imTokenInfo.imType : String(metaMaskInfo.type),
-          value: isImtoken ? Number(imTokenInfo.imValueTo) : Number(metaMaskInfo.value),
-          address: isImtoken ? imTokenInfo.imEthAddresses : String(metaMaskInfo.address),
-          contractAddress: isImtoken ? imTokenInfo.imContractAddress : String(metaMaskInfo.contractAddress),
-          language: isImtoken ? imTokenInfo.imLanguage : String(metaMaskInfo.language),
-    }
-  })
 
   async function loadTransactionRequest() {
         // TODO : Validate token with api
+        const isImtoken = window.ethereum?.isImToken;
         if(id){
           getTransactionRequest(id)
           .then(res => {
@@ -68,6 +58,14 @@ function Requests () {
             history.push('/notFound');
           });
         } else {
+          const transferInfo: TransferInfoTypes = {
+            productId: isImtoken ? Number(imTokenInfo.imProductId) : Number(metaMaskInfo.productId),
+            type: isImtoken ? imTokenInfo.imType : String(metaMaskInfo.type),
+            value: isImtoken ? Number(imTokenInfo.imValueTo) : Number(metaMaskInfo.value),
+            address: isImtoken ? imTokenInfo.imEthAddresses : String(metaMaskInfo.address),
+            contractAddress: isImtoken ? imTokenInfo.imContractAddress : String(metaMaskInfo.contractAddress),
+            language: isImtoken ? imTokenInfo.imLanguage : String(metaMaskInfo.language),
+          }
           getProductInfo(transferInfo.productId).then((product) => {
             setTransactionRequest({
               type: transferInfo.type,
