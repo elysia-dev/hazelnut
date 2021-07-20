@@ -63,11 +63,10 @@ function Buying(props: Props) {
   const [chainId, setChainId] = useState<string>('');
 
   const currentChainId = async () => {
-    setChainId(
-      await library.provider.request({
-        method: 'eth_chainId',
-      }),
-    );
+    const id =  await library.provider.request({
+      method: 'eth_chainId'
+    })
+    setChainId(() => id);
   };
 
   const networkCheck = () => {
@@ -80,11 +79,16 @@ function Buying(props: Props) {
   const createNetwork = async () => {
     let network: Promise<void> | undefined;
     if (props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
+      if(chainId === process.env.REACT_APP_BNB_NETWORK) return;
       network = createBnbNet(library);
     } else {
+      if(chainId === process.env.REACT_APP_ETH_NETWORK) return;
       network = changeEthNet(library);
     }
     try {
+      if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
+          throw Error; 
+      }
       await network;
     } catch (switchChainError) {
       if (
@@ -229,6 +233,7 @@ function Buying(props: Props) {
   useEffect(() => {
     if (!account && !chainId) return;
     currentChainId();
+    if(!chainId) return;
     createNetwork();
     Swal.close();
 
