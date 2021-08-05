@@ -8,6 +8,8 @@ type ParamType = {
   contractAddress?: string,
   ethAddresses?: string,
   language?: string,
+  rewardValue?: string, // 없으면 '0'으로 온다!
+  migrationValue?: string,
 }
 
 const StakingRequests: React.FC = () => {
@@ -23,6 +25,8 @@ const StakingRequests: React.FC = () => {
       <div>{params.contractAddress}</div>
       <div>{params.ethAddresses}</div>
       <div>{params.language}</div>
+      <div>{params.rewardValue}</div>
+      <div>{params.migrationValue}</div>
     </div>
   );
 }
