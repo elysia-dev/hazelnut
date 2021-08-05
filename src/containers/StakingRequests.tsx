@@ -1,24 +1,29 @@
 import React from 'react';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
+import queryString from 'query-string';
 
-type ParamTypes = {
-  imValue: string;
-  imType: string
-  imContractAddress: string;
-  imEthAddresses: string;
-  imLanguage: string;
-};
-
-type TransferInfoTypes = {
-  value: number,
-  type: string,
-  contractAddress: string,
-  ethAddress: string,
-  language: string,
+type ParamType = {
+  value?: string,
+  type?: string,
+  contractAddress?: string,
+  ethAddresses?: string,
+  language?: string,
 }
 
 const StakingRequests: React.FC = () => {
+  const { search } = useLocation();
+  const imtokenParams = useParams<ParamType>();
+  const metamaskParmas = queryString.parse(search);
+  const params = window.ethereum?.isImToken ? imtokenParams : metamaskParmas;
+
   return (
-    <div>hello</div>
+    <div>
+      <div>{params.value}</div>
+      <div>{params.type}</div>
+      <div>{params.contractAddress}</div>
+      <div>{params.ethAddresses}</div>
+      <div>{params.language}</div>
+    </div>
   );
 }
 
