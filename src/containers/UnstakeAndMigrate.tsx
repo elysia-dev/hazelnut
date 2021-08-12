@@ -7,8 +7,9 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
       <h1>UnstakeAndMigrate</h1>
       <div>{transactionRequest.value}</div>
       <div>{transactionRequest.type}</div>
+      <div>{transactionRequest.unit}</div>
       <div>{transactionRequest.contractAddress}</div>
-      <div>{transactionRequest.ethAddresses}</div>
+      <div>{transactionRequest.userAddress}</div>
       <div>{transactionRequest.language}</div>
       <div>{transactionRequest.rewardValue}</div>
       <div>{transactionRequest.migrationValue}</div>

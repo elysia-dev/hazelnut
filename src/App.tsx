@@ -21,7 +21,7 @@ function App() {
         <Route path="/requests">
           <Requests />
         </Route>
-        <Route exact={true} path="/staking-requests/:value/:type/:contractAddress/:ethAddresses/:language/:rewardValue/:migrationValue">
+        <Route exact={true} path="/staking-requests/:value/:type/:unit/:contractAddress/:userAddress/:language/:rewardValue/:migrationValue">
           <StakingRequests />
         </Route>
         <Route path="/staking-requests">

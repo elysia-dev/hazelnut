@@ -62,7 +62,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
           style={{ marginTop: 20 }}
           clickHandler={() => {
             account &&
-            String(transactionRequest.ethAddresses) !== account
+            String(transactionRequest.userAddress) !== account
               ? checkAccount()
               : setState({ ...state, stage: RequestStage.NETWORK_CHECK });
           }}
@@ -72,7 +72,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
         </BoxLayout>
         <AddressBottomTab
           chainId={process.env.REACT_APP_ETH_NETWORK}
-          paymentMethod={'EL'} // 아 헐 스테이캉 단위를 안 가져오네...
+          paymentMethod={transactionRequest.unit} // 아 헐 스테이캉 단위를 안 가져오네...
         />
       </div>
     );

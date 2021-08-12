@@ -1,8 +1,11 @@
+import StakingTransactionType from '../enums/StakingTransactionType';
+
 type StakingTransactionRequest = {
   value?: string,
-  type?: string,
+  type?: StakingTransactionType,
+  unit?: 'EL' | 'ELFI' | 'DAI',
   contractAddress?: string,
-  ethAddresses?: string,
+  userAddress?: string,
   language?: string,
   rewardValue?: string, // 없으면 '0'으로 온다!
   migrationValue?: string,
