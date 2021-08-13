@@ -14,10 +14,9 @@ import AddressBottomTab from '../components/AddressBottomTab';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import { useWatingTx } from '../hooks/useWatingTx';
 import { isValidChainId, changeEthNet } from '../core/utils/createNetwork';
-import { useElysiaToken, useElfiToken } from '../hooks/useContract';
+import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract';
 import Loading from '../components/Loading';
 import TxStatus from '../core/enums/TxStatus';
-import getContract from '../core/utils/getContract';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
@@ -46,11 +45,9 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   const elToken = useElysiaToken();
   const elfiToken = useElfiToken();
   const tokenContract = transactionRequest.unit === 'EL' ? elToken : elfiToken;
-  const stakingPoolContract = getContract(
+  const stakingPoolContract = useContract(
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
-    library,
-    account ? account : undefined
   );
 
   const currentChainId = async () => {
