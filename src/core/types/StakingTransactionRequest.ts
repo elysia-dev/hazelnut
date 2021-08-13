@@ -8,7 +8,7 @@ type StakingTransactionRequest = {
   userAddress?: string,
   language?: string,
   rewardValue?: string, // 없으면 '0'으로 온다!
-  migrationValue?: string,
+  migrationValue?: string, // 입력 안 하면 undefined로 오는 듯 ('undefined'?)
 }
 
 export default StakingTransactionRequest;
