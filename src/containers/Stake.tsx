@@ -19,6 +19,7 @@ import Loading from '../components/Loading';
 import TxStatus from '../core/enums/TxStatus';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import PaymentMethod from '../core/types/PaymentMethod';
+import BuyingSuccess from './../images/success_buying.svg'; // 근데 다른 이미지 써야 할 듯...
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   // return (
@@ -167,7 +168,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     //     })
     // } else {
       stakingPoolContract?.populateTransaction
-        .stake(BigNumber.from(transactionRequest.value).toHexString())
+        .stake(BigNumber.from(transactionRequest.value))
         .then(populatedTransaction => {
           sendTx(
             populatedTransaction,
@@ -302,20 +303,13 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
         // completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Title'),
-          // html: `<div style="font-size:15px;"> ${t('Completion.BuyingResult', {
-          //   product: props.transactionRequest.product.title,
-          //   value:
-          //     totalSupply.toString() !== '0'
-          //       ? (
-          //           (props.transactionRequest.amount /
-          //             parseFloat(formatEther(totalSupply))) *
-          //           100
-          //         ).toFixed(2)
-          //       : '--',
-          // })}<br />${t('Completion.Notice')}</div>
-          // `,
+          html: `<div style="font-size:15px;"> ${t('Completion.StakingResult', {
+            stakingTokenType: transactionRequest.unit,
+            amount: transactionRequest.value,
+          })}<br />${t('Completion.Notice')}</div>
+          `,
           showConfirmButton: false,
-          // imageUrl: BuyingSuccess,
+          imageUrl: BuyingSuccess,
           imageWidth: 275,
           allowOutsideClick: false,
         });
