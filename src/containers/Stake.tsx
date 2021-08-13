@@ -18,6 +18,7 @@ import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract'
 import Loading from '../components/Loading';
 import TxStatus from '../core/enums/TxStatus';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   // return (
@@ -378,8 +379,8 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
           </div>
         </BoxLayout>
         <AddressBottomTab
-          chainId={process.env.REACT_APP_ETH_NETWORK}
-          paymentMethod={transactionRequest.unit || ''}
+          chainId={chainId}
+          paymentMethod={transactionRequest.unit === 'EL' ? PaymentMethod.EL : PaymentMethod.ELFI}
         />
       </div>
     );

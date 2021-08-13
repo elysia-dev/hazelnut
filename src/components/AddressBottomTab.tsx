@@ -2,7 +2,7 @@ import { useWeb3React } from '@web3-react/core';
 import { BigNumberish, utils } from 'ethers';
 import React, { useEffect, useState } from 'react';
 import PaymentMethod from '../core/types/PaymentMethod';
-import { useElysiaToken } from '../hooks/useContract';
+import { useElysiaToken, useElfiToken } from '../hooks/useContract';
 import AccountIcon from './AccountIcon';
 
 type Props = {
@@ -12,12 +12,19 @@ type Props = {
 
 function AddressBottomTab(props: Props) {
   const elToken = useElysiaToken();
+  const elfiToken = useElfiToken();
   const [balance, setBalance] = useState<BigNumberish | undefined>(undefined);
   const { account, library } = useWeb3React();
 
   useEffect(() => {
     if (props.paymentMethod === PaymentMethod.EL) {
       elToken?.balanceOf(account).then((balance: BigNumberish) => {
+        setBalance(balance);
+      });
+    } else if (props.paymentMethod === PaymentMethod.ELFI) {
+      // 근데 balanceOf라는 메소드가 없다고 한다...? elfi는 뭐가 다른가...
+      // 아무튼 나중에 이거 고쳐야 함
+      elfiToken?.balanceOf(account).then((balance: BigNumberish) => {
         setBalance(balance);
       });
     } else {
@@ -37,8 +44,8 @@ function AddressBottomTab(props: Props) {
               library.getBalance(account).then((balance: BigNumberish) => {
                 setBalance(balance);
               })
-            } 
-      } 
+            }
+      }
   }
 
   return (
