@@ -4,6 +4,7 @@ type StakingTransactionRequest = {
   value?: string,
   type?: StakingTransactionType,
   unit?: 'EL' | 'ELFI' | 'DAI',
+  round?: string, // 원래 1~6이지만 지금 테스트 중인 라운드가 7을 넘어서서...
   contractAddress?: string,
   userAddress?: string,
   language?: string,

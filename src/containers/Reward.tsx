@@ -8,6 +8,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       <div>{transactionRequest.value}</div>
       <div>{transactionRequest.type}</div>
       <div>{transactionRequest.unit}</div>
+      <div>{transactionRequest.round}</div>
       <div>{transactionRequest.contractAddress}</div>
       <div>{transactionRequest.userAddress}</div>
       <div>{transactionRequest.language}</div>
