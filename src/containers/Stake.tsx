@@ -22,19 +22,6 @@ import PaymentMethod from '../core/types/PaymentMethod';
 import BuyingSuccess from './../images/success_buying.svg'; // 근데 다른 이미지 써야 할 듯...
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
-  // return (
-  //   <div>
-  //     <h1>Stake</h1>
-  //     <div>{transactionRequest.value}</div>
-  //     <div>{transactionRequest.type}</div>
-  //     <div>{transactionRequest.contractAddress}</div>
-  //     <div>{transactionRequest.ethAddresses}</div> // ethAddresses -> userAddresses로 바꿔야 함!!!! ㅜㅜ
-  //     <div>{transactionRequest.language}</div>
-  //     <div>{transactionRequest.rewardValue}</div>
-  //     <div>{transactionRequest.migrationValue}</div>
-  //   </div>
-  // );
-
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const [state, setState] = useState({
@@ -67,48 +54,13 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   };
 
   const createNetwork = async () => {
-    // let network: Promise<void> | undefined;
-    // if (props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
-    //   if(chainId === process.env.REACT_APP_BNB_NETWORK) return;
-    //   network = createBnbNet(library);
-    // } else {
       if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
-      // network = changeEthNet(library);
-      // const network = changeEthNet(library);
       await changeEthNet(library);
       setState({
         ...state,
         stage: RequestStage.INIT,
       });
       currentChainId();
-    // }
-    // try {
-    //   // if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
-    //   //     throw Error;
-    //   // }
-    //   await network;
-    // } catch (switchChainError) {
-    //   // if (
-    //   //   !(
-    //   //     props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
-    //   //     props.transactionRequest.product.paymentMethod === PaymentMethod.ETH
-    //   //   )
-    //   // ) {
-    //   //   return;
-    //   // }
-    //   network = createEthNet(library);
-    //   try {
-    //     await network;
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // } finally {
-    //   setState({
-    //     ...state,
-    //     stage: RequestStage.INIT,
-    //   });
-    //   currentChainId();
-    // }
   };
 
   const checkAccount = () => {
@@ -123,18 +75,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   };
 
   const checkAllowance = () => {
-    // if (
-    //   props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ||
-    //   props.transactionRequest.product.paymentMethod === PaymentMethod.BNB
-    // ) {
-    //   setState({
-    //     ...state,
-    //     stage: RequestStage.TRANSACTION,
-    //   });
-
-    //   return;
-    // }
-
     tokenContract
       ?.allowance(account, transactionRequest.contractAddress)
       .then((res: BigNumber) => {
@@ -148,35 +88,15 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   };
 
   const createTransaction = () => {
-    // if (
-    //   props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ||
-    //   props.transactionRequest.product.paymentMethod === PaymentMethod.BNB
-    // ) {
-    //   assetToken?.populateTransaction
-    //     .purchase()
-    //     .then(populatedTransaction => {
-    //       let expectedValueHex = expectedValue.value.toHexString()
-    //       const hexString = expectedValueHex[2] === '0'
-    //           ? expectedValueHex.substr(3)
-    //           : expectedValueHex;
-    //       sendTx(
-    //         populatedTransaction,
-    //         RequestStage.TRANSACTION_RESULT,
-    //         RequestStage.TRANSACTION_RETRY,
-    //         hexString,
-    //       );
-    //     })
-    // } else {
-      stakingPoolContract?.populateTransaction
-        .stake(BigNumber.from(transactionRequest.value))
-        .then(populatedTransaction => {
-          sendTx(
-            populatedTransaction,
-            RequestStage.TRANSACTION_PENDING,
-            RequestStage.TRANSACTION_RETRY,
-          );
-        });
-    // }
+    stakingPoolContract?.populateTransaction
+      .stake(BigNumber.from(transactionRequest.value))
+      .then(populatedTransaction => {
+        sendTx(
+          populatedTransaction,
+          RequestStage.TRANSACTION_PENDING,
+          RequestStage.TRANSACTION_RETRY,
+        );
+      });
   };
 
   const approve = () => {
@@ -300,7 +220,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
         account && createTransaction();
         break;
       case RequestStage.TRANSACTION_RESULT:
-        // completeTransactionRequest(id, state.txHash);
         Swal.fire({
           title: t('Completion.Title'),
           html: `<div style="font-size:15px;"> ${t('Completion.StakingResult', {
@@ -368,7 +287,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
                   : setState({ ...state, stage: RequestStage.NETWORK_CHECK });
               }}
               title={t('Buying.TransactionRetryButton')}
-              // disabled={!expectedValue.loaded}
             />
           </div>
         </BoxLayout>
