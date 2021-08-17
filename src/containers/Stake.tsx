@@ -40,10 +40,9 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   );
 
   const currentChainId = async () => {
-    const id =  await library.provider.request({
+    setChainId(await library.provider.request({
       method: 'eth_chainId'
-    })
-    setChainId(() => id);
+    }));
   };
 
   const networkCheck = () => {
@@ -54,13 +53,13 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   };
 
   const createNetwork = async () => {
-      if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
-      await changeEthNet(library);
-      setState({
-        ...state,
-        stage: RequestStage.INIT,
-      });
-      currentChainId();
+    if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
+    await changeEthNet(library);
+    setState({
+      ...state,
+      stage: RequestStage.INIT,
+    });
+    currentChainId();
   };
 
   const checkAccount = () => {
@@ -91,7 +90,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     stakingPoolContract?.populateTransaction
       .stake(BigNumber.from(transactionRequest.value))
       .then(populatedTransaction => {
-        sendTx(
+        sendTransaction(
           populatedTransaction,
           RequestStage.TRANSACTION_PENDING,
           RequestStage.TRANSACTION_RETRY,
@@ -103,7 +102,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     tokenContract?.populateTransaction
       .approve(transactionRequest.contractAddress, constants.MaxUint256)
       .then(populatedTransaction => {
-        sendTx(
+        sendTransaction(
           populatedTransaction,
           RequestStage.ALLOWANCE_PENDING,
           RequestStage.ALLOWANCE_CHECK,
@@ -111,7 +110,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
       });
   };
 
-  const sendTx = (
+  const sendTransaction = (
     populatedTransaction: PopulatedTransaction,
     nextStage: RequestStage,
     prevStage: RequestStage,
