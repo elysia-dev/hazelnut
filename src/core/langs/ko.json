@@ -33,7 +33,10 @@
       "RefundResult": "엘리시아 {{product}}의<br>투자금 {{paymentMethod}} {{value}}이 환불될 예정입니다.",
       "Notice": "트랜잭션이 완료되면<br>앱으로 알림을 보내드립니다.",
       "ReturnToApp": "앱으로 돌아가기",
-      "StakingResult": "{{stakingTokenType}} 토큰 {{amount}}개를<br>스테이킹할 예정입니다."
+      "StakingResult": "{{stakingTokenType}} 토큰 {{amount}}개를<br>스테이킹할 예정입니다.",
+      "UnstakingResult": "{{stakingTokenType}} 토큰 {{amount}}개를<br>언스테이킹할 예정입니다.",
+      "RewardResult": "{{stakingTokenType}} 토큰 {{amount}}개를<br>보상으로 받을 예정입니다.",
+      "MigrationResult": "{{round}}차에 스테이킹한 {{stakingTokenType}} 토큰 {{amount}}개를<br>현재 진행 중인 회차로 마이그레이션할 예정입니다."
     },
     "Error": {
       "PriceServer": "EL 가격 정보를 불러오지 못했습니다",
