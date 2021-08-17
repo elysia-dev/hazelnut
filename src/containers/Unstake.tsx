@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import StakingTransactionRequest from '../core/types/StakingTransactionRequest';
 import { useTranslation } from 'react-i18next';
 import { BigNumber, BigNumberish, constants, utils } from 'ethers';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
+import StakingTransactionRequest from '../core/types/StakingTransactionRequest';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
-import TxSummary from '../components/TxSummary';
 import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
 import AddressBottomTab from '../components/AddressBottomTab';
@@ -20,9 +19,6 @@ import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
-  const elToken = useElysiaToken();
-  const elfiToken = useElfiToken();
-  const tokenContract = transactionRequest.unit === 'EL' ? elToken : elfiToken;
   const stakingPoolContract = useContract(
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
@@ -97,7 +93,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
           imageUrl: RefundSuccess,
           imageWidth: 275,
           showConfirmButton: false,
-          // allowOutsideClick: false,
+          allowOutsideClick: false,
         });
       })
       .catch(() => {
