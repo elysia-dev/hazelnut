@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BigNumber, BigNumberish, constants, utils } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
 import StakingTransactionRequest from '../core/types/StakingTransactionRequest';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract';
+import useContract from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
-import AddressBottomTab from '../components/AddressBottomTab';
 import Swal, { RetrySwal } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
-import PaymentMethod from '../core/types/PaymentMethod';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
+import ConfirmationList from '../components/ConfirmationList';
+import usePrice from '../hooks/usePrice';
 
 const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -24,6 +24,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
     STAKING_POOL_ABI,
   );
   const [chainId, setChainId] = useState<string>('');
+  const { elPrice } = usePrice();
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
@@ -122,26 +123,36 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
     return <ConnectWallet handler={() => activate(InjectedConnector)} />;
   } else {
     return (
-      <div>
-        <BoxLayout>
-          <div style={{ padding: 20 }}>
-            <Button
-              style={{ marginTop: 20 }}
-              clickHandler={() => {
-                account &&
-                String(transactionRequest.userAddress) !== account
-                  ? checkAccount()
-                  : createTransaction();
-              }}
-              title={t('Buying.TransactionRetryButton')}
-            />
-          </div>
-        </BoxLayout>
-        <AddressBottomTab
-          chainId={chainId}
-          paymentMethod={transactionRequest.unit === 'EL' ? PaymentMethod.EL : PaymentMethod.ELFI}
-        />
-      </div>
+      <BoxLayout>
+        <div style={{ padding: 20 }}>
+          <h1 style={{ fontSize: 22, color: '#1C1C1C' }}>
+            {`${transactionRequest.unit} 언스테이킹`}
+          </h1>
+          <ConfirmationList
+            list={[
+              {
+                label: '언스테이킹 회차',
+                value: `${transactionRequest.round}차`,
+              },
+              {
+                label: '언스테이킹 수량',
+                value: `${transactionRequest.value} ${transactionRequest.unit}`,
+                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(elPrice))}`,
+              }
+            ]}
+          />
+          <Button
+            style={{ marginTop: 20 }}
+            clickHandler={() => {
+              account &&
+              String(transactionRequest.userAddress) !== account
+                ? checkAccount()
+                : createTransaction();
+            }}
+            title={t('Buying.TransactionRetryButton')}
+          />
+        </div>
+      </BoxLayout>
     );
   }
 }

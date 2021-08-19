@@ -10,7 +10,6 @@ import ServerError from '../components/errors/ServerError';
 import ConnectWallet from '../components/ConnectWallet';
 import BoxLayout from '../components/BoxLayout';
 import Button from '../components/Button';
-import AddressBottomTab from '../components/AddressBottomTab';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import { useWatingTx } from '../hooks/useWatingTx';
 import { isValidChainId, changeEthNet } from '../core/utils/createNetwork';
@@ -18,8 +17,9 @@ import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract'
 import Loading from '../components/Loading';
 import TxStatus from '../core/enums/TxStatus';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
-import PaymentMethod from '../core/types/PaymentMethod';
 import BuyingSuccess from './../images/success_buying.svg'; // 근데 다른 이미지 써야 할 듯...
+import ConfirmationList from '../components/ConfirmationList';
+import usePrice from '../hooks/usePrice';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -38,6 +38,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
   );
+  const { elPrice } = usePrice();
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
@@ -274,26 +275,36 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     );
   } else {
     return (
-      <div>
-        <BoxLayout>
-          <div style={{ padding: 20 }}>
-            <Button
-              style={{ marginTop: 20 }}
-              clickHandler={() => {
-                account &&
-                String(transactionRequest.userAddress) !== account
-                  ? checkAccount()
-                  : setState({ ...state, stage: RequestStage.NETWORK_CHECK });
-              }}
-              title={t('Buying.TransactionRetryButton')}
-            />
-          </div>
-        </BoxLayout>
-        <AddressBottomTab
-          chainId={chainId}
-          paymentMethod={transactionRequest.unit === 'EL' ? PaymentMethod.EL : PaymentMethod.ELFI}
-        />
-      </div>
+      <BoxLayout>
+        <div style={{ padding: 20 }}>
+          <h1 style={{ fontSize: 22, color: '#1C1C1C' }}>
+            {`${transactionRequest.unit} 스테이킹`}
+          </h1>
+          <ConfirmationList
+            list={[
+              {
+                label: '스테이킹 회차',
+                value: `${transactionRequest.round}차`,
+              },
+              {
+                label: '스테이킹 수량',
+                value: `${transactionRequest.value} ${transactionRequest.unit}`,
+                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(elPrice))}`,
+              }
+            ]}
+          />
+          <Button
+            style={{ marginTop: 20 }}
+            clickHandler={() => {
+              account &&
+              String(transactionRequest.userAddress) !== account
+                ? checkAccount()
+                : setState({ ...state, stage: RequestStage.NETWORK_CHECK });
+            }}
+            title={t('Buying.TransactionRetryButton')}
+          />
+        </div>
+      </BoxLayout>
     );
   }
 }

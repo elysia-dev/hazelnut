@@ -3,17 +3,18 @@ import StakingTransactionRequest from '../core/types/StakingTransactionRequest';
 import { useTranslation } from 'react-i18next';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
+import { utils } from 'ethers';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import useContract from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import BoxLayout from '../components/BoxLayout';
-import AddressBottomTab from '../components/AddressBottomTab';
 import InterestSuccess from './../images/success_interest.svg';
 import Swal, { RetrySwal } from '../core/utils/Swal';
 import Button from '../components/Button';
-import PaymentMethod from '../core/types/PaymentMethod';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
+import ConfirmationList from '../components/ConfirmationList';
+import usePrice from '../hooks/usePrice';
 
 const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
   );
+  const { elPrice } = usePrice();
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
@@ -118,26 +120,36 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     return <ConnectWallet handler={() => activate(InjectedConnector)} />;
   } else {
     return (
-      <div>
-        <BoxLayout>
-          <div style={{ padding: 20 }}>
-            <Button
-              style={{ marginTop: 20 }}
-              clickHandler={() => {
-                account &&
-                String(transactionRequest.userAddress) !== account
-                  ? checkAccount()
-                  : createTransaction();
-              }}
-              title={t('Buying.TransactionRetryButton')}
-            />
-          </div>
-        </BoxLayout>
-        <AddressBottomTab
-          chainId={chainId}
-          paymentMethod={transactionRequest.unit === 'EL' ? PaymentMethod.EL : PaymentMethod.ELFI}
-        />
-      </div>
+      <BoxLayout>
+        <div style={{ padding: 20 }}>
+          <h1 style={{ fontSize: 22, color: '#1C1C1C' }}>
+            {`${transactionRequest.unit} 보상 수령`}
+          </h1>
+          <ConfirmationList
+            list={[
+              {
+                label: '보상 수령 회차',
+                value: `${transactionRequest.round}차`,
+              },
+              {
+                label: '보상 수량',
+                value: `${transactionRequest.value} ${transactionRequest.unit}`,
+                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(elPrice))}`,
+              }
+            ]}
+          />
+          <Button
+            style={{ marginTop: 20 }}
+            clickHandler={() => {
+              account &&
+              String(transactionRequest.userAddress) !== account
+                ? checkAccount()
+                : createTransaction();
+            }}
+            title={t('Buying.TransactionRetryButton')}
+          />
+        </div>
+      </BoxLayout>
     );
   }
 }
