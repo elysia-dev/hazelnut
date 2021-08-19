@@ -86,14 +86,10 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
       .then(() => {
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size: 15px;"> ${t('Completion.UnstakingResult', {
-            stakingTokenType: transactionRequest.unit,
-            amount: transactionRequest.value,
-          })}<br />${t('Completion.Notice')}</div>
-          `,
-          imageUrl: RefundSuccess,
-          imageWidth: 275,
+          html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
           showConfirmButton: false,
+          icon: 'success',
+          iconColor: '#3679B5',
           allowOutsideClick: false,
         });
       })

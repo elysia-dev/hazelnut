@@ -222,14 +222,10 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
       case RequestStage.TRANSACTION_RESULT:
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size:15px;"> ${t('Completion.StakingResult', {
-            stakingTokenType: transactionRequest.unit,
-            amount: transactionRequest.value,
-          })}<br />${t('Completion.Notice')}</div>
-          `,
+          html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
           showConfirmButton: false,
-          imageUrl: BuyingSuccess,
-          imageWidth: 275,
+          icon: 'success',
+          iconColor: '#3679B5',
           allowOutsideClick: false,
         });
         break;

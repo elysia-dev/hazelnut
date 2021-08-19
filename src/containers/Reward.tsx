@@ -83,14 +83,10 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       .then(() => {
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size: 15px;"> ${t('Completion.RewardResult', {
-            stakingTokenType: transactionRequest.unit,
-            amount: transactionRequest.value,
-          })}<br />${t('Completion.Notice')}</div>
-          `,
-          imageUrl: InterestSuccess,
-          imageWidth: 275,
+          html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
           showConfirmButton: false,
+          icon: 'success',
+          iconColor: '#3679B5',
           allowOutsideClick: false,
         });
       })
