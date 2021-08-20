@@ -8,6 +8,9 @@ type CoinPriceResponse = {
     binancecoin: {
         usd: number;
     };
+    dai: {
+        usd: number;
+    }
   }
 
   export default CoinPriceResponse;

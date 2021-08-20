@@ -5,6 +5,7 @@ enum PaymentMethod {
   ETH = 'eth',
   BNB = 'bnb',
   ELFI = 'elfi',
+  DAI = 'dai',
 }
 
 export default PaymentMethod
