@@ -37,8 +37,8 @@
       "UnstakingAmount": "Unstaking(解除权益质押)数量",
       "MigrationRound": "转移位置",
       "MigrationAmount": "转移数量",
-      "RewardTitle": "{{unit}} 보상 수령",
-      "RewardRound": "보상 수령 회차",
+      "RewardTitle": "领取{{unit}}代币奖励",
+      "RewardRound": "奖励领取轮数",
       "RewardAmount": "奖励数量",
       "ConfirmationTitle": "请再确认一次。"
     },
@@ -49,7 +49,7 @@
       "RefundResult": "爱立厦(Elysia) {{product}}投资<br>{{paymentMethod}}代币{{value}}退款完成!",
       "ReturnToApp": "请在手机应用程序上确认",
       "Notice": "交易完成后，<br>我们将向应用发送通知。",
-      "TransactionSuccess": "요청하신 트랜잭션을 전송했습니다.<br>트랜잭션이 완료되면 앱으로 알림을 보내드립니다."
+      "TransactionSuccess": "您操作的交易已提交。<br>交易完成后，我们会在应用程序上向您发送通知。"
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。",
