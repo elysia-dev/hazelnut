@@ -284,16 +284,16 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
             fontFamily: 'Spoqa Han Sans',
             fontWeight: 700,
             }}>
-            {`${transactionRequest.unit} 스테이킹`}
+            {t('Staking.StakingTitle', { unit: transactionRequest.unit })}
           </h1>
           <ConfirmationList
             list={[
               {
-                label: '스테이킹 회차',
-                value: `${transactionRequest.round}차`,
+                label: t('Staking.StakingRound'),
+                value: t('Staking.RoundWithAffix', { round: transactionRequest.round }),
               },
               {
-                label: '스테이킹 수량',
+                label: t('Staking.StakingAmount'),
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
                 subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
               }

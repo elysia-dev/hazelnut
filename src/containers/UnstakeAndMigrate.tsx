@@ -142,30 +142,30 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
             fontFamily: 'Spoqa Han Sans',
             fontWeight: 700,
             }}>
-            {'트랜잭션'}
+            {t('Staking.Transaction')}
           </h1>
           <ConfirmationList
             list={[
               {
-                label: '언스테이킹 회차',
-                value: `${transactionRequest.round}차`,
+                label: t('Staking.UnstakingRound'),
+                value: t('Staking.RoundWithAffix', { round: transactionRequest.round }),
               },
               {
-                label: '언스테이킹 수량',
+                label: t('Staking.UnstakingAmount'),
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
                 subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
               },
               {
-                label: '마이그레이션 회차',
-                value: `${transactionRequest.round}차 → ${currentRound}차`,
+                label: t('Staking.MigrationRound'),
+                value: `${t('Staking.RoundWithAffix', { round: transactionRequest.round })} → ${t('Staking.RoundWithAffix', { round: currentRound })}`,
               },
               {
-                label: '마이그레이션 수량',
+                label: t('Staking.MigrationAmount'),
                 value: `${transactionRequest.migrationValue} ${transactionRequest.unit}`,
                 subvalue: `$ ${(parseFloat(transactionRequest.migrationValue || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
               },
               {
-                label: '보상 수량',
+                label: t('Staking.RewardAmount'),
                 value: `${transactionRequest.rewardValue} ${rewardUnit}`,
                 subvalue: `$ ${(parseFloat(transactionRequest.rewardValue || '0') * parseFloat(utils.formatEther(rewardPrice))).toFixed(2)}`,
               }

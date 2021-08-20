@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   list: { label: string; value: string; subvalue?: string }[];
@@ -7,6 +8,7 @@ interface Props {
 const ConfirmationList: React.FC<Props> = ({
   list,
 }) => {
+  const { t } = useTranslation();
 
   return (
     <div
@@ -27,7 +29,7 @@ const ConfirmationList: React.FC<Props> = ({
           fontFamily: 'Spoqa Han Sans',
           fontWeight: 500,
         }}>
-        최종 확인을 해주세요!
+        {t('Staking.ConfirmationTitle')}
       </div>
       {list.map((item) => {
         return (
