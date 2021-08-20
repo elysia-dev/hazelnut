@@ -153,7 +153,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
               {
                 label: '언스테이킹 수량',
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))}`,
+                subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
               },
               {
                 label: '마이그레이션 회차',
@@ -162,12 +162,12 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
               {
                 label: '마이그레이션 수량',
                 value: `${transactionRequest.migrationValue} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.migrationValue || '0') * parseFloat(utils.formatEther(price))}`,
+                subvalue: `$ ${(parseFloat(transactionRequest.migrationValue || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
               },
               {
                 label: '보상 수량',
                 value: `${transactionRequest.rewardValue} ${rewardUnit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.rewardValue || '0') * parseFloat(utils.formatEther(rewardPrice))}`,
+                subvalue: `$ ${(parseFloat(transactionRequest.rewardValue || '0') * parseFloat(utils.formatEther(rewardPrice))).toFixed(2)}`,
               }
             ]}
           />

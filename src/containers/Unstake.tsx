@@ -143,7 +143,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
               {
                 label: '언스테이킹 수량',
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))}`,
+                subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
               }
             ]}
           />

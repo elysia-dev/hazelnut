@@ -140,7 +140,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
               {
                 label: '보상 수량',
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))}`,
+                subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
               }
             ]}
           />
