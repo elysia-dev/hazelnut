@@ -117,7 +117,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{ fontSize: 22, color: '#1C1C1C' }}>
+          <h1 style={{ fontSize: 22, color: '#1C1C1C', marginTop: 10, marginBottom: 24 }}>
             {`${transactionRequest.unit} 보상 수령`}
           </h1>
           <ConfirmationList
@@ -133,8 +133,15 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
               }
             ]}
           />
+        </div>
+        <div style={{
+          position: 'fixed',
+          bottom: 20,
+          left: 20,
+          right: 20,
+        }}>
           <Button
-            style={{ marginTop: 20 }}
+            style={{ borderRadius: 5 }}
             clickHandler={() => {
               account &&
               String(transactionRequest.userAddress) !== account

@@ -11,7 +11,6 @@ function Button(props: Props) {
   return (
     <button
       style={{
-        ...props.style,
         backgroundColor: "#3679B5",
         borderRadius: 10,
         borderWidth: 0,
@@ -20,6 +19,7 @@ function Button(props: Props) {
         marginLeft: 'auto',
         marginRight: 'auto',
         width: "100%",
+        ...props.style,
       }}
       onClick={props.clickHandler}
       disabled={props.disabled}

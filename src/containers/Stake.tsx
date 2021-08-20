@@ -272,7 +272,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{ fontSize: 22, color: '#1C1C1C' }}>
+          <h1 style={{ fontSize: 22, color: '#1C1C1C', marginTop: 10, marginBottom: 24 }}>
             {`${transactionRequest.unit} 스테이킹`}
           </h1>
           <ConfirmationList
@@ -288,8 +288,15 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
               }
             ]}
           />
+        </div>
+        <div style={{
+          position: 'fixed',
+          bottom: 20,
+          left: 20,
+          right: 20,
+        }}>
           <Button
-            style={{ marginTop: 20 }}
+            style={{ borderRadius: 5 }}
             clickHandler={() => {
               account &&
               String(transactionRequest.userAddress) !== account

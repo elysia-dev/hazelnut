@@ -120,7 +120,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{ fontSize: 22, color: '#1C1C1C' }}>
+          <h1 style={{ fontSize: 22, color: '#1C1C1C', marginTop: 10, marginBottom: 24 }}>
             {'트랜잭션'}
           </h1>
           <ConfirmationList
@@ -149,8 +149,15 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
               }
             ]}
           />
+        </div>
+        <div style={{
+          position: 'fixed',
+          bottom: 20,
+          left: 20,
+          right: 20,
+        }}>
           <Button
-            style={{ marginTop: 20 }}
+            style={{ borderRadius: 5 }}
             clickHandler={() => {
               account &&
               String(transactionRequest.userAddress) !== account
@@ -163,21 +170,6 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
       </BoxLayout>
     );
   }
-
-  // return (
-  //   <div>
-  //     <h1>UnstakeAndMigrate</h1>
-  //     <div>{transactionRequest.value}</div>
-  //     <div>{transactionRequest.type}</div>
-  //     <div>{transactionRequest.unit}</div>
-  //     <div>{transactionRequest.round}</div>
-  //     <div>{transactionRequest.contractAddress}</div>
-  //     <div>{transactionRequest.userAddress}</div>
-  //     <div>{transactionRequest.language}</div>
-  //     <div>{transactionRequest.rewardValue}</div>
-  //     <div>{transactionRequest.migrationValue}</div>
-  //   </div>
-  // );
 }
 
 export default UnstakeAndMigrate;
