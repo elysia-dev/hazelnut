@@ -14,6 +14,7 @@ import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -23,7 +24,20 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     STAKING_POOL_ABI,
   );
   const [chainId, setChainId] = useState<string>('');
-  const { elPrice } = usePrice();
+  const { elPrice, elfiPrice, daiPrice } = usePrice();
+  const [currentRound, setCurrentRound] = useState(1);
+  stakingPoolContract?.currentRound().then((res: any) => {
+    setCurrentRound(res);
+  });
+  const rewardUnit = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+    ? PaymentMethod.ELFI.toUpperCase()
+    : PaymentMethod.DAI.toUpperCase();
+  const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+    ? elPrice
+    : elfiPrice;
+  const rewardPrice = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+  ? elfiPrice
+  : daiPrice;
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
@@ -132,20 +146,21 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
               {
                 label: '언스테이킹 수량',
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(elPrice))}`,
+                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))}`,
               },
               {
                 label: '마이그레이션 회차',
-                value: `${transactionRequest.round}차 → ${transactionRequest.round}차`,
+                value: `${transactionRequest.round}차 → ${currentRound}차`,
               },
               {
                 label: '마이그레이션 수량',
                 value: `${transactionRequest.migrationValue} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.migrationValue || '0') * parseFloat(utils.formatEther(elPrice))}`,
+                subvalue: `$ ${parseFloat(transactionRequest.migrationValue || '0') * parseFloat(utils.formatEther(price))}`,
               },
               {
                 label: '보상 수량',
-                value: `${transactionRequest.rewardValue} ELFI!!!!`
+                value: `${transactionRequest.rewardValue} ${rewardUnit}`,
+                subvalue: `$ ${parseFloat(transactionRequest.rewardValue || '0') * parseFloat(utils.formatEther(rewardPrice))}`,
               }
             ]}
           />

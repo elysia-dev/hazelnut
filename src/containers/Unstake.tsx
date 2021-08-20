@@ -14,6 +14,7 @@ import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -23,7 +24,10 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
     STAKING_POOL_ABI,
   );
   const [chainId, setChainId] = useState<string>('');
-  const { elPrice } = usePrice();
+  const { elPrice, elfiPrice } = usePrice();
+  const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+  ? elPrice
+  : elfiPrice;
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
@@ -132,7 +136,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
               {
                 label: '언스테이킹 수량',
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(elPrice))}`,
+                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))}`,
               }
             ]}
           />

@@ -14,6 +14,7 @@ import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -23,7 +24,10 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
   );
-  const { elPrice } = usePrice();
+  const { elfiPrice, daiPrice } = usePrice();
+  const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.ELFI
+  ? elfiPrice
+  : daiPrice;
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
@@ -108,7 +112,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     currentChainId();
     if(!chainId) return;
     createNetwork();
-    // Swal.close();
+    Swal.close();
   }, [account, chainId]);
 
   if (!account) {
@@ -129,7 +133,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
               {
                 label: '보상 수량',
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(elPrice))}`,
+                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))}`,
               }
             ]}
           />

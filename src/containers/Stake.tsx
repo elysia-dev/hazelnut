@@ -19,6 +19,7 @@ import TxStatus from '../core/enums/TxStatus';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
+import PaymentMethod from '../core/types/PaymentMethod';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -37,7 +38,10 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
   );
-  const { elPrice } = usePrice();
+  const { elPrice, elfiPrice } = usePrice();
+  const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+    ? elPrice
+    : elfiPrice;
 
   const currentChainId = async () => {
     setChainId(await library.provider.request({
@@ -284,7 +288,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
               {
                 label: '스테이킹 수량',
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(elPrice))}`,
+                subvalue: `$ ${parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))}`,
               }
             ]}
           />
