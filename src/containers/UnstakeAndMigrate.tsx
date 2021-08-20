@@ -125,7 +125,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     currentChainId();
     if(!chainId) return;
     createNetwork();
-    // Swal.close();
+    Swal.close();
   }, [account, chainId]);
 
   if (!account) {
@@ -134,7 +134,14 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{ fontSize: 22, color: '#1C1C1C', marginTop: 10, marginBottom: 24 }}>
+          <h1 style={{
+            fontSize: 22,
+            color: '#1C1C1C',
+            marginTop: 10,
+            marginBottom: 24,
+            fontFamily: 'Spoqa Han Sans',
+            fontWeight: 700,
+            }}>
             {'트랜잭션'}
           </h1>
           <ConfirmationList

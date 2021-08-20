@@ -121,7 +121,14 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{ fontSize: 22, color: '#1C1C1C', marginTop: 10, marginBottom: 24 }}>
+          <h1 style={{
+            fontSize: 22,
+            color: '#1C1C1C',
+            marginTop: 10,
+            marginBottom: 24,
+            fontFamily: 'Spoqa Han Sans',
+            fontWeight: 700,
+            }}>
             {`${transactionRequest.unit} 보상 수령`}
           </h1>
           <ConfirmationList

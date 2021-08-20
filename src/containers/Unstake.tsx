@@ -115,7 +115,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
     currentChainId();
     if(!chainId) return;
     createNetwork();
-    // Swal.close();
+    Swal.close();
   }, [account, chainId]);
 
   if (!account) {
@@ -124,7 +124,14 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{ fontSize: 22, color: '#1C1C1C', marginTop: 10, marginBottom: 24 }}>
+          <h1 style={{
+            fontSize: 22,
+            color: '#1C1C1C',
+            marginTop: 10,
+            marginBottom: 24,
+            fontFamily: 'Spoqa Han Sans',
+            fontWeight: 700,
+            }}>
             {`${transactionRequest.unit} 언스테이킹`}
           </h1>
           <ConfirmationList

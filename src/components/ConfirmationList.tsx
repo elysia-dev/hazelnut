@@ -24,6 +24,8 @@ const ConfirmationList: React.FC<Props> = ({
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          fontFamily: 'Spoqa Han Sans',
+          fontWeight: 500,
         }}>
         최종 확인을 해주세요!
       </div>
@@ -44,6 +46,7 @@ const ConfirmationList: React.FC<Props> = ({
               style={{
                 fontSize: 14,
                 color: '#848484',
+                fontFamily: 'Spoqa Han Sans',
               }}>
               {item.label}
             </div>
@@ -53,6 +56,9 @@ const ConfirmationList: React.FC<Props> = ({
                   fontSize: 14,
                   color: '#1C1C1C',
                   textAlign: 'right',
+                  fontFamily: 'Spoqa Han Sans',
+                  fontWeight: 500,
+                  marginBottom: 2,
                 }}>
                 {item.value}
               </div>
@@ -62,6 +68,7 @@ const ConfirmationList: React.FC<Props> = ({
                     fontSize: 12,
                     color: '#848484',
                     textAlign: 'right',
+                    fontFamily: 'Spoqa Han Sans',
                   }}>
                   {item.subvalue}
                 </div>
