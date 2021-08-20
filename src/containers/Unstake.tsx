@@ -10,7 +10,6 @@ import ConnectWallet from '../components/ConnectWallet';
 import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
 import Swal, { RetrySwal } from '../core/utils/Swal';
-import RefundSuccess from './../images/success_refund.svg';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';

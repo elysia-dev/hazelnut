@@ -8,7 +8,6 @@ import InjectedConnector from '../core/connectors/InjectedConnector';
 import useContract from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import BoxLayout from '../components/BoxLayout';
-import InterestSuccess from './../images/success_interest.svg';
 import Swal, { RetrySwal } from '../core/utils/Swal';
 import Button from '../components/Button';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';

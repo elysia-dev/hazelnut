@@ -17,7 +17,6 @@ import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract'
 import Loading from '../components/Loading';
 import TxStatus from '../core/enums/TxStatus';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
-import BuyingSuccess from './../images/success_buying.svg'; // 근데 다른 이미지 써야 할 듯...
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 
