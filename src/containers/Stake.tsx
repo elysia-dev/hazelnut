@@ -44,13 +44,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     ? elPrice
     : elfiPrice;
 
-  const networkCheck = () => {
-    return isValidChainId(
-      transactionRequest.unit || '',
-      chainId,
-    );
-  };
-
   const createNetwork = async () => {
     if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
     await changeEthNet(library);
@@ -165,7 +158,10 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
         });
         break;
       case RequestStage.NETWORK_CHECK:
-        if (!networkCheck()) {
+        if (!isValidChainId(
+          transactionRequest.unit || '',
+          chainId,
+        )) {
           createNetwork();
         } else {
           setState({

@@ -40,13 +40,6 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
   ? elfiPrice
   : daiPrice;
 
-  const networkCheck = () => {
-    return isValidChainId(
-      transactionRequest.unit || '',
-      chainId,
-    );
-  };
-
   const createNetwork = async () => {
     if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
     await changeEthNet(library);
@@ -64,7 +57,10 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
   };
 
   const createTransaction = () => {
-    if(!networkCheck()){
+    if(!isValidChainId(
+      transactionRequest.unit || '',
+      chainId,
+    )){
       createNetwork();
       return;
     }
