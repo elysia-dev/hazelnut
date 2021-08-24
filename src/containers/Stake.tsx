@@ -20,6 +20,7 @@ import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
+import useChainId from '../hooks/useChainId';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -30,7 +31,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     txHash: '',
   });
   const txResult = useWatingTx(state.txHash);
-  const [chainId, setChainId] = useState<string>('');
+  const chainId = useChainId();
   const elToken = useElysiaToken();
   const elfiToken = useElfiToken();
   const tokenContract = transactionRequest.unit === 'EL' ? elToken : elfiToken;
@@ -42,12 +43,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
     ? elPrice
     : elfiPrice;
-
-  const currentChainId = async () => {
-    setChainId(await library.provider.request({
-      method: 'eth_chainId'
-    }));
-  };
 
   const networkCheck = () => {
     return isValidChainId(
@@ -63,7 +58,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
       ...state,
       stage: RequestStage.INIT,
     });
-    currentChainId();
   };
 
   const checkAccount = () => {
@@ -150,7 +144,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
 
   useEffect(() => {
     if (!account && !chainId) return;
-    currentChainId();
     if(!chainId) return;
     createNetwork();
     Swal.close();

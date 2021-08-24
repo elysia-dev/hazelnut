@@ -15,11 +15,12 @@ import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
+import useChainId from '../hooks/useChainId';
 
 const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
-  const [chainId, setChainId] = useState<string>('');
+  const chainId = useChainId();
   const stakingPoolContract = useContract(
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
@@ -28,12 +29,6 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
   const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.ELFI
   ? elfiPrice
   : daiPrice;
-
-  const currentChainId = async () => {
-    setChainId(await library.provider.request({
-      method: 'eth_chainId'
-    }));
-  };
 
   const networkCheck = () => {
     return isValidChainId(
@@ -109,7 +104,6 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
 
   useEffect(() => {
     if (!account && !chainId) return;
-    currentChainId();
     if(!chainId) return;
     createNetwork();
     Swal.close();

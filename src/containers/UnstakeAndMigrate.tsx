@@ -15,6 +15,7 @@ import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
+import useChainId from '../hooks/useChainId';
 
 const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -23,7 +24,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
   );
-  const [chainId, setChainId] = useState<string>('');
+  const chainId = useChainId();
   const { elPrice, elfiPrice, daiPrice } = usePrice();
   const [currentRound, setCurrentRound] = useState(1);
   stakingPoolContract?.currentRound().then((res: any) => {
@@ -38,12 +39,6 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
   const rewardPrice = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
   ? elfiPrice
   : daiPrice;
-
-  const currentChainId = async () => {
-    setChainId(await library.provider.request({
-      method: 'eth_chainId'
-    }));
-  };
 
   const networkCheck = () => {
     return isValidChainId(
@@ -122,7 +117,6 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
 
   useEffect(() => {
     if (!account && !chainId) return;
-    currentChainId();
     if(!chainId) return;
     createNetwork();
     Swal.close();
