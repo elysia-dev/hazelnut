@@ -13,14 +13,14 @@ import Button from '../components/Button';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import { useWatingTx } from '../hooks/useWatingTx';
 import { isValidChainId, changeEthNet } from '../core/utils/createNetwork';
-import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract';
+import { useElysiaToken, useElfiToken } from '../hooks/useContract';
 import Loading from '../components/Loading';
 import TxStatus from '../core/enums/TxStatus';
-import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
+import useStakingPool from '../hooks/useStakingPool';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -35,10 +35,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   const elToken = useElysiaToken();
   const elfiToken = useElfiToken();
   const tokenContract = transactionRequest.unit === 'EL' ? elToken : elfiToken;
-  const stakingPoolContract = useContract(
-    transactionRequest.contractAddress || '',
-    STAKING_POOL_ABI,
-  );
+  const stakingPoolContract = useStakingPool(transactionRequest.contractAddress || '');
   const { elPrice, elfiPrice } = usePrice();
   const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
     ? elPrice
@@ -69,15 +66,25 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   };
 
   const createTransaction = () => {
-    stakingPoolContract?.populateTransaction
-      .stake(BigNumber.from(transactionRequest.value))
-      .then(populatedTransaction => {
-        sendTransaction(
-          populatedTransaction,
-          RequestStage.TRANSACTION_PENDING,
-          RequestStage.TRANSACTION_RETRY,
-        );
+    stakingPoolContract?.stake(
+      BigNumber.from(transactionRequest.value),
+    ).then((tx) => {
+      tx.wait()
+      .then((res) => {
+        setState({
+          ...state,
+          stage: RequestStage.TRANSACTION_PENDING,
+          txHash: res.transactionHash,
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        setState({
+          ...state,
+          stage: RequestStage.TRANSACTION_RETRY,
+        });
       });
+    });
   };
 
   const approve = () => {
