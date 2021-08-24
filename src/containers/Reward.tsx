@@ -1,30 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import StakingTransactionRequest from '../core/types/StakingTransactionRequest';
 import { useTranslation } from 'react-i18next';
-import { PopulatedTransaction } from '@ethersproject/contracts';
 import { useWeb3React } from '@web3-react/core';
 import { utils } from 'ethers';
 import InjectedConnector from '../core/connectors/InjectedConnector';
-import useContract from '../hooks/useContract';
 import ConnectWallet from '../components/ConnectWallet';
 import BoxLayout from '../components/BoxLayout';
 import Swal, { RetrySwal } from '../core/utils/Swal';
 import Button from '../components/Button';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
-import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
+import useStakingPool from '../hooks/useStakingPool';
 
 const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const chainId = useChainId();
-  const stakingPoolContract = useContract(
-    transactionRequest.contractAddress || '',
-    STAKING_POOL_ABI,
-  );
+  const stakingPoolContract = useStakingPool(transactionRequest.contractAddress || '');
   const { elfiPrice, daiPrice } = usePrice();
   const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.ELFI
   ? elfiPrice
@@ -51,25 +46,11 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       });
     }
 
-    stakingPoolContract?.populateTransaction
-      .claim(transactionRequest.round)
-      .then(populatedTransaction => {
-        sendTransaction(populatedTransaction);
-      });
-  };
-
-  const sendTransaction = (populatedTransaction: PopulatedTransaction) => {
-    library.provider
-      .request({
-        method: 'eth_sendTransaction',
-        params: [
-          {
-            to: populatedTransaction.to,
-            from: account,
-            data: populatedTransaction.data,
-          },
-        ],
-      })
+    stakingPoolContract?.claim(
+      String(transactionRequest.round),
+    )
+    .then((tx) => {
+      tx.wait()
       .then(() => {
         Swal.fire({
           title: t('Completion.Title'),
@@ -92,6 +73,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
           }
         });
       });
+    });
   };
 
   useEffect(() => {
