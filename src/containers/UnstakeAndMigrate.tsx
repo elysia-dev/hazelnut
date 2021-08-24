@@ -40,11 +40,6 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
   ? elfiPrice
   : daiPrice;
 
-  const createNetwork = async () => {
-    if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
-    await changeEthNet(library);
-  };
-
   const checkAccount = () => {
     RetrySwal.fire({
       html: `<div style="font-size:15px; margin-top: 20px;">
@@ -61,8 +56,9 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
       transactionRequest.unit || '',
       chainId,
     )){
-      createNetwork();
-      return;
+      changeEthNet(library).then(() => {
+        return;
+      });
     }
 
     stakingPoolContract?.populateTransaction
@@ -112,11 +108,16 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
   };
 
   useEffect(() => {
-    if (!account && !chainId) return;
-    if(!chainId) return;
-    createNetwork();
-    Swal.close();
-  }, [account, chainId]);
+    if (chainId) {
+      if (chainId === process.env.REACT_APP_ETH_NETWORK) {
+        Swal.close();
+      } else {
+        changeEthNet(library).then(() => {
+          Swal.close();
+        });
+      }
+    }
+  }, [chainId]);
 
   if (!account) {
     return <ConnectWallet handler={() => activate(InjectedConnector)} />;

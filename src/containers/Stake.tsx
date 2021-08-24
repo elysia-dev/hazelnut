@@ -44,15 +44,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     ? elPrice
     : elfiPrice;
 
-  const createNetwork = async () => {
-    if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
-    await changeEthNet(library);
-    setState({
-      ...state,
-      stage: RequestStage.INIT,
-    });
-  };
-
   const checkAccount = () => {
     RetrySwal.fire({
       html: `<div style="font-size:15px; margin-top: 20px;">
@@ -136,16 +127,21 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   };
 
   useEffect(() => {
-    if (!account && !chainId) return;
-    if(!chainId) return;
-    createNetwork();
-    Swal.close();
+    if (chainId) {
+      if (chainId === process.env.REACT_APP_ETH_NETWORK) {
+        Swal.close();
+      } else {
+        changeEthNet(library).then(() => {
+          Swal.close();
+        });
+      }
 
-    setState({
-      ...state,
-      stage: RequestStage.INIT,
-    });
-  }, [account, chainId]);
+      setState({
+        ...state,
+        stage: RequestStage.INIT,
+      });
+    }
+  }, [chainId]);
 
   useEffect(() => {
     switch (state.stage) {
@@ -162,7 +158,12 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
           transactionRequest.unit || '',
           chainId,
         )) {
-          createNetwork();
+          changeEthNet(library).then(() => {
+            setState({
+              ...state,
+              stage: RequestStage.INIT,
+            });
+          });
         } else {
           setState({
             ...state,
