@@ -1,19 +1,20 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BigNumber, utils } from 'ethers';
+import { utils } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 import StakingTransactionRequest from '../core/types/StakingTransactionRequest';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import ConnectWallet from '../components/ConnectWallet';
 import Button from '../components/Button';
 import BoxLayout from '../components/BoxLayout';
-import Swal, { RetrySwal } from '../core/utils/Swal';
+import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
 import useStakingPool from '../hooks/useStakingPool';
+import Loading from '../components/Loading';
 
 const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -51,6 +52,11 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
       String(transactionRequest.round),
     )
     .then((tx) => {
+      SwalWithReact.fire({
+        html: <Loading />,
+        title: t(`Buying.TransactionPending`),
+        showConfirmButton: false,
+      });
       tx.wait()
       .then(() => {
         Swal.fire({

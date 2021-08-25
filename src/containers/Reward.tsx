@@ -6,7 +6,7 @@ import { utils } from 'ethers';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import ConnectWallet from '../components/ConnectWallet';
 import BoxLayout from '../components/BoxLayout';
-import Swal, { RetrySwal } from '../core/utils/Swal';
+import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import Button from '../components/Button';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import ConfirmationList from '../components/ConfirmationList';
@@ -14,6 +14,7 @@ import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
 import useStakingPool from '../hooks/useStakingPool';
+import Loading from '../components/Loading';
 
 const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
@@ -50,6 +51,11 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       String(transactionRequest.round),
     )
     .then((tx) => {
+      SwalWithReact.fire({
+        html: <Loading />,
+        title: t(`Buying.TransactionPending`),
+        showConfirmButton: false,
+      });
       tx.wait()
       .then(() => {
         Swal.fire({
