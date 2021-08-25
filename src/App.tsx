@@ -6,6 +6,8 @@ import './i18n';
 import EthAddress from './containers/EthAddress';
 import './fonts/font.css';
 import ServerError from './components/errors/ServerError';
+import StakingRequests from './containers/StakingRequests'; // Requests도 AssetRequests 뭐 이런 걸로 이름 바꿔야 함..
+
 function App() {
   return (
     <Router>
@@ -18,6 +20,12 @@ function App() {
         </Route>
         <Route path="/requests">
           <Requests />
+        </Route>
+        <Route exact={true} path="/staking-requests/:value/:type/:unit/:round/:contractAddress/:userAddress/:language/:rewardValue/:migrationValue">
+          <StakingRequests />
+        </Route>
+        <Route path="/staking-requests">
+          <StakingRequests />
         </Route>
         <Route path="/ethAddress/:id">
           <EthAddress />

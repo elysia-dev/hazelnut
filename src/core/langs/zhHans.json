@@ -26,13 +26,30 @@
     "Interest": {
       "Title": "领取奖励"
     },
+    "Staking": {
+      "Transaction": "交易",
+      "RoundWithAffix": "第$t(NumeralCharacter.{{round}})轮",
+      "StakingTitle": "{{unit}}代币Staking",
+      "StakingRound": "Staking轮数",
+      "StakingAmount": "Staking数量",
+      "UnstakingTitle": "{{unit}}代币Unstaking(解除权益质押)",
+      "UnstakingRound": "Unstaking(解除权益质押)轮数",
+      "UnstakingAmount": "Unstaking(解除权益质押)数量",
+      "MigrationRound": "转移位置",
+      "MigrationAmount": "转移数量",
+      "RewardTitle": "领取{{unit}}代币奖励",
+      "RewardRound": "奖励领取轮数",
+      "RewardAmount": "奖励数量",
+      "ConfirmationTitle": "请再确认一次。"
+    },
     "Completion": {
       "Title": "确认投资",
       "InterestResult": "收到了爱立厦(Elysia) {{product}}<br>的收益{{value}}个{{paymentMethod}}代币",
       "BuyingResult": "恭喜您成为爱立厦(Elysia) {{product}}<br>{{value}}的房地产房主之一啦",
       "RefundResult": "爱立厦(Elysia) {{product}}投资<br>{{paymentMethod}}代币{{value}}退款完成!",
       "ReturnToApp": "请在手机应用程序上确认",
-      "Notice": "交易完成后，<br>我们将向应用发送通知。"
+      "Notice": "交易完成后，<br>我们将向应用发送通知。",
+      "TransactionSuccess": "您操作的交易已提交。<br>交易完成后，我们会在应用程序上向您发送通知。"
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。",
@@ -50,6 +67,7 @@
       "Connect": "绑定钱包",
       "Connected": "本钱包地址已经被绑定。",
       "Duplicated": "钱包地址重复。使用其他地址"
-    }
+    },
+    "NumeralCharacter": ["", "一", "二", "三", "四", "五", "六"]
   }
 }

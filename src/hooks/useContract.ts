@@ -37,4 +37,12 @@ export function useElysiaToken(): Contract | null {
   );
 }
 
+export function useElfiToken(): Contract | null {
+  return useContract(
+    '0x4da34f8264cb33a5c9f17081b9ef5ff6091116f4',
+    ERC20_ABI,
+    false,
+  );
+}
+
 export default useContract;

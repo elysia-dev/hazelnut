@@ -1,17 +1,18 @@
-import React from 'react'
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useState } from "react";
-import PRICE_ORACLE_ABI from '../core/constants/abis/price-oracle.json';
 import useContract from "./useContract";
-import axios, { AxiosResponse } from 'axios';
 import CoingeckoClient from '../api/CoingeckoClient';
+import UniswapClient from '../api/UniswapClient';
 
 interface IPrice {
   elPrice: BigNumber,
   ethPrice: BigNumber,
   bnbPrice:BigNumber,
+  elfiPrice: BigNumber,
+  daiPrice: BigNumber,
   loaded: boolean
 }
+
 export function usePriceLoader(
   initialValue: string,
   address: string,
@@ -35,27 +36,29 @@ export function usePriceLoader(
   return price;
 }
 
-
-
 function usePrice(): IPrice {
-  const [prices, setPrices] = useState<{ elPrice: BigNumber, ethPrice: BigNumber,bnbPrice:BigNumber, loaded: boolean }>({
+  const [prices, setPrices] = useState<{ elPrice: BigNumber, ethPrice: BigNumber, bnbPrice:BigNumber, elfiPrice: BigNumber, daiPrice: BigNumber, loaded: boolean }>({
     elPrice: constants.One,
     ethPrice: constants.One,
     bnbPrice: constants.One,
+    elfiPrice: constants.One,
+    daiPrice: constants.One,
     loaded: false,
   })
-
-  // const elPriceOracle = useContract(process.env.REACT_APP_EL_PRICE_ORACLE_ADDRESS, PRICE_ORACLE_ABI, false)
-  // const ethPriceOracle = useContract(process.env.REACT_APP_ETH_PRICE_ORACLE_ADDRESS, PRICE_ORACLE_ABI, false)
-
 
   const loadPrices = async () => {
     try {
       const coingeckoClient = await CoingeckoClient.getElAndEthPrice();
+      const uniswapClient = await UniswapClient.getELFIPRice();
+
       setPrices({
         elPrice: utils.parseEther(coingeckoClient.data.elysia.usd.toString()),
         ethPrice: utils.parseEther(coingeckoClient.data.ethereum.usd.toString()),
         bnbPrice: utils.parseEther(coingeckoClient.data.binancecoin.usd.toString()),
+        elfiPrice: utils.parseEther(
+          parseFloat(uniswapClient.data.data.token.tokenDayData[0].priceUSD).toFixed(10),
+        ),
+        daiPrice: utils.parseEther(coingeckoClient.data.dai.usd.toString()),
         loaded: true,
       })
     } catch (error) {
@@ -70,4 +73,4 @@ function usePrice(): IPrice {
   return prices;
 }
 
-export default usePrice
+export default usePrice;

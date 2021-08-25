@@ -26,13 +26,30 @@
     "Interest": {
       "Title": "Claim reward"
     },
+    "Staking": {
+      "Transaction": "Transaction",
+      "RoundWithAffix": "{{round}}$t(OrdinalSuffix.{{round}})",
+      "StakingTitle": "{{unit}} staking",
+      "StakingRound": "staking round",
+      "StakingAmount": "staking supply",
+      "UnstakingTitle": "Unstake {{unit}}",
+      "UnstakingRound": "unstaking round",
+      "UnstakingAmount": "unstaking supply",
+      "MigrationRound": "Destination",
+      "MigrationAmount": "Supply",
+      "RewardTitle": "Receive {{unit}} reward",
+      "RewardRound": "Reward round",
+      "RewardAmount": "Reward supply",
+      "ConfirmationTitle": "Please confirm again"
+    },
     "Completion": {
       "Title": "Transaction Success",
       "InterestResult": "You will receive<br>{{paymentMethod}} {{value}} from {{product}}",
       "BuyingResult": "You now own {{value}}% of {{product}}!",
       "RefundResult": "Your investment of {{paymentMethod}} {{value}}<br>from {{product}} will be returned",
       "ReturnToApp": "Return to app",
-      "Notice": "When the transaction is complete,<br> we will send you a notification."
+      "Notice": "When the transaction is complete,<br> we will send you a notification.",
+      "TransactionSuccess": "Request has been sent. You will receive a notification once the transaction is complete."
     },
     "Error": {
       "PriceServer": "EL price information could not be loaded",
@@ -50,6 +67,7 @@
       "Connect": "Connect",
       "Connected": "Your address is registerd",
       "Duplicated": "Wallet address is duplicated, Use other address"
-    }
+    },
+    "OrdinalSuffix": ["", "st", "nd", "rd", "th", "th", "th"]
   }
 }

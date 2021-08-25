@@ -3,7 +3,9 @@ enum PaymentMethod {
   EL = 'el',
   WBTC = 'wbtc',
   ETH = 'eth',
-  BNB = 'bnb'
+  BNB = 'bnb',
+  ELFI = 'elfi',
+  DAI = 'dai',
 }
 
 export default PaymentMethod

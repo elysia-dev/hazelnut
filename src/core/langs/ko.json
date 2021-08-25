@@ -26,13 +26,30 @@
     "Interest": {
       "Title": "이자받기"
     },
+    "Staking": {
+      "Transaction": "트랜잭션",
+      "RoundWithAffix": "{{round}}차",
+      "StakingTitle": "{{unit}} 스테이킹",
+      "StakingRound": "스테이킹 회차",
+      "StakingAmount": "스테이킹 수량",
+      "UnstakingTitle": "{{unit}} 언스테이킹",
+      "UnstakingRound": "언스테이킹 회차",
+      "UnstakingAmount": "언스테이킹 수량",
+      "MigrationRound": "마이그레이션 회차",
+      "MigrationAmount": "마이그레이션 수량",
+      "RewardTitle": "{{unit}} 보상 수령",
+      "RewardRound": "보상 수령 회차",
+      "RewardAmount": "보상 수량",
+      "ConfirmationTitle": "최종 확인을 해주세요!"
+    },
     "Completion": {
       "Title": "트랜잭션 생성",
       "InterestResult": "엘리시아 {{product}}의<br>이자수익 {{paymentMethod}} {{value}}를 받을 예정입니다.",
       "BuyingResult": "{{product}}의<br>지분 {{value}}%를 확보할 예정입니다.",
       "RefundResult": "엘리시아 {{product}}의<br>투자금 {{paymentMethod}} {{value}}이 환불될 예정입니다.",
       "Notice": "트랜잭션이 완료되면<br>앱으로 알림을 보내드립니다.",
-      "ReturnToApp": "앱으로 돌아가기"
+      "ReturnToApp": "앱으로 돌아가기",
+      "TransactionSuccess": "요청하신 트랜잭션을 전송했습니다.<br>트랜잭션이 완료되면 앱으로 알림을 보내드립니다."
     },
     "Error": {
       "PriceServer": "EL 가격 정보를 불러오지 못했습니다",
