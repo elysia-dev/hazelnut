@@ -69,6 +69,10 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     stakingPoolContract?.stake(
       utils.parseEther(transactionRequest.value || '0')
     ).then((tx) => {
+      setState({
+        ...state,
+        stage: RequestStage.TRANSACTION_PENDING,
+      });
       tx.wait()
       .then((res) => {
         setState({
