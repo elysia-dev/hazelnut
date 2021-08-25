@@ -47,7 +47,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
     }
 
     stakingPoolContract?.withdraw(
-      BigNumber.from(transactionRequest.value),
+      utils.parseEther(transactionRequest.value || '0'),
       String(transactionRequest.round),
     )
     .then((tx) => {

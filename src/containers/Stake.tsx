@@ -67,7 +67,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
 
   const createTransaction = () => {
     stakingPoolContract?.stake(
-      BigNumber.from(transactionRequest.value),
+      utils.parseEther(transactionRequest.value || '0')
     ).then((tx) => {
       tx.wait()
       .then((res) => {
