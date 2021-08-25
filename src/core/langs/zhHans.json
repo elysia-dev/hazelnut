@@ -49,7 +49,7 @@
       "RefundResult": "爱立厦(Elysia) {{product}}投资<br>{{paymentMethod}}代币{{value}}退款完成!",
       "ReturnToApp": "请在手机应用程序上确认",
       "Notice": "交易完成后，<br>我们将向应用发送通知。",
-      "TransactionSuccess": "您操作的交易已提交。<br>交易完成后，我们会在应用程序上向您发送通知。"
+      "TransactionSuccess": "您操作的交易已提交。请回到爱立厦(ELYSIA)APP页面后。"
     },
     "Error": {
       "PriceServer": "无法加载EL价格信息。",

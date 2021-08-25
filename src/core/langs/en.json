@@ -49,7 +49,7 @@
       "RefundResult": "Your investment of {{paymentMethod}} {{value}}<br>from {{product}} will be returned",
       "ReturnToApp": "Return to app",
       "Notice": "When the transaction is complete,<br> we will send you a notification.",
-      "TransactionSuccess": "Request has been sent. You will receive a notification once the transaction is complete."
+      "TransactionSuccess": "Request has been sent. Please go back to the Elysia app."
     },
     "Error": {
       "PriceServer": "EL price information could not be loaded",

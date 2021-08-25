@@ -49,7 +49,7 @@
       "RefundResult": "엘리시아 {{product}}의<br>투자금 {{paymentMethod}} {{value}}이 환불될 예정입니다.",
       "Notice": "트랜잭션이 완료되면<br>앱으로 알림을 보내드립니다.",
       "ReturnToApp": "앱으로 돌아가기",
-      "TransactionSuccess": "요청하신 트랜잭션을 전송했습니다.<br>트랜잭션이 완료되면 앱으로 알림을 보내드립니다."
+      "TransactionSuccess": "요청하신 트랜잭션을 전송했습니다. 엘리시아 앱으로 돌아가 주세요!"
     },
     "Error": {
       "PriceServer": "EL 가격 정보를 불러오지 못했습니다",
