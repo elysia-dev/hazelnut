@@ -58,7 +58,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     }
 
     stakingPoolContract?.migrate(
-      utils.parseEther(transactionRequest.value || '0'),
+      utils.parseEther(transactionRequest.migrationValue || '0'),
       String(transactionRequest.round),
     )
     .then((tx) => {
