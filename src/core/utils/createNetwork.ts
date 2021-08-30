@@ -68,7 +68,7 @@ export async function createEthNet (library: any) {
                     blockExplorerUrls: ["https://kovan.etherscan.io"],
                   }
                 ]
-              })   
+              })
         } else {
             await library.provider.request({
                 method: 'wallet_addEthereumChain',
@@ -85,9 +85,9 @@ export async function createEthNet (library: any) {
                     blockExplorerUrls: ["https://etherscan.io"],
                   }
                 ]
-              })   
+              })
         }
-        
+
     } catch (error) {
         console.error(error);
     }
@@ -120,7 +120,6 @@ export  function isValidChainId (productPayment: string, chainId: string): boole
         if(chainId === requiredNetworkChainID){
           return true;
         }
-        alert('네워크가 일치하지 않습니다.')
+        alert('네트워크가 일치하지 않습니다.')
         return false;
 }
-
