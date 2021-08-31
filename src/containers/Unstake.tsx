@@ -42,6 +42,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ 
       transactionRequest.unit || '',
       chainId,
     )){
+      alert(t('Error.InvalidNetwork'));
       changeEthNet(library).then(() => {
         return;
       });

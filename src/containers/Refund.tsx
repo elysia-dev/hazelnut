@@ -57,7 +57,7 @@ function Refund(props: Props) {
     }
     try {
       if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
-        throw Error; 
+        throw Error;
         }
         await network
     } catch (switchChainError) {
@@ -93,6 +93,7 @@ function Refund(props: Props) {
 
   const createTransaction = () => {
     if(!networkCheck()){
+      alert(t('Error.InvalidNetwork'));
       createNetwork();
       return;
     }

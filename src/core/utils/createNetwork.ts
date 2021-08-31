@@ -120,6 +120,5 @@ export  function isValidChainId (productPayment: string, chainId: string): boole
         if(chainId === requiredNetworkChainID){
           return true;
         }
-        alert('네트워크가 일치하지 않습니다.')
         return false;
 }

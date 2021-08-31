@@ -87,7 +87,7 @@ function Buying(props: Props) {
     }
     try {
       if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
-          throw Error; 
+          throw Error;
       }
       await network;
     } catch (switchChainError) {
@@ -255,6 +255,7 @@ function Buying(props: Props) {
         break;
       case RequestStage.NETWORK_CHECK:
         if (!networkCheck()) {
+          alert(t('Error.InvalidNetwork'));
           createNetwork();
         } else {
           setState({

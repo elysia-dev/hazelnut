@@ -42,6 +42,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       transactionRequest.unit || '',
       chainId,
     )){
+      alert(t('Error.InvalidNetwork'));
       changeEthNet(library).then(() => {
         return;
       });
