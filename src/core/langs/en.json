@@ -60,7 +60,8 @@
       "PleaseReload": "Reload",
       "TransactionCancled": "Transaction cancelled",
       "CheckAccount": "This address isn't registered with the Elysia app.<br>Please check the address.",
-      "Check": "Check"
+      "Check": "Check",
+      "InvalidNetwork": "Network does not match"
     },
     "Register": {
       "ConnectWallet": "Connect Wallet",
