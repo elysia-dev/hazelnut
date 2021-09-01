@@ -15,12 +15,19 @@ import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
 import useStakingPool from '../hooks/useStakingPool';
 import Loading from '../components/Loading';
+import { PopulatedTransaction } from '@ethersproject/contracts';
+import useContract from '../hooks/useContract';
+import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 
 const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const chainId = useChainId();
-  const stakingPoolContract = useStakingPool(transactionRequest.contractAddress || '');
+  // const stakingPoolContract = useStakingPool(transactionRequest.contractAddress || '');
+  const stakingPoolContract = useContract(
+    transactionRequest.contractAddress || '',
+    STAKING_POOL_ABI,
+  );
   const { elfiPrice, daiPrice } = usePrice();
   const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.ELFI
   ? elfiPrice
@@ -48,16 +55,59 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       });
     }
 
-    stakingPoolContract?.claim(
-      String(transactionRequest.round),
-    )
-    .then((tx) => {
-      SwalWithReact.fire({
-        html: <Loading />,
-        title: t(`Buying.TransactionPending`),
-        showConfirmButton: false,
+    stakingPoolContract?.populateTransaction
+      .claim(transactionRequest.round)
+      .then(populatedTransaction => {
+        sendTransaction(populatedTransaction);
       });
-      tx.wait()
+
+    // stakingPoolContract?.claim(
+    //   String(transactionRequest.round),
+    // )
+    // .then((tx) => {
+    //   SwalWithReact.fire({
+    //     html: <Loading />,
+    //     title: t(`Buying.TransactionPending`),
+    //     showConfirmButton: false,
+    //   });
+    //   tx.wait()
+    //   .then(() => {
+    //     Swal.fire({
+    //       title: t('Completion.Title'),
+    //       html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
+    //       showConfirmButton: false,
+    //       icon: 'success',
+    //       iconColor: '#3679B5',
+    //       allowOutsideClick: false,
+    //     });
+    //   })
+    //   .catch(() => {
+    //     Swal.fire({
+    //       text: t('Error.TransactionCancled'),
+    //       icon: 'error',
+    //       confirmButtonText: t('Buying.TransactionRetryButton'),
+    //       showCloseButton: true,
+    //     }).then(res => {
+    //       if (res.isConfirmed) {
+    //         createTransaction();
+    //       }
+    //     });
+    //   });
+    // });
+  };
+
+  const sendTransaction = (populatedTransaction: PopulatedTransaction) => {
+    library.provider
+      .request({
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: populatedTransaction.to,
+            from: account,
+            data: populatedTransaction.data,
+          },
+        ],
+      })
       .then(() => {
         Swal.fire({
           title: t('Completion.Title'),
@@ -80,8 +130,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
           }
         });
       });
-    });
-  };
+  }
 
   useEffect(() => {
     if (chainId) {
