@@ -20,7 +20,6 @@ import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
-import useStakingPool from '../hooks/useStakingPool';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
@@ -36,7 +35,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
   const elToken = useElysiaToken();
   const elfiToken = useElfiToken();
   const tokenContract = transactionRequest.unit === 'EL' ? elToken : elfiToken;
-  // const stakingPoolContract = useStakingPool(transactionRequest.contractAddress || '');
   const stakingPoolContract = useContract(
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
@@ -80,30 +78,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
           RequestStage.TRANSACTION_RETRY,
         );
       });
-
-    // stakingPoolContract?.stake(
-    //   utils.parseEther(transactionRequest.value || '0')
-    // ).then((tx) => {
-    //   setState({
-    //     ...state,
-    //     stage: RequestStage.TRANSACTION_PENDING,
-    //   });
-    //   tx.wait()
-    //   .then((res) => {
-    //     setState({
-    //       ...state,
-    //       stage: RequestStage.TRANSACTION_PENDING,
-    //       txHash: res.transactionHash,
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //     setState({
-    //       ...state,
-    //       stage: RequestStage.TRANSACTION_RETRY,
-    //     });
-    //   });
-    // });
   };
 
   const approve = () => {

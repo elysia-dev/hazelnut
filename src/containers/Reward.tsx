@@ -6,15 +6,13 @@ import { utils } from 'ethers';
 import InjectedConnector from '../core/connectors/InjectedConnector';
 import ConnectWallet from '../components/ConnectWallet';
 import BoxLayout from '../components/BoxLayout';
-import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
+import Swal, { RetrySwal } from '../core/utils/Swal';
 import Button from '../components/Button';
 import { changeEthNet, isValidChainId } from '../core/utils/createNetwork';
 import ConfirmationList from '../components/ConfirmationList';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
-import useStakingPool from '../hooks/useStakingPool';
-import Loading from '../components/Loading';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import useContract from '../hooks/useContract';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
@@ -23,7 +21,6 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const chainId = useChainId();
-  // const stakingPoolContract = useStakingPool(transactionRequest.contractAddress || '');
   const stakingPoolContract = useContract(
     transactionRequest.contractAddress || '',
     STAKING_POOL_ABI,
@@ -60,40 +57,6 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       .then(populatedTransaction => {
         sendTransaction(populatedTransaction);
       });
-
-    // stakingPoolContract?.claim(
-    //   String(transactionRequest.round),
-    // )
-    // .then((tx) => {
-    //   SwalWithReact.fire({
-    //     html: <Loading />,
-    //     title: t(`Buying.TransactionPending`),
-    //     showConfirmButton: false,
-    //   });
-    //   tx.wait()
-    //   .then(() => {
-    //     Swal.fire({
-    //       title: t('Completion.Title'),
-    //       html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
-    //       showConfirmButton: false,
-    //       icon: 'success',
-    //       iconColor: '#3679B5',
-    //       allowOutsideClick: false,
-    //     });
-    //   })
-    //   .catch(() => {
-    //     Swal.fire({
-    //       text: t('Error.TransactionCancled'),
-    //       icon: 'error',
-    //       confirmButtonText: t('Buying.TransactionRetryButton'),
-    //       showCloseButton: true,
-    //     }).then(res => {
-    //       if (res.isConfirmed) {
-    //         createTransaction();
-    //       }
-    //     });
-    //   });
-    // });
   };
 
   const sendTransaction = (populatedTransaction: PopulatedTransaction) => {
