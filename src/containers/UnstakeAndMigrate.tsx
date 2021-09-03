@@ -70,41 +70,6 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
       .then(populatedTransaction => {
         sendTransaction(populatedTransaction);
       });
-
-    // stakingPoolContract?.migrate(
-    //   utils.parseEther(transactionRequest.migrationValue || '0'),
-    //   String(transactionRequest.round),
-    // )
-    // .then((tx) => {
-    //   SwalWithReact.fire({
-    //     html: <Loading />,
-    //     title: t(`Buying.TransactionPending`),
-    //     showConfirmButton: false,
-    //   });
-    //   tx.wait()
-    //   .then(() => {
-    //     Swal.fire({
-    //       title: t('Completion.Title'),
-    //       html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
-    //       showConfirmButton: false,
-    //       icon: 'success',
-    //       iconColor: '#3679B5',
-    //       allowOutsideClick: false,
-    //     });
-    //   })
-    //   .catch(() => {
-    //     Swal.fire({
-    //       text: t('Error.TransactionCancled'),
-    //       icon: 'error',
-    //       confirmButtonText: t('Buying.TransactionRetryButton'),
-    //       showCloseButton: true,
-    //     }).then(res => {
-    //       if (res.isConfirmed) {
-    //         createTransaction();
-    //       }
-    //     });
-    //   });
-    // });
   };
 
   const sendTransaction = (populatedTransaction: PopulatedTransaction) => {
