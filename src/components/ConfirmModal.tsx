@@ -17,7 +17,7 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
           fontWeight: 'bold',
           borderBottom: '1px solid #F1F1F1',
           alignItems: 'center',
-          marginTop: 20,
+          marginTop: 35,
           height: 40,
         }}
       >
