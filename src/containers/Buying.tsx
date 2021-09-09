@@ -126,7 +126,7 @@ function Buying(props: Props) {
     ) {
       setState({
         ...state,
-        stage: RequestStage.TRANSACTION,
+        stage: RequestStage.CONFIRM,
       });
 
       return;
@@ -276,8 +276,13 @@ function Buying(props: Props) {
         break;
       case RequestStage.ALLOWANCE_RETRY:
         SwalWithReact.fire({
-          html: <ApproveStep isApproved={false} />,
-          confirmButtonText: t('Buying.TransactionRetryButton'),
+          html: (
+            <ApproveStep
+              isApproved={false}
+              paymentMethod={props.transactionRequest.product.paymentMethod}
+            />
+          ),
+          confirmButtonText: '허용하기',
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
@@ -323,9 +328,10 @@ function Buying(props: Props) {
                   value: `${props.transactionRequest.amount} ${props.transactionRequest.product.tokenName}`,
                 },
               ]}
+              paymentMethod={props.transactionRequest.product.paymentMethod}
             />
           ),
-          confirmButtonText: t('Buying.TransactionRetryButton'),
+          confirmButtonText: '구매하기',
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
