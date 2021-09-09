@@ -138,7 +138,7 @@ function Buying(props: Props) {
         setState({
           ...state,
           stage: res.gte(expectedValue.value)
-            ? RequestStage.TRANSACTION
+            ? RequestStage.CONFIRM
             : RequestStage.ALLOWANCE_RETRY,
         });
       });
