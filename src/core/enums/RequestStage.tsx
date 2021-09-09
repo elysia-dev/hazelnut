@@ -1,5 +1,6 @@
 enum RequestStage {
   INIT = 'init',
+  CONFIRM = 'Confirm',
   NETWORK_CHECK = 'NetworkCheck',
   ALLOWANCE_CHECK = 'AllowanceCheck',
   ALLOWANCE_PENDING = 'AllowancePending',
@@ -10,4 +11,4 @@ enum RequestStage {
   TRANSACTION_RESULT = 'TransactionResult',
 }
 
-export default RequestStage
+export default RequestStage;
