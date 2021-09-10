@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 function ApproveDes() {
+  const { t } = useTranslation();
+
   return (
     <div
       style={{
@@ -15,7 +18,7 @@ function ApproveDes() {
           fontWeight: 'bold',
         }}
       >
-        접근 권한을 승인해주세요!
+        {t('Buying.approve_guide')}
       </div>
       <div
         style={{
@@ -35,8 +38,7 @@ function ApproveDes() {
           fontFamily: 'Spoqa Han Sans',
         }}
       >
-        부동산 토큰을 구매하기 위해서는 연결된 지갑에 해당 앱이 접근할 수 있도록
-        접근 권한을 승인해야 합니다.
+        {t('Buying.approve_guide_first')}
       </div>
       <div
         style={{
@@ -46,8 +48,7 @@ function ApproveDes() {
           fontFamily: 'Spoqa Han Sans',
         }}
       >
-        최초 구매 시에만 승인이 필요하며, 승인이 성공적으로 완료될 경우, 이후의
-        거래에는 권한 승인 없이 부동산 토큰을 구매하실 수 있습니다.
+        {t('Buying.approve_guide_second')}
       </div>
     </div>
   );
