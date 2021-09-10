@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   list?: { label: string; value: string; subvalue?: string }[];
 };
 
 const ConfirmModal: React.FC<Props> = ({ list }) => {
+  const { t } = useTranslation();
   return (
     <>
       {' '}
@@ -21,7 +23,7 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
           height: 40,
         }}
       >
-        구매 전 최종 금액을 확인해 주세요!
+        {t('Staking.ConfirmationTitle')}
       </div>
       {list?.map(item => {
         return (
