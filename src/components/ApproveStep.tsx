@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import PaymentMethod from '../core/types/PaymentMethod';
 import ApproveDes from './ApproveDes';
 import ConfirmModal from './ConfirmModal';
@@ -6,13 +7,15 @@ import ConfirmModal from './ConfirmModal';
 type Props = {
   isApproved: boolean;
   list?: { label: string; value: string; subvalue?: string }[];
-  paymentMethod: PaymentMethod;
+  paymentMethod?: string;
 };
 
 const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
+  const payments: string[] = [PaymentMethod.ETH, PaymentMethod.BNB];
+  const { t } = useTranslation();
   return (
     <>
-      {paymentMethod === PaymentMethod.EL && (
+      {!payments.includes(paymentMethod || '') && (
         <div
           style={{
             display: 'flex',
@@ -42,14 +45,9 @@ const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
                 fontWeight: 'bold',
               }}
             >
-              {'1단계\n권한승인'.split('\n').map(text => {
-                return (
-                  <span>
-                    {text}
-                    <br />
-                  </span>
-                );
-              })}
+              <span>{t('Buying.approve_step', { step: 1 })}</span>
+              <br />
+              <span>{t('Buying.approve_step_authorization')}</span>
             </div>
           </div>
           <div
@@ -73,14 +71,9 @@ const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
                 fontWeight: 'bold',
               }}
             >
-              {'2단계\n최종확인'.split('\n').map(text => {
-                return (
-                  <span>
-                    {text}
-                    <br />
-                  </span>
-                );
-              })}
+              <span>{t('Buying.approve_step', { step: 2 })}</span>
+              <br />
+              <span>{t('Buying.approve_step_confirm')}</span>
             </div>
           </div>
           <div
