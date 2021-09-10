@@ -282,7 +282,7 @@ function Buying(props: Props) {
               paymentMethod={props.transactionRequest.product.paymentMethod}
             />
           ),
-          confirmButtonText: '허용하기',
+          confirmButtonText: t('Buying.Transaction'),
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
@@ -312,11 +312,11 @@ function Buying(props: Props) {
               isApproved={true}
               list={[
                 {
-                  label: '구매 상품',
+                  label: t('Buying.purchaseProduct'),
                   value: props.transactionRequest.product.title,
                 },
                 {
-                  label: '구매 금액',
+                  label: t('Buying.purchaseValue'),
                   value: `${parseFloat(
                     utils.formatEther(expectedValue.value),
                   ).toFixed(
@@ -324,14 +324,14 @@ function Buying(props: Props) {
                   )} ${props.transactionRequest.product.paymentMethod.toUpperCase()}`,
                 },
                 {
-                  label: '구매 토큰량',
+                  label: t('Buying.purchaseStake'),
                   value: `${props.transactionRequest.amount} ${props.transactionRequest.product.tokenName}`,
                 },
               ]}
               paymentMethod={props.transactionRequest.product.paymentMethod}
             />
           ),
-          confirmButtonText: '구매하기',
+          confirmButtonText: t('Buying.Transaction'),
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
