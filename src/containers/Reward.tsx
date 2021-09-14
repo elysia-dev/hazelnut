@@ -16,8 +16,12 @@ import useChainId from '../hooks/useChainId';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import useContract from '../hooks/useContract';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
+import AppFonts from '../core/enums/AppFonts';
+import AppColors from '../core/enums/AppColors';
 
-const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
+const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
+  transactionRequest,
+}) => {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const chainId = useChainId();
@@ -26,9 +30,10 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     STAKING_POOL_ABI,
   );
   const { elfiPrice, daiPrice } = usePrice();
-  const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.ELFI
-  ? elfiPrice
-  : daiPrice;
+  const price =
+    transactionRequest.unit?.toLowerCase() === PaymentMethod.ELFI
+      ? elfiPrice
+      : daiPrice;
 
   const checkAccount = () => {
     RetrySwal.fire({
@@ -42,10 +47,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
   };
 
   const createTransaction = () => {
-    if(!isValidChainId(
-      transactionRequest.unit || '',
-      chainId,
-    )){
+    if (!isValidChainId(transactionRequest.unit || '', chainId)) {
       alert(t('Error.InvalidNetwork'));
       changeEthNet(library).then(() => {
         return;
@@ -74,7 +76,9 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       .then(() => {
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
+          html: `<div style="font-size:15px;">${t(
+            'Completion.TransactionSuccess',
+          )}</div>`,
           showConfirmButton: false,
           icon: 'success',
           iconColor: '#3679B5',
@@ -93,7 +97,7 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
           }
         });
       });
-  }
+  };
 
   useEffect(() => {
     if (chainId) {
@@ -113,41 +117,49 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{
-            fontSize: 22,
-            color: '#1C1C1C',
-            marginTop: 10,
-            marginBottom: 24,
-            fontFamily: 'Spoqa Han Sans',
-            fontWeight: 700,
-            }}>
+          <h1
+            style={{
+              fontSize: 22,
+              color: AppColors.BLACK,
+              marginTop: 10,
+              marginBottom: 24,
+              fontFamily: AppFonts.Regular,
+              fontWeight: 700,
+            }}
+          >
             {t('Staking.RewardTitle', { unit: transactionRequest.unit })}
           </h1>
           <ConfirmationList
             list={[
               {
                 label: t('Staking.RewardRound'),
-                value: t('Staking.RoundWithAffix', { round: transactionRequest.round }),
+                value: t('Staking.RoundWithAffix', {
+                  round: transactionRequest.round,
+                }),
               },
               {
                 label: t('Staking.RewardAmount'),
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
-              }
+                subvalue: `$ ${(
+                  parseFloat(transactionRequest.value || '0') *
+                  parseFloat(utils.formatEther(price))
+                ).toFixed(2)}`,
+              },
             ]}
           />
         </div>
-        <div style={{
-          position: 'fixed',
-          bottom: 20,
-          left: 20,
-          right: 20,
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 20,
+            left: 20,
+            right: 20,
+          }}
+        >
           <Button
             style={{ borderRadius: 5 }}
             clickHandler={() => {
-              account &&
-              String(transactionRequest.userAddress) !== account
+              account && String(transactionRequest.userAddress) !== account
                 ? checkAccount()
                 : createTransaction();
             }}
@@ -157,6 +169,6 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ t
       </BoxLayout>
     );
   }
-}
+};
 
 export default Reward;

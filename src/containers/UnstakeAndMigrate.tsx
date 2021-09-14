@@ -16,8 +16,12 @@ import useChainId from '../hooks/useChainId';
 import { PopulatedTransaction } from '@ethersproject/contracts';
 import useContract from '../hooks/useContract';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
+import AppColors from '../core/enums/AppColors';
+import AppFonts from '../core/enums/AppFonts';
 
-const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
+const UnstakeAndMigrate: React.FC<{
+  transactionRequest: StakingTransactionRequest;
+}> = ({ transactionRequest }) => {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const stakingPoolContract = useContract(
@@ -30,15 +34,18 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
   stakingPoolContract?.currentRound().then((res: any) => {
     setCurrentRound(res);
   });
-  const rewardUnit = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
-    ? PaymentMethod.ELFI.toUpperCase()
-    : PaymentMethod.DAI.toUpperCase();
-  const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
-    ? elPrice
-    : elfiPrice;
-  const rewardPrice = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
-  ? elfiPrice
-  : daiPrice;
+  const rewardUnit =
+    transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+      ? PaymentMethod.ELFI.toUpperCase()
+      : PaymentMethod.DAI.toUpperCase();
+  const price =
+    transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+      ? elPrice
+      : elfiPrice;
+  const rewardPrice =
+    transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+      ? elfiPrice
+      : daiPrice;
 
   const checkAccount = () => {
     RetrySwal.fire({
@@ -52,10 +59,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
   };
 
   const createTransaction = () => {
-    if(!isValidChainId(
-      transactionRequest.unit || '',
-      chainId,
-    )){
+    if (!isValidChainId(transactionRequest.unit || '', chainId)) {
       alert(t('Error.InvalidNetwork'));
       changeEthNet(library).then(() => {
         return;
@@ -65,7 +69,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     stakingPoolContract?.populateTransaction
       .migrate(
         utils.parseEther(transactionRequest.migrationValue || '0'),
-        transactionRequest.round
+        transactionRequest.round,
       )
       .then(populatedTransaction => {
         sendTransaction(populatedTransaction);
@@ -87,7 +91,9 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
       .then(() => {
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
+          html: `<div style="font-size:15px;">${t(
+            'Completion.TransactionSuccess',
+          )}</div>`,
           showConfirmButton: false,
           icon: 'success',
           iconColor: '#3679B5',
@@ -106,7 +112,7 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
           }
         });
       });
-  }
+  };
 
   useEffect(() => {
     if (chainId) {
@@ -126,55 +132,71 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{
-            fontSize: 22,
-            color: '#1C1C1C',
-            marginTop: 10,
-            marginBottom: 24,
-            fontFamily: 'Spoqa Han Sans',
-            fontWeight: 700,
-            }}>
+          <h1
+            style={{
+              fontSize: 22,
+              color: AppColors.BLACK,
+              marginTop: 10,
+              marginBottom: 24,
+              fontFamily: AppFonts.Regular,
+              fontWeight: 700,
+            }}
+          >
             {t('Staking.Transaction')}
           </h1>
           <ConfirmationList
             list={[
               {
                 label: t('Staking.UnstakingRound'),
-                value: t('Staking.RoundWithAffix', { round: transactionRequest.round }),
+                value: t('Staking.RoundWithAffix', {
+                  round: transactionRequest.round,
+                }),
               },
               {
                 label: t('Staking.UnstakingAmount'),
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
+                subvalue: `$ ${(
+                  parseFloat(transactionRequest.value || '0') *
+                  parseFloat(utils.formatEther(price))
+                ).toFixed(2)}`,
               },
               {
                 label: t('Staking.MigrationRound'),
-                value: `${t('Staking.RoundWithAffix', { round: transactionRequest.round })} → ${t('Staking.RoundWithAffix', { round: currentRound })}`,
+                value: `${t('Staking.RoundWithAffix', {
+                  round: transactionRequest.round,
+                })} → ${t('Staking.RoundWithAffix', { round: currentRound })}`,
               },
               {
                 label: t('Staking.MigrationAmount'),
                 value: `${transactionRequest.migrationValue} ${transactionRequest.unit}`,
-                subvalue: `$ ${(parseFloat(transactionRequest.migrationValue || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
+                subvalue: `$ ${(
+                  parseFloat(transactionRequest.migrationValue || '0') *
+                  parseFloat(utils.formatEther(price))
+                ).toFixed(2)}`,
               },
               {
                 label: t('Staking.RewardAmount'),
                 value: `${transactionRequest.rewardValue} ${rewardUnit}`,
-                subvalue: `$ ${(parseFloat(transactionRequest.rewardValue || '0') * parseFloat(utils.formatEther(rewardPrice))).toFixed(2)}`,
-              }
+                subvalue: `$ ${(
+                  parseFloat(transactionRequest.rewardValue || '0') *
+                  parseFloat(utils.formatEther(rewardPrice))
+                ).toFixed(2)}`,
+              },
             ]}
           />
         </div>
-        <div style={{
-          position: 'fixed',
-          bottom: 20,
-          left: 20,
-          right: 20,
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 20,
+            left: 20,
+            right: 20,
+          }}
+        >
           <Button
             style={{ borderRadius: 5 }}
             clickHandler={() => {
-              account &&
-              String(transactionRequest.userAddress) !== account
+              account && String(transactionRequest.userAddress) !== account
                 ? checkAccount()
                 : createTransaction();
             }}
@@ -184,6 +206,6 @@ const UnstakeAndMigrate: React.FC<{ transactionRequest: StakingTransactionReques
       </BoxLayout>
     );
   }
-}
+};
 
 export default UnstakeAndMigrate;
