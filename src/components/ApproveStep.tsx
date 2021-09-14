@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AppColors from '../core/enums/AppColors';
+import AppFonts from '../core/enums/AppFonts';
 import PaymentMethod from '../core/types/PaymentMethod';
 import ApproveDes from './ApproveDes';
 import ConfirmModal from './ConfirmModal';
@@ -27,7 +29,9 @@ const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
             style={{
               height: 37,
               width: '50%',
-              backgroundColor: isApproved ? '#E6E6E6' : '#666666',
+              backgroundColor: isApproved
+                ? AppColors.SUB_GREY
+                : AppColors.BLACK2,
               borderTopLeftRadius: 5,
               borderBottomLeftRadius: 5,
               justifyContent: 'center',
@@ -36,12 +40,12 @@ const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
             <div
               style={{
                 fontSize: 10,
-                color: '#FFF',
+                color: AppColors.WHITE,
                 paddingLeft: 9,
                 textAlign: 'left',
                 paddingTop: 6,
                 paddingBottom: 6,
-                fontFamily: 'Spoqa Han Sans',
+                fontFamily: AppFonts.Regular,
                 fontWeight: 'bold',
               }}
             >
@@ -54,7 +58,9 @@ const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
             style={{
               height: 37,
               width: '50%',
-              backgroundColor: !isApproved ? '#E6E6E6' : '#666666',
+              backgroundColor: !isApproved
+                ? AppColors.SUB_GREY
+                : AppColors.BLACK2,
               borderTopRightRadius: 5,
               borderBottomRightRadius: 5,
               textAlign: 'right',
@@ -63,11 +69,11 @@ const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
             <div
               style={{
                 fontSize: 10,
-                color: '#FFF',
+                color: AppColors.WHITE,
                 paddingRight: 9,
                 paddingTop: 6,
                 paddingBottom: 6,
-                fontFamily: 'Spoqa Han Sans',
+                fontFamily: AppFonts.Regular,
                 fontWeight: 'bold',
               }}
             >
@@ -82,7 +88,9 @@ const ApproveStep: React.FC<Props> = ({ isApproved, list, paymentMethod }) => {
               left: '49.9%',
               borderTop: '18.5px solid rgba(0,0,0,0)',
               borderBottom: '18.5px solid rgba(0,0,0,0)',
-              borderLeft: `19px solid ${isApproved ? '#E6E6E6' : '#666666'}`,
+              borderLeft: `19px solid ${
+                isApproved ? AppColors.SUB_GREY : AppColors.BLACK2
+              }`,
             }}
           />
         </div>

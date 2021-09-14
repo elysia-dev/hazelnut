@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AppColors from '../core/enums/AppColors';
+import AppFonts from '../core/enums/AppFonts';
 
 type Props = {
   list?: { label: string; value: string; subvalue?: string }[];
@@ -12,11 +14,11 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
       <div
         style={{
           fontSize: 18,
-          color: 'black',
+          color: AppColors.BLACK,
           textAlign: 'center',
-          fontFamily: 'Spoqa Han Sans',
+          fontFamily: AppFonts.Regular,
           fontWeight: 'bold',
-          borderBottom: '1px solid #F1F1F1',
+          borderBottom: `1px solid ${AppColors.GREY}`,
           alignItems: 'center',
           marginTop: 35,
           height: 40,
@@ -32,7 +34,7 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'space-between',
-              borderBottom: '1px solid #F1F1F1',
+              borderBottom: `1px solid ${AppColors.GREY}`,
               alignItems: 'center',
               height: item.subvalue ? 64 : 50,
             }}
@@ -40,8 +42,8 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
             <div
               style={{
                 fontSize: 14,
-                color: 'black',
-                fontFamily: 'Spoqa Han Sans',
+                color: AppColors.BLACK,
+                fontFamily: AppFonts.Regular,
               }}
             >
               {item.label}
@@ -50,9 +52,9 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
               <div
                 style={{
                   fontSize: 14,
-                  color: 'black',
+                  color: AppColors.BLACK,
                   textAlign: 'right',
-                  fontFamily: 'Spoqa Han Sans',
+                  fontFamily: AppFonts.Regular,
                   fontWeight: 'bold',
                 }}
               >
@@ -62,9 +64,9 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
                 <div
                   style={{
                     fontSize: 12,
-                    color: 'black',
+                    color: AppColors.BLACK,
                     textAlign: 'right',
-                    fontFamily: 'Spoqa Han Sans',
+                    fontFamily: AppFonts.Regular,
                   }}
                 >
                   {item.subvalue}

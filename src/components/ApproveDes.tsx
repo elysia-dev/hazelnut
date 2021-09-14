@@ -1,5 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import AppColors from '../core/enums/AppColors';
+import AppFonts from '../core/enums/AppFonts';
 
 function ApproveDes() {
   const { t } = useTranslation();
@@ -14,7 +16,7 @@ function ApproveDes() {
       <div
         style={{
           fontSize: 18,
-          fontFamily: 'Spoqa Han Sans',
+          fontFamily: AppFonts.Regular,
           fontWeight: 'bold',
         }}
       >
@@ -24,7 +26,7 @@ function ApproveDes() {
         style={{
           width: '100%',
           borderTopWidth: 1,
-          borderColor: 'gray',
+          borderColor: AppColors.GREY,
           marginTop: 15,
           marginBottom: 29,
         }}
@@ -32,10 +34,10 @@ function ApproveDes() {
       <div
         style={{
           fontSize: 14,
-          color: 'black',
+          color: AppColors.BLACK,
           textAlign: 'center',
           marginBottom: 26,
-          fontFamily: 'Spoqa Han Sans',
+          fontFamily: AppFonts.Regular,
         }}
       >
         {t('Buying.approve_guide_first')}
@@ -43,9 +45,9 @@ function ApproveDes() {
       <div
         style={{
           fontSize: 14,
-          color: 'black',
+          color: AppColors.BLACK,
           textAlign: 'center',
-          fontFamily: 'Spoqa Han Sans',
+          fontFamily: AppFonts.Regular,
         }}
       >
         {t('Buying.approve_guide_second')}
