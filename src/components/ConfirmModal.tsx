@@ -9,7 +9,6 @@ const ConfirmModal: React.FC<Props> = ({ list }) => {
   const { t } = useTranslation();
   return (
     <>
-      {' '}
       <div
         style={{
           fontSize: 18,
