@@ -13,7 +13,10 @@
       "TransactionRetryButton": "Create a transaction",
       "Annual": "Annual",
       "ExpectedReturn": "Expected return",
-      "Success": "Go back to the Elysia app<br>and check out purchased asset!"
+      "Success": "Go back to the Elysia app<br>and check out purchased asset!",
+      "purchaseProduct": "Product",
+      "purchaseValue": "Amount",
+      "purchaseStake": "Number of tokens"
     },
     "Retry": "Retry",
     "Loading": {
