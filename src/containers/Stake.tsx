@@ -25,6 +25,8 @@ import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ApproveStep from '../components/ApproveStep';
+import AppFonts from '../core/enums/AppFonts';
+import AppColors from '../core/enums/AppColors';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
   transactionRequest,
@@ -68,10 +70,9 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
       .then((res: BigNumber) => {
         setState({
           ...state,
-          stage:
-            Number(utils.formatEther(res)) > Number(transactionRequest.value)
-              ? RequestStage.CONFIRM
-              : RequestStage.ALLOWANCE_RETRY,
+          stage: res.gte(transactionRequest.value || '')
+            ? RequestStage.CONFIRM
+            : RequestStage.ALLOWANCE_RETRY,
         });
       });
   };
@@ -314,10 +315,10 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
           <h1
             style={{
               fontSize: 22,
-              color: '#1C1C1C',
+              color: AppColors.BLACK,
               marginTop: 10,
               marginBottom: 24,
-              fontFamily: 'Spoqa Han Sans',
+              fontFamily: AppFonts.Regular,
               fontWeight: 700,
             }}
           >
