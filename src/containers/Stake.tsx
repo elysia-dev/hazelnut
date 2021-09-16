@@ -13,7 +13,10 @@ import Button from '../components/Button';
 import Swal, { RetrySwal, SwalWithReact } from '../core/utils/Swal';
 import { useWatingTx } from '../hooks/useWatingTx';
 import { isValidChainId, changeEthNet } from '../core/utils/createNetwork';
-import useContract, { useElysiaToken, useElfiToken } from '../hooks/useContract';
+import useContract, {
+  useElysiaToken,
+  useElfiToken,
+} from '../hooks/useContract';
 import Loading from '../components/Loading';
 import TxStatus from '../core/enums/TxStatus';
 import ConfirmationList from '../components/ConfirmationList';
@@ -21,8 +24,13 @@ import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import useChainId from '../hooks/useChainId';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
+import ApproveStep from '../components/ApproveStep';
+import AppFonts from '../core/enums/AppFonts';
+import AppColors from '../core/enums/AppColors';
 
-const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ transactionRequest }) => {
+const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
+  transactionRequest,
+}) => {
   const { t } = useTranslation();
   const { activate, library, account } = useWeb3React();
   const [state, setState] = useState({
@@ -40,9 +48,10 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     STAKING_POOL_ABI,
   );
   const { elPrice, elfiPrice } = usePrice();
-  const price = transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
-    ? elPrice
-    : elfiPrice;
+  const price =
+    transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
+      ? elPrice
+      : elfiPrice;
 
   const checkAccount = () => {
     RetrySwal.fire({
@@ -62,7 +71,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
         setState({
           ...state,
           stage: res.gte(transactionRequest.value || '')
-            ? RequestStage.TRANSACTION
+            ? RequestStage.CONFIRM
             : RequestStage.ALLOWANCE_RETRY,
         });
       });
@@ -154,10 +163,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
         });
         break;
       case RequestStage.NETWORK_CHECK:
-        if (!isValidChainId(
-          transactionRequest.unit || '',
-          chainId,
-        )) {
+        if (!isValidChainId(transactionRequest.unit || '', chainId)) {
           alert(t('Error.InvalidNetwork'));
           changeEthNet(library).then(() => {
             setState({
@@ -181,16 +187,53 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
         account && checkAllowance();
         break;
       case RequestStage.ALLOWANCE_RETRY:
-        RetrySwal.fire({
-          html: `<div style="font-size:15px; margin-top: 20px;"> ${t(
-            'Buying.AllowanceRetry',
-          )}</div>`,
-          icon: 'info',
-          confirmButtonText: t('Buying.TransactionRetryButton'),
+        SwalWithReact.fire({
+          html: (
+            <ApproveStep
+              isApproved={false}
+              paymentMethod={transactionRequest.unit?.toLowerCase()}
+            />
+          ),
+          confirmButtonText: t('Buying.Transaction'),
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
             approve();
+          }
+        });
+        break;
+      case RequestStage.CONFIRM:
+        SwalWithReact.fire({
+          html: (
+            <ApproveStep
+              isApproved={true}
+              list={[
+                {
+                  label: t('Staking.StakingRound'),
+                  value: t('Staking.RoundWithAffix', {
+                    round: transactionRequest.round,
+                  }),
+                },
+                {
+                  label: t('Staking.StakingAmount'),
+                  value: `${transactionRequest.value} ${transactionRequest.unit}`,
+                  subvalue: `$ ${(
+                    parseFloat(transactionRequest.value || '0') *
+                    parseFloat(utils.formatEther(price))
+                  ).toFixed(2)}`,
+                },
+              ]}
+              paymentMethod={transactionRequest.unit?.toLowerCase()}
+            />
+          ),
+          confirmButtonText: t('Buying.Transaction'),
+          showCloseButton: true,
+        }).then(res => {
+          if (res.isConfirmed) {
+            setState({
+              ...state,
+              stage: RequestStage.TRANSACTION,
+            });
           }
         });
         break;
@@ -216,7 +259,9 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
       case RequestStage.TRANSACTION_RESULT:
         Swal.fire({
           title: t('Completion.Title'),
-          html: `<div style="font-size:15px;">${t('Completion.TransactionSuccess')}</div>`,
+          html: `<div style="font-size:15px;">${t(
+            'Completion.TransactionSuccess',
+          )}</div>`,
           showConfirmButton: false,
           icon: 'success',
           iconColor: '#3679B5',
@@ -237,7 +282,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
           ...state,
           stage:
             txResult.status === TxStatus.SUCCESS
-              ? RequestStage.TRANSACTION
+              ? RequestStage.CONFIRM
               : RequestStage.ALLOWANCE_RETRY,
         });
         break;
@@ -267,41 +312,49 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
     return (
       <BoxLayout>
         <div style={{ padding: 20 }}>
-          <h1 style={{
-            fontSize: 22,
-            color: '#1C1C1C',
-            marginTop: 10,
-            marginBottom: 24,
-            fontFamily: 'Spoqa Han Sans',
-            fontWeight: 700,
-            }}>
+          <h1
+            style={{
+              fontSize: 22,
+              color: AppColors.BLACK,
+              marginTop: 10,
+              marginBottom: 24,
+              fontFamily: AppFonts.Regular,
+              fontWeight: 700,
+            }}
+          >
             {t('Staking.StakingTitle', { unit: transactionRequest.unit })}
           </h1>
           <ConfirmationList
             list={[
               {
                 label: t('Staking.StakingRound'),
-                value: t('Staking.RoundWithAffix', { round: transactionRequest.round }),
+                value: t('Staking.RoundWithAffix', {
+                  round: transactionRequest.round,
+                }),
               },
               {
                 label: t('Staking.StakingAmount'),
                 value: `${transactionRequest.value} ${transactionRequest.unit}`,
-                subvalue: `$ ${(parseFloat(transactionRequest.value || '0') * parseFloat(utils.formatEther(price))).toFixed(2)}`,
-              }
+                subvalue: `$ ${(
+                  parseFloat(transactionRequest.value || '0') *
+                  parseFloat(utils.formatEther(price))
+                ).toFixed(2)}`,
+              },
             ]}
           />
         </div>
-        <div style={{
-          position: 'fixed',
-          bottom: 20,
-          left: 20,
-          right: 20,
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            bottom: 20,
+            left: 20,
+            right: 20,
+          }}
+        >
           <Button
             style={{ borderRadius: 5 }}
             clickHandler={() => {
-              account &&
-              String(transactionRequest.userAddress) !== account
+              account && String(transactionRequest.userAddress) !== account
                 ? checkAccount()
                 : setState({ ...state, stage: RequestStage.NETWORK_CHECK });
             }}
@@ -311,6 +364,6 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({ tr
       </BoxLayout>
     );
   }
-}
+};
 
 export default Stake;

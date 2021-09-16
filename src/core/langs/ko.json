@@ -13,7 +13,16 @@
       "TransactionRetryButton": "트랜잭션 생성",
       "Annual": "연",
       "ExpectedReturn": "기대 적립금",
-      "Success": "엘리시아 앱으로 돌아가서<br>구매한 상품을 확인해보세요!"
+      "Success": "엘리시아 앱으로 돌아가서<br>구매한 상품을 확인해보세요!",
+      "purchaseProduct": "구매 상품",
+      "purchaseValue": "구매 금액",
+      "purchaseStake": "구매 토큰량",
+      "approve_step": "{{step}}단계",
+      "approve_step_authorization": "권한승인",
+      "approve_step_confirm": "최종확인",
+      "approve_guide": "접근 권한을 승인해주세요!",
+      "approve_guide_first": "부동산 토큰을 구매하기 위해서는 연결된 지갑에\n해당 앱이 접근 할 수 있도록 권한을 승인해야 합니다.",
+      "approve_guide_second": "최초 구매 시에만 승인이 필요하며, 승인이 성공적으로\n완료될 경우, 이후의 거래에는 권한 승인이 없이 부동산\n토큰을 구매하실 수 있습니다."
     },
     "Retry": "다시 시도하기",
     "Loading": {

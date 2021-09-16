@@ -13,7 +13,16 @@
       "TransactionRetryButton": "Create a transaction",
       "Annual": "Annual",
       "ExpectedReturn": "Expected return",
-      "Success": "Go back to the Elysia app<br>and check out purchased asset!"
+      "Success": "Go back to the Elysia app<br>and check out purchased asset!",
+      "purchaseProduct": "Product",
+      "purchaseValue": "Amount",
+      "purchaseStake": "Number of tokens",
+      "approve_step": "Step {{step}}",
+      "approve_step_authorization": "Approve",
+      "approve_step_confirm": "Confirm",
+      "approve_guide": "Please allow ELYSIA to connect to your wallet",
+      "approve_guide_first": "By granting permission, you will be able to buy real estate tokens.",
+      "approve_guide_second": "After this approval, you will be able to make further real estate token purchases"
     },
     "Retry": "Retry",
     "Loading": {

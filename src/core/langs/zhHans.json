@@ -13,7 +13,16 @@
       "TransactionRetryButton": "确认投资",
       "Annual": "年",
       "ExpectedReturn": "度预期收益",
-      "Success": "请回到爱立厦(ELYSIA)APP页面后,<br>再次确认购买的房地产产品。"
+      "Success": "请回到爱立厦(ELYSIA)APP页面后,<br>再次确认购买的房地产产品。",
+      "purchaseProduct": "购买产品",
+      "purchaseValue": "购买金额",
+      "purchaseStake": "购买代币量",
+      "approve_step": "{{step}} 阶段",
+      "approve_step_authorization": "授予访问权限",
+      "approve_step_confirm": "再次确认",
+      "approve_guide": "请授予访问权限！",
+      "approve_guide_first": "在购买房地产代币前，您必须授予平台访问钱包的权限。",
+      "approve_guide_second": "仅在首次交易时需要授权，授权成功后，之后可直接购买房地产代币。"
     },
     "Retry": "请再次尝试",
     "Loading": {

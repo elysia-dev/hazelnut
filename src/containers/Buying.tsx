@@ -30,6 +30,7 @@ import {
   createEthNet,
   isValidChainId,
 } from '../core/utils/createNetwork';
+import ApproveStep from '../components/ApproveStep';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -63,9 +64,9 @@ function Buying(props: Props) {
   const [chainId, setChainId] = useState<string>('');
 
   const currentChainId = async () => {
-    const id =  await library.provider.request({
-      method: 'eth_chainId'
-    })
+    const id = await library.provider.request({
+      method: 'eth_chainId',
+    });
     setChainId(() => id);
   };
 
@@ -75,19 +76,21 @@ function Buying(props: Props) {
       chainId,
     );
   };
-
   const createNetwork = async () => {
     let network: Promise<void> | undefined;
     if (props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
-      if(chainId === process.env.REACT_APP_BNB_NETWORK) return;
+      if (chainId === process.env.REACT_APP_BNB_NETWORK) return;
       network = createBnbNet(library);
     } else {
-      if(chainId === process.env.REACT_APP_ETH_NETWORK) return;
+      if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
       network = changeEthNet(library);
     }
     try {
-      if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
-          throw Error;
+      if (
+        !(chainId === process.env.REACT_APP_ETH_NETWORK) &&
+        window.ethereum?.isImToken
+      ) {
+        throw Error;
       }
       await network;
     } catch (switchChainError) {
@@ -123,7 +126,7 @@ function Buying(props: Props) {
     ) {
       setState({
         ...state,
-        stage: RequestStage.TRANSACTION,
+        stage: RequestStage.CONFIRM,
       });
 
       return;
@@ -135,7 +138,7 @@ function Buying(props: Props) {
         setState({
           ...state,
           stage: res.gte(expectedValue.value)
-            ? RequestStage.TRANSACTION
+            ? RequestStage.CONFIRM
             : RequestStage.ALLOWANCE_RETRY,
         });
       });
@@ -157,20 +160,19 @@ function Buying(props: Props) {
       props.transactionRequest.product.paymentMethod === PaymentMethod.ETH ||
       props.transactionRequest.product.paymentMethod === PaymentMethod.BNB
     ) {
-      assetToken?.populateTransaction
-        .purchase()
-        .then(populatedTransaction => {
-          let expectedValueHex = expectedValue.value.toHexString()
-          const hexString = expectedValueHex[2] === '0'
-              ? expectedValueHex.substr(3)
-              : expectedValueHex;
-          sendTx(
-            populatedTransaction,
-            RequestStage.TRANSACTION_RESULT,
-            RequestStage.TRANSACTION_RETRY,
-            hexString,
-          );
-        })
+      assetToken?.populateTransaction.purchase().then(populatedTransaction => {
+        let expectedValueHex = expectedValue.value.toHexString();
+        const hexString =
+          expectedValueHex[2] === '0'
+            ? expectedValueHex.substr(3)
+            : expectedValueHex;
+        sendTx(
+          populatedTransaction,
+          RequestStage.TRANSACTION_RESULT,
+          RequestStage.TRANSACTION_RETRY,
+          hexString,
+        );
+      });
     } else {
       assetToken?.populateTransaction
         .purchase(expectedValue.value.toHexString())
@@ -233,7 +235,7 @@ function Buying(props: Props) {
   useEffect(() => {
     if (!account && !chainId) return;
     currentChainId();
-    if(!chainId) return;
+    if (!chainId) return;
     createNetwork();
     Swal.close();
 
@@ -273,12 +275,14 @@ function Buying(props: Props) {
         account && checkAllowance();
         break;
       case RequestStage.ALLOWANCE_RETRY:
-        RetrySwal.fire({
-          html: `<div style="font-size:15px; margin-top: 20px;"> ${t(
-            'Buying.AllowanceRetry',
-          )}</div>`,
-          icon: 'info',
-          confirmButtonText: t('Buying.TransactionRetryButton'),
+        SwalWithReact.fire({
+          html: (
+            <ApproveStep
+              isApproved={false}
+              paymentMethod={props.transactionRequest.product.paymentMethod}
+            />
+          ),
+          confirmButtonText: t('Buying.Transaction'),
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
@@ -291,6 +295,43 @@ function Buying(props: Props) {
           text: t('Buying.TransactionRetry'),
           icon: 'error',
           confirmButtonText: t('Retry'),
+          showCloseButton: true,
+        }).then(res => {
+          if (res.isConfirmed) {
+            setState({
+              ...state,
+              stage: RequestStage.TRANSACTION,
+            });
+          }
+        });
+        break;
+      case RequestStage.CONFIRM:
+        SwalWithReact.fire({
+          html: (
+            <ApproveStep
+              isApproved={true}
+              list={[
+                {
+                  label: t('Buying.purchaseProduct'),
+                  value: props.transactionRequest.product.title,
+                },
+                {
+                  label: t('Buying.purchaseValue'),
+                  value: `${parseFloat(
+                    utils.formatEther(expectedValue.value),
+                  ).toFixed(
+                    5,
+                  )} ${props.transactionRequest.product.paymentMethod.toUpperCase()}`,
+                },
+                {
+                  label: t('Buying.purchaseStake'),
+                  value: `${props.transactionRequest.amount} ${props.transactionRequest.product.tokenName}`,
+                },
+              ]}
+              paymentMethod={props.transactionRequest.product.paymentMethod}
+            />
+          ),
+          confirmButtonText: t('Buying.Transaction'),
           showCloseButton: true,
         }).then(res => {
           if (res.isConfirmed) {
@@ -341,7 +382,7 @@ function Buying(props: Props) {
           ...state,
           stage:
             txResult.status === TxStatus.SUCCESS
-              ? RequestStage.TRANSACTION
+              ? RequestStage.CONFIRM
               : RequestStage.ALLOWANCE_RETRY,
         });
         break;
