@@ -55,7 +55,12 @@ const Reward: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
     }
 
     stakingPoolContract?.populateTransaction
-      .claim(transactionRequest.round)
+      .claim(
+        transactionRequest.contractAddress ===
+          process.env.ELFI_STAKING_POOL_V2_ADDRESS
+          ? Number(transactionRequest.round) - 2
+          : transactionRequest.round,
+      )
       .then(populatedTransaction => {
         sendTransaction(populatedTransaction);
       });

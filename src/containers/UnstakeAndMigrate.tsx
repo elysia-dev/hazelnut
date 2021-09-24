@@ -69,7 +69,10 @@ const UnstakeAndMigrate: React.FC<{
     stakingPoolContract?.populateTransaction
       .migrate(
         utils.parseEther(transactionRequest.migrationValue || '0'),
-        transactionRequest.round,
+        transactionRequest.contractAddress ===
+          process.env.ELFI_STAKING_POOL_V2_ADDRESS
+          ? Number(transactionRequest.round) - 2
+          : transactionRequest.round,
       )
       .then(populatedTransaction => {
         sendTransaction(populatedTransaction);

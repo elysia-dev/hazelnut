@@ -34,7 +34,6 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
     transactionRequest.unit?.toLowerCase() === PaymentMethod.EL
       ? elPrice
       : elfiPrice;
-
   const checkAccount = () => {
     RetrySwal.fire({
       html: `<div style="font-size:15px; margin-top: 20px;">
@@ -57,7 +56,10 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
     stakingPoolContract?.populateTransaction
       .withdraw(
         utils.parseEther(transactionRequest.value || '0'),
-        transactionRequest.round,
+        transactionRequest.contractAddress ===
+          process.env.ELFI_STAKING_POOL_V2_ADDRESS
+          ? Number(transactionRequest.round) - 2
+          : transactionRequest.round,
       )
       .then(populatedTransaction => {
         sendTransaction(populatedTransaction);
