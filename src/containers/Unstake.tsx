@@ -57,7 +57,7 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
       .withdraw(
         utils.parseEther(transactionRequest.value || '0'),
         transactionRequest.contractAddress ===
-          process.env.NEW_EL_STAKING_POOL_ADDRESS
+          process.env.ELFI_STAKING_POOL_V2_ADDRESS
           ? Number(transactionRequest.round) - 2
           : transactionRequest.round,
       )
