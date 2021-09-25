@@ -70,7 +70,7 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
       .then((res: BigNumber) => {
         setState({
           ...state,
-          stage: res.gte(transactionRequest.value || '')
+          stage: res.gte(utils.parseEther(transactionRequest.value || '0'))
             ? RequestStage.CONFIRM
             : RequestStage.ALLOWANCE_RETRY,
         });
