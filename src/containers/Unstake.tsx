@@ -18,6 +18,8 @@ import useContract from '../hooks/useContract';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import AppColors from '../core/enums/AppColors';
 import AppFonts from '../core/enums/AppFonts';
+import { saveTxData } from '../core/utils/saveTxData';
+import TransferType from '../core/enums/TransferType';
 
 const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
   transactionRequest,
@@ -78,7 +80,9 @@ const Unstake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
           },
         ],
       })
-      .then(() => {
+      .then((txHash: string) => {
+        const { uuid, value, unit } = transactionRequest;
+        saveTxData(uuid!, TransferType.Unstaking, unit!, txHash, value!);
         Swal.fire({
           title: t('Completion.Title'),
           html: `<div style="font-size:15px;">${t(
