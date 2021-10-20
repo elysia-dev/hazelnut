@@ -106,7 +106,10 @@ const UnstakeAndMigrate: React.FC<{
           TransferType.Migration,
           unit!,
           txHash,
-          `${migrationValue},${value},${rewardValue}`,
+          migrationValue!,
+          '',
+          value,
+          rewardValue,
         );
         Swal.fire({
           title: t('Completion.Title'),
