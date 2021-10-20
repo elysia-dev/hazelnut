@@ -5,9 +5,11 @@ export const saveTxData = (
   uuid: string,
   transferType: TransferType,
   cryptoType: string,
-  txHash: string,
+  hash: string,
   amount: string,
   unit?: string,
+  migrationUnstakingAmount?: string,
+  migrationRewardAmount?: string,
 ) => {
   axios
     .post(`${process.env.REACT_APP_UUID_DATA_URL}/${uuid}/tx`, {
@@ -15,9 +17,11 @@ export const saveTxData = (
       date: String(new Date()),
       unit: unit?.toUpperCase() || '',
       nonce: 0,
-      txHash,
+      hash,
       amount,
       cryptoType: cryptoType.toUpperCase(),
+      migrationUnstakingAmount: migrationUnstakingAmount || '',
+      migrationRewardAmount: migrationRewardAmount || '',
     })
     .then(res => {})
     .catch(error => {});
