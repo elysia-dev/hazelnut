@@ -27,6 +27,8 @@ import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import ApproveStep from '../components/ApproveStep';
 import AppFonts from '../core/enums/AppFonts';
 import AppColors from '../core/enums/AppColors';
+import TransferType from '../core/enums/TransferType';
+import { saveTxData } from '../core/utils/saveTxData';
 
 const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
   transactionRequest,
@@ -120,6 +122,10 @@ const Stake: React.FC<{ transactionRequest: StakingTransactionRequest }> = ({
         ],
       })
       .then((txHash: string) => {
+        if (nextStage !== RequestStage.ALLOWANCE_PENDING) {
+          const { uuid, value, unit } = transactionRequest;
+          saveTxData(uuid!, TransferType.Staking, unit!, txHash, value!);
+        }
         setState({
           ...state,
           stage: nextStage,

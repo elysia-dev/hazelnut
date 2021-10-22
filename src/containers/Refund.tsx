@@ -16,8 +16,15 @@ import Swal, { RetrySwal } from '../core/utils/Swal';
 import RefundSuccess from './../images/success_refund.svg';
 import useExpectedValue from '../hooks/useExpectedValue';
 import { request } from 'http';
-import { changeEthNet, createBnbNet, createEthNet, isValidChainId } from '../core/utils/createNetwork';
+import {
+  changeEthNet,
+  createBnbNet,
+  createEthNet,
+  isValidChainId,
+} from '../core/utils/createNetwork';
 import PaymentMethod from '../core/types/PaymentMethod';
+import { saveTxData } from '../core/utils/saveTxData';
+import TransferType from '../core/enums/TransferType';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -31,50 +38,64 @@ function Refund(props: Props) {
     props.transactionRequest.contract.abi,
   );
   const [expectedValue] = useExpectedValue(props.transactionRequest);
-  const [accountBalance, setAccountBalance] = useState<BigNumberish>(constants.Zero);
+  const [accountBalance, setAccountBalance] = useState<BigNumberish>(
+    constants.Zero,
+  );
   const { id } = useParams<{ id: string }>();
 
   const [chainId, setChainId] = useState<string>('');
 
   const currentChainId = async () => {
-    setChainId(await library.provider.request({
-       method: 'eth_chainId'
-     }));
-  }
+    setChainId(
+      await library.provider.request({
+        method: 'eth_chainId',
+      }),
+    );
+  };
 
   const networkCheck = () => {
-      return isValidChainId(props.transactionRequest.product.paymentMethod, chainId);
-  }
+    return isValidChainId(
+      props.transactionRequest.product.paymentMethod,
+      chainId,
+    );
+  };
 
   const createNetwork = async () => {
     let network: Promise<void> | undefined;
-    if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
-      if(chainId === process.env.REACT_APP_BNB_NETWORK) return;
+    if (props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
+      if (chainId === process.env.REACT_APP_BNB_NETWORK) return;
       network = createBnbNet(library);
     } else {
-      if(chainId === process.env.REACT_APP_ETH_NETWORK) return;
+      if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
       network = changeEthNet(library);
     }
     try {
-      if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
+      if (
+        !(chainId === process.env.REACT_APP_ETH_NETWORK) &&
+        window.ethereum?.isImToken
+      ) {
         throw Error;
-        }
-        await network
-    } catch (switchChainError) {
-      if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
-         props.transactionRequest.product.paymentMethod === PaymentMethod.ETH)){
-          return;
       }
-        network = createEthNet(library);
-      try{
+      await network;
+    } catch (switchChainError) {
+      if (
+        !(
+          props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
+          props.transactionRequest.product.paymentMethod === PaymentMethod.ETH
+        )
+      ) {
+        return;
+      }
+      network = createEthNet(library);
+      try {
         await network;
-     } catch (error) {
-       console.error(error);
-     }
-  } finally {
-    currentChainId();
-  }
-}
+      } catch (error) {
+        console.error(error);
+      }
+    } finally {
+      currentChainId();
+    }
+  };
 
   const checkAccount = () => {
     RetrySwal.fire({
@@ -92,16 +113,20 @@ function Refund(props: Props) {
   };
 
   const createTransaction = () => {
-    if(!networkCheck()){
+    if (!networkCheck()) {
       alert(t('Error.InvalidNetwork'));
       createNetwork();
       return;
     }
-    const requestAmount = utils.parseEther(props.transactionRequest.amount.toString())
+    const requestAmount = utils.parseEther(
+      props.transactionRequest.amount.toString(),
+    );
 
-    const amount = (BigNumber.from(accountBalance)
-      .sub(requestAmount))
-      .gte(constants.Zero) ? requestAmount : accountBalance
+    const amount = BigNumber.from(accountBalance)
+      .sub(requestAmount)
+      .gte(constants.Zero)
+      ? requestAmount
+      : accountBalance;
 
     assetToken?.populateTransaction
       .refund(amount)
@@ -118,6 +143,15 @@ function Refund(props: Props) {
             ],
           })
           .then((txHash: string) => {
+            const { uuid, product, amount } = props.transactionRequest;
+            saveTxData(
+              uuid,
+              TransferType.Refund,
+              product.paymentMethod.toString(),
+              txHash,
+              amount.toString(),
+              product.tokenName,
+            );
             completeTransactionRequest(id, txHash);
             Swal.fire({
               title: t('Completion.Title'),
@@ -125,9 +159,9 @@ function Refund(props: Props) {
                 'Completion.RefundResult',
                 {
                   product: props.transactionRequest.product.title,
-                  value: parseFloat(utils.formatEther(expectedValue.value)).toFixed(
-                    4,
-                  ),
+                  value: parseFloat(
+                    utils.formatEther(expectedValue.value),
+                  ).toFixed(4),
                   paymentMethod: props.transactionRequest.product.paymentMethod,
                 },
               )}
@@ -158,11 +192,11 @@ function Refund(props: Props) {
   useEffect(() => {
     assetToken?.balanceOf(account).then((balance: BigNumberish) => {
       setAccountBalance(balance);
-    })
+    });
     currentChainId();
-    if(!chainId) return;
+    if (!chainId) return;
     createNetwork();
-  }, [account, chainId])
+  }, [account, chainId]);
 
   if (!account) {
     return <ConnectWallet handler={connectWallet} />;
@@ -174,7 +208,11 @@ function Refund(props: Props) {
             outUnit={props.transactionRequest.product.tokenName}
             outValue={props.transactionRequest.amount.toString()}
             inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            inValue={expectedValue.loaded ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(4) : "Checking"}
+            inValue={
+              expectedValue.loaded
+                ? parseFloat(utils.formatEther(expectedValue.value)).toFixed(4)
+                : 'Checking'
+            }
             title={t('Refund.Title')}
             transactionRequest={props.transactionRequest}
           />
@@ -191,7 +229,7 @@ function Refund(props: Props) {
           <div style={{ height: 100 }}></div>
         </BoxLayout>
         <AddressBottomTab
-        chainId={chainId}
+          chainId={chainId}
           paymentMethod={props.transactionRequest.product.paymentMethod}
         />
       </div>

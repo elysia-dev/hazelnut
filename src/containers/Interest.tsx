@@ -20,7 +20,14 @@ import Button from '../components/Button';
 import usePrice from '../hooks/usePrice';
 import PaymentMethod from '../core/types/PaymentMethod';
 import { BigNumber } from 'ethers';
-import { changeEthNet, createBnbNet, createEthNet, isValidChainId } from '../core/utils/createNetwork';
+import {
+  changeEthNet,
+  createBnbNet,
+  createEthNet,
+  isValidChainId,
+} from '../core/utils/createNetwork';
+import { saveTxData } from '../core/utils/saveTxData';
+import TransferType from '../core/enums/TransferType';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -53,48 +60,60 @@ function Interest(props: Props) {
   const [chainId, setChainId] = useState<string>('');
 
   const currentChainId = async () => {
-    setChainId(await library.provider.request({
-       method: 'eth_chainId'
-     }));
-  }
+    setChainId(
+      await library.provider.request({
+        method: 'eth_chainId',
+      }),
+    );
+  };
 
   const networkCheck = () => {
-      return isValidChainId(props.transactionRequest.product.paymentMethod, chainId);
-  }
+    return isValidChainId(
+      props.transactionRequest.product.paymentMethod,
+      chainId,
+    );
+  };
 
   const createNetwork = async () => {
     let network: Promise<void> | undefined;
-    if(props.transactionRequest.product.paymentMethod === PaymentMethod.BNB){
-      if(chainId === process.env.REACT_APP_BNB_NETWORK) return;
+    if (props.transactionRequest.product.paymentMethod === PaymentMethod.BNB) {
+      if (chainId === process.env.REACT_APP_BNB_NETWORK) return;
       network = createBnbNet(library);
     } else {
-      if(chainId === process.env.REACT_APP_ETH_NETWORK) return;
+      if (chainId === process.env.REACT_APP_ETH_NETWORK) return;
       network = changeEthNet(library);
     }
     try {
-      if(!(chainId === process.env.REACT_APP_ETH_NETWORK) && window.ethereum?.isImToken) {
+      if (
+        !(chainId === process.env.REACT_APP_ETH_NETWORK) &&
+        window.ethereum?.isImToken
+      ) {
         throw Error;
-        }
-        await network
-    } catch (switchChainError) {
-      if(!(props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
-         props.transactionRequest.product.paymentMethod === PaymentMethod.ETH)){
-          return;
       }
-        network = createEthNet(library);
-      try{
+      await network;
+    } catch (switchChainError) {
+      if (
+        !(
+          props.transactionRequest.product.paymentMethod === PaymentMethod.EL ||
+          props.transactionRequest.product.paymentMethod === PaymentMethod.ETH
+        )
+      ) {
+        return;
+      }
+      network = createEthNet(library);
+      try {
         await network;
-     } catch (error) {
-       console.error(error);
-     }
+      } catch (error) {
+        console.error(error);
+      }
     } finally {
       setState({
         ...state,
         stage: RequestStage.INIT,
-      })
+      });
       currentChainId();
     }
-  }
+  };
 
   const connectWallet = () => {
     activate(InjectedConnector);
@@ -128,7 +147,7 @@ function Interest(props: Props) {
   };
 
   const createTransaction = () => {
-    if(!networkCheck()){
+    if (!networkCheck()) {
       alert(t('Error.InvalidNetwork'));
       createNetwork();
       return;
@@ -146,6 +165,15 @@ function Interest(props: Props) {
           ],
         })
         .then((txHash: string) => {
+          const { uuid, product, amount } = props.transactionRequest;
+          saveTxData(
+            uuid,
+            TransferType.ProductReward,
+            product.paymentMethod.toString(),
+            txHash,
+            amount.toString(),
+            product.tokenName,
+          );
           setState({
             ...state,
             loading: true,
@@ -166,13 +194,12 @@ function Interest(props: Props) {
     if (!account || !loaded) return;
     loadInterest();
     currentChainId();
-    if(!chainId) return;
+    if (!chainId) return;
     createNetwork();
     setState({
       ...state,
       stage: RequestStage.TRANSACTION,
     });
-
   }, [account, loaded, chainId]);
 
   useEffect(() => {
@@ -242,7 +269,7 @@ function Interest(props: Props) {
         <BoxLayout>
           <TxSummary
             inUnit={props.transactionRequest.product.paymentMethod.toUpperCase()}
-            inValue={loaded ? interest.toFixed(4) : "Checking"}
+            inValue={loaded ? interest.toFixed(4) : 'Checking'}
             outUnit={''}
             outValue={'0'}
             title={t('Interest.Title')}

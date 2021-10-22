@@ -31,6 +31,10 @@ import {
   isValidChainId,
 } from '../core/utils/createNetwork';
 import ApproveStep from '../components/ApproveStep';
+import axios from 'axios';
+import { mockComponent } from 'react-dom/test-utils';
+import TransferType from '../core/enums/TransferType';
+import { saveTxData } from '../core/utils/saveTxData';
 
 type Props = {
   transactionRequest: TransactionRequest;
@@ -62,7 +66,6 @@ function Buying(props: Props) {
     txHash: '',
   });
   const [chainId, setChainId] = useState<string>('');
-
   const currentChainId = async () => {
     const id = await library.provider.request({
       method: 'eth_chainId',
@@ -217,6 +220,18 @@ function Buying(props: Props) {
         ],
       })
       .then((txHash: string) => {
+        axios.defaults.withCredentials = true;
+        if (nextStage !== RequestStage.ALLOWANCE_PENDING) {
+          const { uuid, product, amount } = props.transactionRequest;
+          saveTxData(
+            uuid,
+            TransferType.Purchase,
+            product.paymentMethod.toString(),
+            txHash,
+            amount.toString(),
+            product.tokenName,
+          );
+        }
         setState({
           ...state,
           stage: nextStage,
@@ -238,7 +253,6 @@ function Buying(props: Props) {
     if (!chainId) return;
     createNetwork();
     Swal.close();
-
     setState({
       ...state,
       stage: RequestStage.INIT,

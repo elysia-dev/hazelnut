@@ -15,29 +15,33 @@ import { useTranslation } from 'react-i18next';
 import InstallMetamask from '../components/errors/InstallMetamask';
 import LanguageType from '../core/enums/LanguageType';
 import PaymentMethod from '../core/types/PaymentMethod';
-import ETH_abi from '../AssetTokenEthAbi.json'
-import TokenAbi from '../core/constants/abis/asset-token.json'
+import ETH_abi from '../AssetTokenEthAbi.json';
+import TokenAbi from '../core/constants/abis/asset-token.json';
 
 type ParamTypes = {
   id: string | undefined;
-  imProductId : string;
+  imProductId: string;
   imValueTo: string;
-  imType: string
+  imType: string;
   imContractAddress: string;
   imEthAddresses: string;
   imLanguage: string;
+  uuid: string;
 };
 type TransferInfoTypes = {
-  productId: number,
-  type: string,
-  value: number,
-  address: string,
-  contractAddress: string,
-  language: string,
-}
+  productId: number;
+  type: string;
+  value: number;
+  address: string;
+  contractAddress: string;
+  language: string;
+  uuid: string;
+};
 
-function Requests () {
-  const [transactionRequest, setTransactionRequest] = useState<TransactionRequest>();
+function Requests() {
+  const [transactionRequest, setTransactionRequest] = useState<
+    TransactionRequest
+  >();
   const { search } = useLocation();
   const { id } = useParams<ParamTypes>();
   const imTokenInfo = useParams<ParamTypes>();
@@ -46,55 +50,72 @@ function Requests () {
   const history = useHistory();
 
   async function loadTransactionRequest() {
-        // TODO : Validate token with api
-        const isImtoken = window.ethereum?.isImToken;
-        if(id){
-          getTransactionRequest(id)
-          .then(res => {
-            setTransactionRequest(res.data);
-            i18n.changeLanguage(res.data.language || LanguageType.EN);
-          })
-          .catch(() => {
-            history.push('/notFound');
-          });
-        } else {
-          const transferInfo: TransferInfoTypes = {
-            productId: isImtoken ? Number(imTokenInfo.imProductId) : Number(metaMaskInfo.productId),
-            type: isImtoken ? imTokenInfo.imType : String(metaMaskInfo.type),
-            value: isImtoken ? Number(imTokenInfo.imValueTo) : Number(metaMaskInfo.value),
-            address: isImtoken ? imTokenInfo.imEthAddresses : String(metaMaskInfo.address),
-            contractAddress: isImtoken ? imTokenInfo.imContractAddress : String(metaMaskInfo.contractAddress),
-            language: isImtoken ? imTokenInfo.imLanguage : String(metaMaskInfo.language),
-          }
-          getProductInfo(transferInfo.productId).then((product) => {
-            setTransactionRequest({
-              type: transferInfo.type,
-              amount: transferInfo.value,
-              userAddresses: transferInfo.address,
-              language: transferInfo.language,
-              product:{
-                title: product.data.title,
-                tokenName: product.data.tokenName,
-                expectedAnnualReturn: product.data.expectedAnnualReturn,
-                contractAddress: product.data.contractAddress,
-                usdPricePerToken: product.data.usdPricePerToken,
-                paymentMethod:product.data.paymentMethod,
-                data:{
-                  images:product.data.data.images,
-                }
+    // TODO : Validate token with api
+    const isImtoken = window.ethereum?.isImToken;
+    if (id) {
+      getTransactionRequest(id)
+        .then(res => {
+          setTransactionRequest(res.data);
+          i18n.changeLanguage(res.data.language || LanguageType.EN);
+        })
+        .catch(() => {
+          history.push('/notFound');
+        });
+    } else {
+      const transferInfo: TransferInfoTypes = {
+        productId: isImtoken
+          ? Number(imTokenInfo.imProductId)
+          : Number(metaMaskInfo.productId),
+        type: isImtoken ? imTokenInfo.imType : String(metaMaskInfo.type),
+        value: isImtoken
+          ? Number(imTokenInfo.imValueTo)
+          : Number(metaMaskInfo.value),
+        address: isImtoken
+          ? imTokenInfo.imEthAddresses
+          : String(metaMaskInfo.address),
+        contractAddress: isImtoken
+          ? imTokenInfo.imContractAddress
+          : String(metaMaskInfo.contractAddress),
+        language: isImtoken
+          ? imTokenInfo.imLanguage
+          : String(metaMaskInfo.language),
+        uuid: isImtoken ? imTokenInfo.uuid : String(metaMaskInfo.uuid),
+      };
+      getProductInfo(transferInfo.productId)
+        .then(product => {
+          setTransactionRequest({
+            type: transferInfo.type,
+            amount: transferInfo.value,
+            userAddresses: transferInfo.address,
+            language: transferInfo.language,
+            product: {
+              title: product.data.title,
+              tokenName: product.data.tokenName,
+              expectedAnnualReturn: product.data.expectedAnnualReturn,
+              contractAddress: product.data.contractAddress,
+              usdPricePerToken: product.data.usdPricePerToken,
+              paymentMethod: product.data.paymentMethod,
+              data: {
+                images: product.data.data.images,
               },
-              contract:{
-                address: transferInfo.contractAddress,
-                abi:JSON.stringify(product.data.paymentMethod !== PaymentMethod.EL ? ETH_abi : TokenAbi),
-                version:'v2.0.0'
-              }
-            })
-            i18n.changeLanguage(transferInfo.language || LanguageType.EN);
-          })
-          .catch(() => {
-            history.push('/notFound');
-          });;
-      }
+            },
+            contract: {
+              address: transferInfo.contractAddress,
+              abi: JSON.stringify(
+                product.data.paymentMethod !== PaymentMethod.EL
+                  ? ETH_abi
+                  : TokenAbi,
+              ),
+              version: 'v2.0.0',
+            },
+            uuid: transferInfo.uuid,
+          });
+          i18n.changeLanguage(transferInfo.language || LanguageType.EN);
+        })
+        .catch(() => {
+          history.push('/notFound');
+        });
+    }
   }
 
   useEffect(() => {

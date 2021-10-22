@@ -18,6 +18,8 @@ import useContract from '../hooks/useContract';
 import STAKING_POOL_ABI from '../core/constants/abis/staking-pool.json';
 import AppColors from '../core/enums/AppColors';
 import AppFonts from '../core/enums/AppFonts';
+import { saveTxData } from '../core/utils/saveTxData';
+import TransferType from '../core/enums/TransferType';
 
 const UnstakeAndMigrate: React.FC<{
   transactionRequest: StakingTransactionRequest;
@@ -91,7 +93,24 @@ const UnstakeAndMigrate: React.FC<{
           },
         ],
       })
-      .then(() => {
+      .then((txHash: string) => {
+        const {
+          uuid,
+          value,
+          unit,
+          migrationValue,
+          rewardValue,
+        } = transactionRequest;
+        saveTxData(
+          uuid!,
+          TransferType.Migration,
+          unit!,
+          txHash,
+          migrationValue!,
+          '',
+          value,
+          rewardValue,
+        );
         Swal.fire({
           title: t('Completion.Title'),
           html: `<div style="font-size:15px;">${t(
