@@ -12,7 +12,7 @@ export const saveTxData = (
   migrationRewardAmount?: string,
 ) => {
   axios
-    .post(`${process.env.REACT_APP_UUID_DATA_URL}/${uuid}/tx`, {
+    .post(`${process.env.REACT_APP_EXTERNAL_WALLET_TX_URL}/${uuid}/tx`, {
       transferType,
       date: String(new Date()),
       unit: unit?.toUpperCase() || '',
